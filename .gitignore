@@ -9,5 +9,3 @@ dist-ssr
 .cache
 server/dist
 public/dist
-packages/*/target
-packages/*/web/dist
