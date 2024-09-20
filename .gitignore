@@ -10,3 +10,4 @@ dist-ssr
 server/dist
 public/dist
 packages/*/target
+packages/*/web/dist

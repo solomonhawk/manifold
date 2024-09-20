@@ -3,6 +3,9 @@ import "./style.css";
 import typescriptLogo from "/typescript.svg";
 import { Counter } from "@repo/ui/counter";
 import { setupCounter } from "@repo/ui/setup-counter";
+import init, * as wasm from "@repo/tabol-core";
+
+await init();
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
@@ -20,3 +23,5 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 `;
 
 setupCounter(document.querySelector<HTMLButtonElement>("#counter")!);
+
+wasm.greet();

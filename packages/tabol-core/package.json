@@ -3,5 +3,11 @@
   "scripts": {
     "build": "wasm-pack build --target web --out-dir web/dist",
     "build:release": "cargo build --release"
+  },
+  "exports": {
+    ".": {
+      "import": "./web/dist/tabol_rust.js",
+      "types": "./web/dist/tabol_rust.d.ts"
+    }
   }
 }
