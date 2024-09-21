@@ -7,7 +7,8 @@ mod tabol;
 
 #[wasm_bindgen]
 pub fn parse(raw_table: JsString) -> Result<(), JsValue> {
-    let input: String = JsString::dyn_ref::<JsString>(&raw_table)
+    let input: String = raw_table
+        .dyn_ref::<JsString>()
         .ok_or("Invalid input")?
         .into();
 
@@ -19,14 +20,14 @@ pub fn parse(raw_table: JsString) -> Result<(), JsValue> {
             )));
 
             // @TODO: pass gen closure(s) back to JS
-            match tabol.gen_many("color", 5) {
+            match tabol.gen_many("potion", 5) {
                 Ok(results) => {
                     for result in results {
                         console::log_1(&JsValue::from(format!("{result}\n")));
                     }
                     Ok(())
                 }
-                Err(e) => Err(JsValue::from("Gen failed")),
+                Err(_e) => Err(JsValue::from("Gen failed")),
             }
         }
         Err(_e) => Err(JsValue::from("Parse failed")),

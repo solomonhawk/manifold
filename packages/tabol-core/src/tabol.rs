@@ -155,9 +155,12 @@ impl<'a> Tabol<'a> {
 
 #[derive(Debug)]
 pub struct TableDefinition<'a> {
-    pub title: &'a str,
     pub id: TableId<'a>,
+    #[allow(unused)]
+    pub title: &'a str,
+    #[allow(unused)]
     pub rules: Vec<Rule<'a>>,
+    #[allow(unused)]
     pub weights: Vec<f32>,
     pub distribution: WeightedIndex<f32>,
 }

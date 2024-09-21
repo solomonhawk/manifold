@@ -1,4 +1,3 @@
-import { Header } from "@repo/ui/header";
 import "./style.css";
 import init, * as wasm from "@repo/tabol-core";
 
@@ -6,9 +5,8 @@ await init();
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
-    ${Header({ title: "Web" })}
     <label>
-      <p>Definition:</p>
+      <p>Table Definition:</p>
       <textarea name="tabol-definition" rows="20" cols="48"></textarea>
     </label>
   </div>
@@ -24,6 +22,7 @@ textArea.addEventListener("input", function onChange(e: Event) {
 
     if (value) {
       try {
+        console.clear();
         wasm.parse(value);
       } catch (e: unknown) {
         console.error(e);

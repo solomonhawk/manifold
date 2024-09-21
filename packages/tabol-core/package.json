@@ -3,7 +3,8 @@
   "scripts": {
     "dev": "cargo watch -i .gitignore -s \"npm run build\"",
     "build": "wasm-pack build --target web --out-dir web/dist",
-    "build:release": "cargo build --release"
+    "build:release": "cargo build --release",
+    "lint": "cargo clippy"
   },
   "exports": {
     ".": {
