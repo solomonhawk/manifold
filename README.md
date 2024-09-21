@@ -1,33 +1,23 @@
-# `Turborepo` Vite starter
+# Tabol
 
-This is an official starter Turborepo.
+This is a place to explore building for the web with a local Rust WASM package
+dependency.
 
-## Using this example
+I [previously wrote](https://github.com/solomonhawk/tabol-rust) a simple parser
+for random tables using Rust. This repo expands on that, building the library
+using `wasm-pack` and consuming it from a simple `vite`-based JS app.
 
-Run the following command:
+This project is structured as a monorepo, using `turbo` for task orchestration.
 
-```sh
-npx create-turbo@latest -e with-vite
-```
+## Setup
 
-## What's inside?
+Install system dependencies:
 
-This Turborepo includes the following packages and apps:
+    $ asdf install
 
-### Apps and Packages
+## Get to work
 
-- `docs`: a vanilla [vite](https://vitejs.dev) ts app
-- `web`: another vanilla [vite](https://vitejs.dev) ts app
-- `@repo/ui`: a stub component & utility library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: shared `eslint` configurations
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+This command will run several tasks, including starting the vite dev server and
+a watch/build task for the Rust WASM package.
 
-Each package and app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+    $ npm run work
