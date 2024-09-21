@@ -10,18 +10,18 @@ use crate::nom_parser;
 type TableId<'a> = &'a str;
 
 #[derive(Debug)]
-pub enum TableError {
+pub enum TableError<'a> {
     ParseError(
         String,
-        GenericErrorTree<&'static str, &'static str, &'static str, Box<dyn Error + Send + Sync>>,
+        GenericErrorTree<&'a str, &'a str, &'a str, Box<dyn Error + Send + Sync>>,
     ),
     InvalidDefinition(String),
     CallError(String),
 }
 
-impl Error for TableError {}
+impl<'a> Error for TableError<'a> {}
 
-impl fmt::Display for TableError {
+impl<'a> fmt::Display for TableError<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             TableError::ParseError(source, e) => {
@@ -94,10 +94,10 @@ pub struct Tabol<'a> {
 }
 
 impl<'a> Tabol<'a> {
-    pub fn new(table_definitions: &'static str) -> Result<Self, TableError> {
+    pub fn new(table_definitions: &'a str) -> Result<Self, TableError<'a>> {
         let mut table_map = HashMap::new();
         let tables = nom_parser::parse_tables(table_definitions)
-            .map_err(|e| TableError::ParseError(table_definitions.to_string(), e))?;
+            .map_err(|e| TableError::ParseError(table_definitions.to_owned(), e))?;
 
         for table in tables {
             table_map.insert(table.id, table);
@@ -108,7 +108,7 @@ impl<'a> Tabol<'a> {
         tabol.validate_tables()
     }
 
-    fn validate_tables(self) -> Result<Self, TableError> {
+    fn validate_tables(self) -> Result<Self, TableError<'a>> {
         for (table_id, table) in self.table_map.iter() {
             for rule in table.rules.iter() {
                 if let Err(err) = rule.resolve(&self) {
@@ -138,8 +138,6 @@ impl<'a> Tabol<'a> {
     }
 
     pub fn gen_many(&self, id: &str, count: u8) -> Result<Vec<String>, TableError> {
-        info!("Generating {count} results for table \"{id}\"");
-
         let table = self.table_map.get(id).ok_or(TableError::CallError(format!(
             "No table found with id {}",
             id

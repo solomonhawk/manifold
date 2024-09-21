@@ -15,7 +15,7 @@ use std::collections::HashMap;
 use crate::tabol::{FilterOp, Rule, RuleInst, TableDefinition};
 
 // --------- Tabol ---------
-pub fn parse_tables(input: &str) -> Result<Vec<TableDefinition>, ErrorTree<&str>> {
+pub fn parse_tables<'a>(input: &'a str) -> Result<Vec<TableDefinition<'a>>, ErrorTree<&'a str>> {
     final_parser(many1(table))(input)
 }
 

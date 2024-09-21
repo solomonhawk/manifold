@@ -1,27 +1,33 @@
 import { Header } from "@repo/ui/header";
 import "./style.css";
-import typescriptLogo from "/typescript.svg";
-import { Counter } from "@repo/ui/counter";
-import { setupCounter } from "@repo/ui/setup-counter";
 import init, * as wasm from "@repo/tabol-core";
 
 await init();
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
     ${Header({ title: "Web" })}
-    <div class="card">
-      ${Counter()}
-    </div>
+    <label>
+      <p>Definition:</p>
+      <textarea name="tabol-definition" rows="20" cols="48"></textarea>
+    </label>
   </div>
 `;
 
-setupCounter(document.querySelector<HTMLButtonElement>("#counter")!);
+const textArea = document.querySelector(
+  'textarea[name="tabol-definition"]'
+) as HTMLTextAreaElement;
 
-wasm.greet();
+textArea.addEventListener("input", function onChange(e: Event) {
+  if (e.target instanceof HTMLTextAreaElement) {
+    const value = e.target.value.trim();
+
+    if (value) {
+      try {
+        wasm.parse(value);
+      } catch (e: unknown) {
+        console.error(e);
+      }
+    }
+  }
+});

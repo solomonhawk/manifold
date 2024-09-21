@@ -44,12 +44,12 @@ id: variable_frequency
 ```
 
 ## CLI
-| Flag | Description |
-|-|-|
-| `-d`, `--definition` | the file name of the `.tbl` file in the `src/tables` folder to use |
-| `-t`, `--table` | the name of the table within the definition to generate variants for |
-| `-c`, `--count` | (default 10): how many to generate |
-| `--debug` | turn on debug logging |
+| Flag                 | Description                                                          |
+| -------------------- | -------------------------------------------------------------------- |
+| `-d`, `--definition` | the file name of the `.tbl` file in the `src/tables` folder to use   |
+| `-t`, `--table`      | the name of the table within the definition to generate variants for |
+| `-c`, `--count`      | (default 10): how many to generate                                   |
+| `--debug`            | turn on debug logging                                                |
 
 ## TODO
 - [ ] optional interpolations?
@@ -102,3 +102,7 @@ Sam Hornblower is a Lawful Evil Elf Paladin originally from the wilds outside Wa
 - Legolas Greenleaf is a commoner from a small logging village outside Triboar, known as a(n) expert banker.
 - Boromir Gamgee is a Neutral Good Half-Dwarf Paladin originally from a small merchant village outside Waterdeep, known as a(n) tolerated novice baker.
 - Gimli Gamgee is a commoner from a small swamp city, known as a(n) novice logger.
+
+# Links
+
+- https://rustwasm.github.io/wasm-bindgen/examples/console-log.html
