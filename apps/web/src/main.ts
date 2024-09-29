@@ -6,7 +6,7 @@ await init();
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
     <label>
-      <p>Table Definition:</p>
+      <p>Table Definition: <span class="dot"></span></p>
       <textarea name="tabol-definition" rows="20" cols="48"></textarea>
     </label>
   </div>
@@ -30,3 +30,23 @@ textArea.addEventListener("input", function onChange(e: Event) {
     }
   }
 });
+
+let direction = -1;
+
+const dot = document.querySelector(".dot") as HTMLSpanElement;
+
+requestAnimationFrame(runAnimation);
+
+function runAnimation() {
+  const opacity = parseFloat(getComputedStyle(dot).opacity);
+  let nextOpacity = opacity + 0.05 * direction;
+
+  if (nextOpacity < 0 || nextOpacity > 1) {
+    direction = direction * -1;
+    nextOpacity = Math.min(1, Math.max(0, nextOpacity));
+  }
+
+  dot.style.opacity = String(nextOpacity);
+
+  requestAnimationFrame(runAnimation);
+}

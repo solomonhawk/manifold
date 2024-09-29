@@ -95,3 +95,11 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.dot {
+  display: inline-block;
+  border-radius: 100%;
+  width: 1rem;
+  height: 1rem;
+  background: #747bff;
+}
