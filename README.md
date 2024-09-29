@@ -14,6 +14,9 @@ This project is structured as a monorepo, using `turbo` for task orchestration.
 Install system dependencies:
 
     $ asdf install
+    $ rustup update
+    $ cargo install wasm-pack
+    $ cargo install -f wasm-bindgen-cli
 
 ## Get to work
 
