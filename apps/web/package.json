@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "@repo/tabol-core": "*",
-    "@repo/ui": "*"
+    "@repo/ui": "*",
+    "comlink": "^4.4.1"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",
@@ -21,6 +22,7 @@
     "eslint": "^8.57.0",
     "typescript": "^5.3.3",
     "vite": "^5.1.4",
+    "vite-plugin-comlink": "^5.0.1",
     "vitest": "^2.1.1"
   }
 }

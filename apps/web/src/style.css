@@ -107,4 +107,5 @@ button:focus-visible {
 .error {
   display: inline-block;
   text-align: left;
+  font-family: monospace;
 }

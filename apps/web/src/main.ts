@@ -1,7 +1,8 @@
 import "./style.css";
-import init, * as wasm from "@repo/tabol-core";
 
-await init();
+const workerInstance = new ComlinkWorker<typeof import("./worker")>(
+  new URL("./worker", import.meta.url)
+);
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
@@ -19,14 +20,14 @@ const textArea = document.querySelector(
 
 const errorFeedback = document.querySelector(".error") as HTMLSpanElement;
 
-textArea.addEventListener("input", function onChange(e: Event) {
+textArea.addEventListener("input", async function onChange(e: Event) {
   if (e.target instanceof HTMLTextAreaElement) {
     const value = e.target.value.trim();
 
     if (value) {
       try {
         console.clear();
-        wasm.parse(value);
+        await workerInstance.parse(value);
         errorFeedback.innerText = "";
       } catch (e: unknown) {
         console.error(e);
