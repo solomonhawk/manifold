@@ -103,3 +103,8 @@ button:focus-visible {
   height: 1rem;
   background: #747bff;
 }
+
+.error {
+  display: inline-block;
+  text-align: left;
+}

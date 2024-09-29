@@ -1,44 +1,99 @@
-use nom_supreme::error::{ErrorTree, GenericErrorTree};
+use miette::{
+    DebugReportHandler, GraphicalReportHandler, GraphicalTheme, JSONReportHandler,
+    NarratableReportHandler,
+};
+use nom_supreme::error::{BaseErrorKind, ErrorTree, GenericErrorTree};
 use nom_supreme::final_parser::Location;
 use rand::distributions::{Uniform, WeightedIndex};
 use rand::prelude::*;
 use std::error::Error;
 use std::{collections::HashMap, fmt};
 
-use crate::nom_parser;
+use crate::nom_parser::{self, Span};
 
 type TableId<'a> = &'a str;
 
+#[derive(thiserror::Error, Debug, miette::Diagnostic)]
+#[error("bad input")]
+struct LocatedError<'a> {
+    #[source_code]
+    src: &'a str,
+
+    #[label("{kind}")]
+    span: miette::SourceSpan,
+
+    kind: &'a BaseErrorKind<&'a str, Box<dyn std::error::Error + Send + Sync>>,
+}
+
 #[derive(Debug)]
-pub enum TableError {
-    ParseError(String, ErrorTree<Location>),
+pub enum TableError<'a> {
+    ParseError(&'a str, ErrorTree<Span<'a>>),
     InvalidDefinition(String),
     CallError(String),
 }
 
-impl Error for TableError {}
+// TODO: just derive miette errors here?
+// #[derive(Debug, thiserror::Error, miette::Diagnostic)]
+// pub enum TableError<'a> {
+//     #[error("syntax error")]
+//     #[diagnostic(code(tabol::parse_tables))]
+//     ParseError {
+//         src: &'a str, ErrorTree<Span<'a>>
+//     },
 
-impl fmt::Display for TableError {
+//     #[error("definition error")]
+//     InvalidDefinition(String),
+
+//     #[error("call error")]
+//     CallError(String),
+// }
+
+impl<'a> TableError<'a> {
+    fn write_located_error(&self, f: &mut fmt::Formatter, error: LocatedError<'a>) -> fmt::Result {
+        // TODO: use JSONReportHandler to send contextual feedback across?
+        GraphicalReportHandler::new_themed(GraphicalTheme::unicode_nocolor())
+            .render_report(f, &error)
+    }
+}
+
+impl<'a> Error for TableError<'a> {}
+
+impl<'a> fmt::Display for TableError<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             TableError::ParseError(source, e) => {
                 match e {
                     GenericErrorTree::Base { location, kind } => {
-                        // XXX: why do we get only Base sometimes, and why does it contain no information about the problem? "Expected eof"
-                        write_base_error(f, source, location, format!("{}", kind).as_ref())?;
+                        self.write_located_error(
+                            f,
+                            LocatedError {
+                                src: source,
+                                span: miette::SourceSpan::new(location.location_offset().into(), 0),
+                                kind,
+                            },
+                        )?;
                     }
-                    GenericErrorTree::Stack { base: _, contexts } => {
-                        for context in contexts.iter().take(1) {
-                            write_base_error(
+                    GenericErrorTree::Stack { base, contexts: _ } => {
+                        if let GenericErrorTree::Base { location, kind } = base.as_ref() {
+                            self.write_located_error(
                                 f,
-                                source,
-                                &context.0,
-                                context.1.to_string().as_ref(),
+                                LocatedError {
+                                    src: source,
+                                    span: miette::SourceSpan::new(
+                                        location.location_offset().into(),
+                                        0,
+                                    ),
+                                    kind,
+                                },
                             )?;
                         }
+
+                        // for (span, ctx) in contexts.iter() {
+                        //   TODO: include contexts in miette error
+                        // }
                     }
-                    _ => {
-                        todo!()
+                    GenericErrorTree::Alt { .. } => {
+                        writeln!(f, "alt")?;
                     }
                 }
             }
@@ -54,47 +109,16 @@ impl fmt::Display for TableError {
     }
 }
 
-fn write_base_error(
-    f: &mut fmt::Formatter,
-    source: &str,
-    location: &Location,
-    msg: &str,
-) -> fmt::Result {
-    for (i, l) in contextual_lines(source, location.line, 3) {
-        writeln!(f, "{}", l)?;
-
-        // line is 1-indexed, i is 0-indexed
-        let indent = location.column - 1;
-        if i == location.line - 1 {
-            writeln!(f, "{:indent$}^-- {}", "", msg)?;
-        }
-    }
-
-    Ok(())
-}
-
-fn contextual_lines(
-    text: &str,
-    line: usize,
-    n_lines: usize,
-) -> impl Iterator<Item = (usize, &str)> {
-    let start = if line >= n_lines { line - n_lines } else { 0 };
-    let end = line + n_lines;
-    let skip = start.max(0);
-
-    text.lines().enumerate().skip(skip).take(end - start)
-}
-
 #[derive(Debug)]
 pub struct Tabol<'a> {
     table_map: HashMap<&'a str, TableDefinition<'a>>,
 }
 
 impl<'a> Tabol<'a> {
-    pub fn new(table_definitions: &'a str) -> Result<Self, TableError> {
+    pub fn new(table_definitions: &'a str) -> Result<Self, TableError<'a>> {
         let mut table_map = HashMap::new();
-        let tables = nom_parser::parse_tables(table_definitions)
-            .map_err(|e| TableError::ParseError(table_definitions.to_owned(), e))?;
+        let tables = nom_parser::parse_tables(Span::new(table_definitions))
+            .map_err(|e| TableError::ParseError(table_definitions, e))?;
 
         for table in tables {
             table_map.insert(table.id, table);
@@ -105,7 +129,7 @@ impl<'a> Tabol<'a> {
         tabol.validate_tables()
     }
 
-    fn validate_tables(self) -> Result<Self, TableError> {
+    fn validate_tables(self) -> Result<Self, TableError<'a>> {
         for (table_id, table) in self.table_map.iter() {
             for rule in table.rules.iter() {
                 if let Err(err) = rule.resolve(&self) {

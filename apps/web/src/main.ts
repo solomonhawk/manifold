@@ -8,6 +8,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
     <label>
       <p>Table Definition: <span class="dot"></span></p>
       <textarea name="tabol-definition" rows="20" cols="48"></textarea>
+      <span class="error"></span>
     </label>
   </div>
 `;
@@ -15,6 +16,8 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 const textArea = document.querySelector(
   'textarea[name="tabol-definition"]'
 ) as HTMLTextAreaElement;
+
+const errorFeedback = document.querySelector(".error") as HTMLSpanElement;
 
 textArea.addEventListener("input", function onChange(e: Event) {
   if (e.target instanceof HTMLTextAreaElement) {
@@ -24,8 +27,10 @@ textArea.addEventListener("input", function onChange(e: Event) {
       try {
         console.clear();
         wasm.parse(value);
+        errorFeedback.innerText = "";
       } catch (e: unknown) {
         console.error(e);
+        errorFeedback.innerText = String(e);
       }
     }
   }
