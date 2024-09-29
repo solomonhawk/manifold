@@ -27,9 +27,9 @@ pub fn parse(raw_table: JsString) -> Result<(), JsValue> {
                     }
                     Ok(())
                 }
-                Err(_e) => Err(JsValue::from("Gen failed")),
+                Err(e) => Err(JsValue::from(e.to_string())),
             }
         }
-        Err(_e) => Err(JsValue::from("Parse failed")),
+        Err(e) => Err(JsValue::from(e.to_string())),
     }
 }

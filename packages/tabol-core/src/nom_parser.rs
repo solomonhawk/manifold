@@ -8,15 +8,15 @@ use nom::{
     sequence::{pair, separated_pair, tuple},
     IResult, Parser,
 };
-use nom_supreme::{error::ErrorTree, tag::complete::tag};
+use nom_supreme::{error::ErrorTree, final_parser::Location, tag::complete::tag};
 use nom_supreme::{final_parser::final_parser, parser_ext::ParserExt};
 use std::collections::HashMap;
 
 use crate::tabol::{FilterOp, Rule, RuleInst, TableDefinition};
 
 // --------- Tabol ---------
-pub fn parse_tables(input: &str) -> Result<Vec<TableDefinition>, ErrorTree<&str>> {
-    final_parser(many1(table))(input)
+pub fn parse_tables(input: &str) -> Result<Vec<TableDefinition>, ErrorTree<Location>> {
+    final_parser(many1(table).context("Expected 1 or more table definitions"))(input)
 }
 
 /**
