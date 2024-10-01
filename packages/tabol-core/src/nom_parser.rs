@@ -37,7 +37,13 @@ pub fn parse_tables(input: Span) -> Result<Vec<TableDefinition>, ErrorTree<Span>
 fn table(input: Span) -> IResult<Span, TableDefinition, ErrorTree<Span>> {
     tuple((frontmatter, rules))
         .context("Invalid table definition")
-        .map(|(frontmatter, rules)| TableDefinition::new(frontmatter.title, frontmatter.id, rules))
+        .map(|(frontmatter, rules)| {
+            TableDefinition::new(
+                frontmatter.title.to_string(),
+                frontmatter.id.to_string(),
+                rules,
+            )
+        })
         .parse(input)
 }
 
@@ -108,7 +114,7 @@ fn rule_line(input: Span) -> IResult<Span, Rule, ErrorTree<Span>> {
         )
         .context("Rule should start with a weight, followed by a `:` and then the rule text")
         .map(|(weight, (raw, parts))| Rule {
-            raw: *raw,
+            raw: (*raw).to_string(),
             weight,
             parts,
         }),
@@ -146,7 +152,7 @@ fn rule_literal(input: Span) -> IResult<Span, RuleInst, ErrorTree<Span>> {
     // successfully parse "" which causes many1 to fail
     map_parser(take_until("{{").or(not_line_ending), literal)
         .context("rule literal")
-        .map(|x| RuleInst::Literal(*x))
+        .map(|x| RuleInst::Literal((*x).to_string()))
         .parse(input)
 }
 
@@ -155,7 +161,7 @@ fn rule_interpolation(input: Span) -> IResult<Span, RuleInst, ErrorTree<Span>> {
         .preceded_by(tag("{{"))
         .terminated(tag("}}"))
         .context("rule interpolation")
-        .map(|(s, filters)| RuleInst::Interpolation(*s, filters))
+        .map(|(s, filters)| RuleInst::Interpolation((*s).to_string(), filters))
         .parse(input)
 }
 

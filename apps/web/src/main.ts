@@ -24,15 +24,19 @@ textArea.addEventListener("input", async function onChange(e: Event) {
   if (e.target instanceof HTMLTextAreaElement) {
     const value = e.target.value.trim();
 
-    if (value) {
-      try {
-        console.clear();
-        await workerInstance.parse(value);
-        errorFeedback.innerText = "";
-      } catch (e: unknown) {
-        console.error(e);
-        errorFeedback.innerText = String(e);
+    try {
+      console.clear();
+
+      if (value) {
+        const hash = await workerInstance.parse(value);
+        const tableIds = await workerInstance.tableIds(hash);
+        console.log("main", hash, tableIds);
       }
+
+      errorFeedback.innerText = "";
+    } catch (e: unknown) {
+      console.error(e);
+      errorFeedback.innerText = String(e);
     }
   }
 });

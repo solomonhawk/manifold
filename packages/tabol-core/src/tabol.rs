@@ -1,127 +1,47 @@
-use miette::{
-    DebugReportHandler, GraphicalReportHandler, GraphicalTheme, JSONReportHandler,
-    NarratableReportHandler,
-};
-use nom_supreme::error::{BaseErrorKind, ErrorTree, GenericErrorTree};
-use nom_supreme::final_parser::Location;
+use crate::nom_parser::{self, Span};
 use rand::distributions::{Uniform, WeightedIndex};
 use rand::prelude::*;
-use std::error::Error;
-use std::{collections::HashMap, fmt};
+use serde::{Deserialize, Serialize};
+use serde_wasm_bindgen::Error;
+use std::collections::HashMap;
+use thiserror::Error;
+use tsify::Tsify;
+use wasm_bindgen::prelude::*;
 
-use crate::nom_parser::{self, Span};
-
-type TableId<'a> = &'a str;
-
-#[derive(thiserror::Error, Debug, miette::Diagnostic)]
-#[error("bad input")]
-struct LocatedError<'a> {
-    #[source_code]
-    src: &'a str,
-
-    #[label("{kind}")]
-    span: miette::SourceSpan,
-
-    kind: &'a BaseErrorKind<&'a str, Box<dyn std::error::Error + Send + Sync>>,
-}
-
-#[derive(Debug)]
-pub enum TableError<'a> {
-    ParseError(&'a str, ErrorTree<Span<'a>>),
+// #[derive(Tsify, Debug, Error, Serialize, Deserialize)]
+// #[tsify(into_wasm_abi, from_wasm_abi)]
+#[derive(Debug, Clone, Error)]
+pub enum TableError {
+    #[error("Failed to parse: {0}")]
+    ParseError(String),
+    #[error("Invalid definition: {0}")]
     InvalidDefinition(String),
+    #[error("Invalid call: {0}")]
     CallError(String),
 }
 
-// TODO: just derive miette errors here?
-// #[derive(Debug, thiserror::Error, miette::Diagnostic)]
-// pub enum TableError<'a> {
-//     #[error("syntax error")]
-//     #[diagnostic(code(tabol::parse_tables))]
-//     ParseError {
-//         src: &'a str, ErrorTree<Span<'a>>
-//     },
-
-//     #[error("definition error")]
-//     InvalidDefinition(String),
-
-//     #[error("call error")]
-//     CallError(String),
+// impl From<TableError> for JsError {
+//     fn from(value: TableError) -> Self {
+//         JsError::from(value.to_string())
+//     }
 // }
 
-impl<'a> TableError<'a> {
-    fn write_located_error(&self, f: &mut fmt::Formatter, error: LocatedError<'a>) -> fmt::Result {
-        // TODO: use JSONReportHandler to send contextual feedback across?
-        GraphicalReportHandler::new_themed(GraphicalTheme::unicode_nocolor())
-            .render_report(f, &error)
-    }
+#[wasm_bindgen]
+#[derive(Debug, Clone)]
+pub struct Tabol {
+    table_map: HashMap<String, TableDefinition>,
 }
 
-impl<'a> Error for TableError<'a> {}
-
-impl<'a> fmt::Display for TableError<'a> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            TableError::ParseError(source, e) => {
-                match e {
-                    GenericErrorTree::Base { location, kind } => {
-                        self.write_located_error(
-                            f,
-                            LocatedError {
-                                src: source,
-                                span: miette::SourceSpan::new(location.location_offset().into(), 0),
-                                kind,
-                            },
-                        )?;
-                    }
-                    GenericErrorTree::Stack { base, contexts: _ } => {
-                        if let GenericErrorTree::Base { location, kind } = base.as_ref() {
-                            self.write_located_error(
-                                f,
-                                LocatedError {
-                                    src: source,
-                                    span: miette::SourceSpan::new(
-                                        location.location_offset().into(),
-                                        0,
-                                    ),
-                                    kind,
-                                },
-                            )?;
-                        }
-
-                        // for (span, ctx) in contexts.iter() {
-                        //   TODO: include contexts in miette error
-                        // }
-                    }
-                    GenericErrorTree::Alt { .. } => {
-                        writeln!(f, "alt")?;
-                    }
-                }
-            }
-            TableError::InvalidDefinition(msg) => {
-                write!(f, "invalid table definition: {}", msg)?;
-            }
-            TableError::CallError(msg) => {
-                write!(f, "invalid table call: {}", msg)?;
-            }
-        }
-
-        Ok(())
-    }
-}
-
-#[derive(Debug)]
-pub struct Tabol<'a> {
-    table_map: HashMap<&'a str, TableDefinition<'a>>,
-}
-
-impl<'a> Tabol<'a> {
-    pub fn new(table_definitions: &'a str) -> Result<Self, TableError<'a>> {
+#[wasm_bindgen]
+impl Tabol {
+    #[wasm_bindgen(constructor)]
+    pub fn new(table_definitions: &str) -> Result<Tabol, JsError> {
         let mut table_map = HashMap::new();
         let tables = nom_parser::parse_tables(Span::new(table_definitions))
-            .map_err(|e| TableError::ParseError(table_definitions, e))?;
+            .map_err(|_e| TableError::ParseError(table_definitions.to_string()))?;
 
         for table in tables {
-            table_map.insert(table.id, table);
+            table_map.insert(table.id.clone(), table);
         }
 
         let tabol = Self { table_map };
@@ -129,14 +49,15 @@ impl<'a> Tabol<'a> {
         tabol.validate_tables()
     }
 
-    fn validate_tables(self) -> Result<Self, TableError<'a>> {
+    fn validate_tables(self) -> Result<Tabol, JsError> {
         for (table_id, table) in self.table_map.iter() {
             for rule in table.rules.iter() {
                 if let Err(err) = rule.resolve(&self) {
                     return Err(TableError::InvalidDefinition(format!(
                         "in table \"{}\" for rule \"{}\". Original error: \"{}\"",
                         table_id, rule.raw, err
-                    )));
+                    ))
+                    .into());
                 }
             }
         }
@@ -144,27 +65,28 @@ impl<'a> Tabol<'a> {
         Ok(self)
     }
 
-    pub fn table_ids(&self) -> Vec<&str> {
-        self.table_map.keys().copied().collect()
+    pub fn table_ids(&self) -> Vec<String> {
+        self.table_map.keys().map(|s| s.to_string()).collect()
     }
 
-    pub fn gen(&self, id: &str) -> Result<String, TableError> {
+    fn _gen(&self, id: &str) -> Result<String, TableError> {
         self.table_map
             .get(id)
-            .ok_or(TableError::CallError(format!(
-                "No table found with id {}",
-                id
-            )))
+            .ok_or(TableError::CallError(format!("No table found with id {}", id)).into())
             .and_then(|table| table.gen(self))
     }
 
-    pub fn gen_many(&self, id: &str, count: u8) -> Result<Vec<String>, TableError> {
+    pub fn gen(&self, id: &str) -> Result<String, JsError> {
+        self._gen(id).map_err(|e| e.into())
+    }
+
+    fn _gen_many(&self, id: &str, count: usize) -> Result<Vec<String>, JsError> {
         let table = self.table_map.get(id).ok_or(TableError::CallError(format!(
             "No table found with id {}",
             id
         )))?;
 
-        let mut results = Vec::with_capacity(count as usize);
+        let mut results = Vec::with_capacity(count);
 
         for _ in 0..count {
             results.push(table.gen(self)?);
@@ -172,22 +94,26 @@ impl<'a> Tabol<'a> {
 
         Ok(results)
     }
+
+    pub fn gen_many(&self, id: &str, count: usize) -> Result<Vec<String>, JsError> {
+        self._gen_many(id, count).map_err(|e| e.into())
+    }
 }
 
-#[derive(Debug)]
-pub struct TableDefinition<'a> {
-    pub id: TableId<'a>,
+#[derive(Debug, Clone)]
+pub struct TableDefinition {
+    pub id: String,
     #[allow(unused)]
-    pub title: &'a str,
+    pub title: String,
     #[allow(unused)]
-    pub rules: Vec<Rule<'a>>,
+    pub rules: Vec<Rule>,
     #[allow(unused)]
     pub weights: Vec<f32>,
     pub distribution: WeightedIndex<f32>,
 }
 
-impl<'a> TableDefinition<'a> {
-    pub fn new(title: &'a str, id: &'a str, rules: Vec<Rule<'a>>) -> Self {
+impl TableDefinition {
+    pub fn new(title: String, id: String, rules: Vec<Rule>) -> Self {
         let weights: Vec<f32> = rules.iter().map(|rule| rule.weight).collect();
 
         Self {
@@ -199,7 +125,7 @@ impl<'a> TableDefinition<'a> {
         }
     }
 
-    pub fn gen(&self, tables: &'a Tabol) -> Result<String, TableError> {
+    pub fn gen(&self, tables: &Tabol) -> Result<String, TableError> {
         let mut rng = rand::thread_rng();
         let rule = &self.rules[self.distribution.sample(&mut rng)];
 
@@ -208,14 +134,14 @@ impl<'a> TableDefinition<'a> {
 }
 
 #[derive(Debug, Clone)]
-pub struct Rule<'a> {
-    pub raw: &'a str,
+pub struct Rule {
+    pub raw: String,
     pub weight: f32,
-    pub parts: Vec<RuleInst<'a>>,
+    pub parts: Vec<RuleInst>,
 }
 
-impl<'a> Rule<'a> {
-    pub fn resolve(&self, tables: &'a Tabol) -> Result<String, TableError> {
+impl Rule {
+    pub fn resolve(&self, tables: &Tabol) -> Result<String, TableError> {
         // keep track of context
         // forward pass to resolve all interpolations
         // backwards pass to resolve built-ins (e.g. article)
@@ -226,7 +152,7 @@ impl<'a> Rule<'a> {
                 RuleInst::DiceRoll(count, sides) => Ok(roll_dice(*count, *sides).to_string()),
                 RuleInst::Literal(str) => Ok(str.to_string()),
                 RuleInst::Interpolation(id, opts) => {
-                    let mut resolved = tables.gen(id)?;
+                    let mut resolved = tables._gen(id)?;
 
                     for opt in opts {
                         opt.apply(&mut resolved);
@@ -242,10 +168,10 @@ impl<'a> Rule<'a> {
 }
 
 #[derive(Debug, Clone)]
-pub enum RuleInst<'a> {
+pub enum RuleInst {
     DiceRoll(usize, usize), // (count, sides)
-    Literal(&'a str),
-    Interpolation(TableId<'a>, Vec<FilterOp>),
+    Literal(String),
+    Interpolation(String, Vec<FilterOp>),
 }
 
 #[derive(Debug, Clone)]
