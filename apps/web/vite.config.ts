@@ -15,4 +15,12 @@ export default defineConfig({
   build: {
     target: "esnext",
   },
+  resolve: {
+    alias: [
+      {
+        find: "./runtimeConfig",
+        replacement: "./runtimeConfig.browser",
+      },
+    ],
+  },
 });

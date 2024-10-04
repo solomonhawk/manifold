@@ -2,6 +2,11 @@ import {
   CircleBackslashIcon,
   QuestionMarkCircledIcon,
 } from "@radix-ui/react-icons";
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from "@repo/ui/components/ui/resizable";
 import { Button } from "@repo/ui/components/ui/button";
 import { Card, CardContent } from "@repo/ui/components/ui/card";
 import { useAtom } from "jotai";
@@ -13,6 +18,7 @@ import {
   tableError,
   type TableMetadata,
 } from "./state";
+import { Badge } from "@repo/ui/components/ui/badge";
 
 const workerInstance = new ComlinkWorker<typeof import("./worker.js")>(
   new URL("./worker", import.meta.url)
@@ -78,82 +84,91 @@ export function Editor() {
   }
 
   return (
-    <div className="flex gap-2 flex-col md:flex-row min-h-full">
-      <div className="flex flex-col flex-1 lg:flex-initial gap-2">
+    <ResizablePanelGroup direction="horizontal" className="flex min-h-full">
+      <ResizablePanel
+        minSize={30}
+        defaultSize={30}
+        className="flex flex-col flex-1 lg:flex-initial"
+      >
         <textarea
           ref={textAreaRef}
           name="tabol-definition"
-          className="w-full flex-1"
+          className="w-full flex-1 p-4"
           rows={20}
           cols={48}
           onChange={handleChange}
         ></textarea>
-        {error && <span className="error">{error}</span>}
-      </div>
+        {error && <span className="p-2">{error}</span>}
+      </ResizablePanel>
 
-      <div className="flex flex-1 flex-col gap-2">
-        {tableHash && tableMetadata.length > 0 ? (
-          <ul className="flex flex-wrap gap-1 mb-2">
-            {tableMetadata.map((table) => {
-              return (
-                <li key={table.id}>
-                  <Button type="button" onClick={(e) => handleRoll(e, table)}>
-                    {table.title}
-                  </Button>
-                </li>
-              );
-            })}
-          </ul>
-        ) : null}
+      <ResizableHandle withHandle />
 
-        {rollResults.length > 0 ? (
-          <>
-            <ul className="flex flex-col gap-2 min-h-0 overflow-auto">
-              {rollResults.map((result, i) => {
+      <ResizablePanel minSize={30} className="flex flex-col flex-1">
+        <div className="flex flex-1 flex-col gap-2 p-2 min-h-0">
+          {tableHash && tableMetadata.length > 0 ? (
+            <ul className="flex flex-wrap gap-1 mb-2">
+              {tableMetadata.map((table) => {
                 return (
-                  <li key={i}>
-                    <Card>
-                      <CardContent className="grid grid-cols-roll-results gap-2 p-4">
-                        <span className="text-slate-400 text-nowrap">
-                          {new Date(result.timestamp).toLocaleTimeString()}
-                        </span>
-
-                        <span className="font-bold">{result.text}</span>
-
-                        <span>
-                          <span className="text-sm bg-slate-700 rounded-full px-2 py-1">
-                            {result.tableName}
-                          </span>
-                        </span>
-                      </CardContent>
-                    </Card>
+                  <li key={table.id}>
+                    <Button type="button" onClick={(e) => handleRoll(e, table)}>
+                      {table.title}
+                    </Button>
                   </li>
                 );
               })}
             </ul>
+          ) : null}
 
-            <div className="flex justify-end">
-              <Button
-                type="button"
-                onClick={handleClearResults}
-                className="gap-1"
-              >
-                <CircleBackslashIcon />
-                Clear Results
-              </Button>
-            </div>
-          </>
-        ) : (
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-2 justify-center text-slate-500">
-                <QuestionMarkCircledIcon className="size-6" />
-                Your roll results will show up here.
+          {rollResults.length > 0 ? (
+            <>
+              <ul className="flex flex-col gap-2 min-h-0 overflow-auto">
+                {rollResults.map((result, i) => {
+                  return (
+                    <li key={i}>
+                      <Card>
+                        <CardContent className="flex items-start gap-2 p-4">
+                          <span className="font-bold grow">{result.text}</span>
+
+                          <span className="flex items-center gap-2">
+                            <Badge variant="secondary">
+                              {result.tableName}
+                            </Badge>
+
+                            <span className="text-slate-400 text-nowrap text-sm">
+                              {new Date(result.timestamp).toLocaleTimeString()}
+                            </span>
+                          </span>
+                        </CardContent>
+                      </Card>
+                    </li>
+                  );
+                })}
+              </ul>
+
+              <div className="flex justify-end">
+                <Button
+                  type="button"
+                  onClick={handleClearResults}
+                  className="gap-1"
+                  variant="destructive"
+                >
+                  <CircleBackslashIcon />
+                  Clear Results
+                </Button>
               </div>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-    </div>
+            </>
+          ) : (
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 justify-center text-slate-500">
+                  <QuestionMarkCircledIcon className="size-6" />
+                  Your roll results will show up here.
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </ResizablePanel>
+    </ResizablePanelGroup>
   );
 }
