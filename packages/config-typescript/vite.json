@@ -10,8 +10,7 @@
     "noEmit": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "jsx": "react-jsx"
+    "noImplicitReturns": true
   },
   "exclude": ["node_modules"]
 }

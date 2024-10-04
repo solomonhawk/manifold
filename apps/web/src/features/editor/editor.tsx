@@ -1,3 +1,9 @@
+import {
+  CircleBackslashIcon,
+  QuestionMarkCircledIcon,
+} from "@radix-ui/react-icons";
+import { Button } from "@repo/ui/components/ui/button";
+import { Card, CardContent } from "@repo/ui/components/ui/card";
 import { useAtom } from "jotai";
 import { useRef, type ChangeEvent } from "react";
 import {
@@ -73,7 +79,7 @@ export function Editor() {
 
   return (
     <div className="flex gap-2 flex-col md:flex-row min-h-full">
-      <div className="flex flex-col flex-1 gap-2">
+      <div className="flex flex-col flex-1 lg:flex-initial gap-2">
         <textarea
           ref={textAreaRef}
           name="tabol-definition"
@@ -91,13 +97,9 @@ export function Editor() {
             {tableMetadata.map((table) => {
               return (
                 <li key={table.id}>
-                  <button
-                    type="button"
-                    onClick={(e) => handleRoll(e, table)}
-                    className="rounded-sm py-1 px-2 bg-neutral-700"
-                  >
+                  <Button type="button" onClick={(e) => handleRoll(e, table)}>
                     {table.title}
-                  </button>
+                  </Button>
                 </li>
               );
             })}
@@ -106,31 +108,51 @@ export function Editor() {
 
         {rollResults.length > 0 ? (
           <>
-            <ul className="flex flex-col gap-4 min-h-0 overflow-auto">
+            <ul className="flex flex-col gap-2 min-h-0 overflow-auto">
               {rollResults.map((result, i) => {
                 return (
-                  <li key={i} className="grid grid-cols-roll-results gap-2">
-                    <span className="text-neutral-400 text-nowrap">
-                      {new Date(result.timestamp).toLocaleTimeString()}
-                    </span>
+                  <li key={i}>
+                    <Card>
+                      <CardContent className="grid grid-cols-roll-results gap-2 p-4">
+                        <span className="text-slate-400 text-nowrap">
+                          {new Date(result.timestamp).toLocaleTimeString()}
+                        </span>
 
-                    <span className="font-bold">{result.text}</span>
+                        <span className="font-bold">{result.text}</span>
 
-                    <span>
-                      <span className="text-sm bg-neutral-700 rounded-full px-2 py-1">
-                        {result.tableName}
-                      </span>
-                    </span>
+                        <span>
+                          <span className="text-sm bg-slate-700 rounded-full px-2 py-1">
+                            {result.tableName}
+                          </span>
+                        </span>
+                      </CardContent>
+                    </Card>
                   </li>
                 );
               })}
             </ul>
 
-            <button type="button" onClick={handleClearResults}>
-              Clear
-            </button>
+            <div className="flex justify-end">
+              <Button
+                type="button"
+                onClick={handleClearResults}
+                className="gap-1"
+              >
+                <CircleBackslashIcon />
+                Clear Results
+              </Button>
+            </div>
           </>
-        ) : null}
+        ) : (
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center gap-2 justify-center text-slate-500">
+                <QuestionMarkCircledIcon className="size-6" />
+                Your roll results will show up here.
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

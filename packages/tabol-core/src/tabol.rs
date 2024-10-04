@@ -56,8 +56,12 @@ impl Tabol {
     }
 
     pub fn table_metadata(&self) -> Vec<JsValue> {
-        self.table_map
-            .values()
+        let mut tables = self.table_map.values().collect::<Vec<&TableDefinition>>();
+
+        tables.sort_by(|a, b| a.title.cmp(&b.title));
+
+        tables
+            .into_iter()
             .map(|def| serde_wasm_bindgen::to_value(&def).unwrap())
             .collect()
     }
@@ -65,7 +69,10 @@ impl Tabol {
     fn _gen(&self, id: &str) -> Result<String, TableError> {
         self.table_map
             .get(id)
-            .ok_or(TableError::CallError(format!("No table found with id {}", id)).into())
+            .ok_or(TableError::CallError(format!(
+                "No table found with id {}",
+                id
+            )))
             .and_then(|table| table.gen(self))
     }
 
@@ -89,7 +96,7 @@ impl Tabol {
     }
 
     pub fn gen_many(&self, id: &str, count: usize) -> Result<Vec<String>, JsError> {
-        self._gen_many(id, count).map_err(|e| e.into())
+        self._gen_many(id, count)
     }
 }
 

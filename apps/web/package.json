@@ -12,6 +12,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@radix-ui/react-icons": "^1.3.0",
     "@repo/tabol-core": "*",
     "@repo/ui": "*",
     "comlink": "^4.4.1",
