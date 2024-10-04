@@ -20,12 +20,6 @@ pub enum TableError {
     CallError(String),
 }
 
-// impl From<TableError> for JsError {
-//     fn from(value: TableError) -> Self {
-//         JsError::from(value.to_string())
-//     }
-// }
-
 #[wasm_bindgen]
 #[derive(Debug, Clone)]
 pub struct Tabol {

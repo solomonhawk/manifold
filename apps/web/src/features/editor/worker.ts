@@ -5,7 +5,7 @@ declare const self: DedicatedWorkerGlobalScope;
 
 import init, { Tabol, table_hash } from "@repo/tabol-core";
 
-await init();
+await init({});
 
 const textToHash = new Map<string, string>();
 const hashToTabol = new Map<string, Tabol>();
@@ -37,4 +37,15 @@ export const tableIds = (hash: string) => {
   const tabol = hashToTabol.get(hash)!;
 
   return tabol.table_ids();
+};
+
+export const gen = (hash: string, text: string, tableId: string) => {
+  if (!hashToTabol.has(hash)) {
+    // webworker doesn't support HMR, so we fallback to passing the text and re-parsing it if necessary
+    parse(text);
+  }
+
+  const tabol = hashToTabol.get(hash)!;
+
+  return tabol.gen(tableId);
 };

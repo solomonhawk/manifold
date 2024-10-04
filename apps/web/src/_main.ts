@@ -1,6 +1,6 @@
 import "./style.css";
 
-const workerInstance = new ComlinkWorker<typeof import("./worker")>(
+const workerInstance = new ComlinkWorker<typeof import("./worker.js")>(
   new URL("./worker", import.meta.url)
 );
 
