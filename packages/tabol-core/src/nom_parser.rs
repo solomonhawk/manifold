@@ -124,28 +124,29 @@ fn rule_line(input: Span) -> IResult<Span, Rule, ErrorTree<Span>> {
 
 // --------- Rule ---------
 pub fn rule(input: Span) -> IResult<Span, (Span, Vec<RuleInst>), ErrorTree<Span>> {
-    // TODO: add back in rule_dice_roll.or(..)
-    many1(rule_interpolation.or(rule_literal))
+    many1(rule_dice_roll.or(rule_interpolation).or(rule_literal))
         .context("Invalid rule text, expected a dice roll (`2d4`), an interpolation (`{{other}}`) or a literal")
         .with_recognized()
         .parse(input)
 }
 
-// TODO: figure out why this infers (&str, RuleInst) instead of (Span, RuleInst)
-// fn rule_dice_roll(input: Span) -> IResult<Span, RuleInst, ErrorTree<Span>> {
-//     tuple((
-//         digit1.parse_from_str(),
-//         digit1.parse_from_str().preceded_by(tag("d")),
-//     ))
-//     .or(digit1
-//         .parse_from_str()
-//         .preceded_by(tag("d"))
-//         .map(|sides| (1, sides)))
-//     .preceded_by(tag("{{"))
-//     .terminated(tag("}}"))
-//     .map(|(count, sides)| RuleInst::DiceRoll(count, sides))
-//     .parse(input)
-// }
+fn rule_dice_roll(input: Span) -> IResult<Span, RuleInst, ErrorTree<Span>> {
+    tuple((
+        digit1.map_res(|span: Span| span.fragment().parse::<usize>()),
+        digit1
+            .map_res(|span: Span| span.fragment().parse::<usize>())
+            .preceded_by(tag("d")),
+    ))
+    .or(digit1
+        .map_res(|span: Span| span.fragment().parse::<usize>())
+        .preceded_by(tag("d"))
+        .map(|sides| (1, sides)))
+    .preceded_by(tag("{{"))
+    .terminated(tag("}}"))
+    .context("dice roll literal")
+    .map(|(count, sides)| RuleInst::DiceRoll(count, sides))
+    .parse(input)
+}
 
 fn rule_literal(input: Span) -> IResult<Span, RuleInst, ErrorTree<Span>> {
     // can't just do `take_until("{{").or(not_line_ending)` or else we'll

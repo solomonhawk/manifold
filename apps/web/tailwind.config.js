@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       gridTemplateColumns: {
-        "roll-results": "min-content 1fr min-content",
+        "roll-results": "min-content 1fr auto",
       },
     },
   },

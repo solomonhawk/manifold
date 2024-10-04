@@ -2,9 +2,10 @@ import { useAtom } from "jotai";
 import { useRef, type ChangeEvent } from "react";
 import {
   currentTableHash,
-  currentTableIds,
+  currentTableMetadata,
   rollHistory,
   tableError,
+  type TableMetadata,
 } from "./state";
 
 const workerInstance = new ComlinkWorker<typeof import("./worker.js")>(
@@ -15,7 +16,7 @@ export function Editor() {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [error, setError] = useAtom(tableError);
   const [tableHash, setTableHash] = useAtom(currentTableHash);
-  const [tableIds, setTableIds] = useAtom(currentTableIds);
+  const [tableMetadata, setTableMetadata] = useAtom(currentTableMetadata);
   const [rollResults, setRollResults] = useAtom(rollHistory);
 
   async function handleChange(e: ChangeEvent<HTMLTextAreaElement>) {
@@ -26,12 +27,12 @@ export function Editor() {
 
       if (value) {
         const hash = await workerInstance.parse(value);
-        const tableIds = await workerInstance.tableIds(hash);
+        const tableMetadata = await workerInstance.tableMetadata(hash);
 
         setTableHash(hash);
-        setTableIds(tableIds);
+        setTableMetadata(tableMetadata);
 
-        console.log("main", hash, tableIds);
+        console.log("main", hash, tableMetadata);
       }
 
       setError(null);
@@ -41,7 +42,7 @@ export function Editor() {
     }
   }
 
-  async function handleRoll(e: React.MouseEvent, tableId: string) {
+  async function handleRoll(e: React.MouseEvent, table: TableMetadata) {
     e.preventDefault();
 
     if (!tableHash) {
@@ -51,17 +52,18 @@ export function Editor() {
     const result = await workerInstance.gen(
       tableHash,
       textAreaRef.current?.value || "",
-      tableId
+      table.id
     );
 
     setRollResults((results) =>
-      results.concat([
+      [
         {
-          tableId,
+          tableName: table.title,
+          tableId: table.id,
           timestamp: Date.now(),
           text: result,
         },
-      ])
+      ].concat(results)
     );
   }
 
@@ -84,17 +86,17 @@ export function Editor() {
       </div>
 
       <div className="flex flex-1 flex-col gap-2">
-        {tableHash && tableIds.length > 0 ? (
+        {tableHash && tableMetadata.length > 0 ? (
           <ul className="flex flex-wrap gap-1 mb-2">
-            {tableIds.map((tableId) => {
+            {tableMetadata.map((table) => {
               return (
-                <li key={tableId}>
+                <li key={table.id}>
                   <button
                     type="button"
-                    onClick={(e) => handleRoll(e, tableId)}
+                    onClick={(e) => handleRoll(e, table)}
                     className="rounded-sm py-1 px-2 bg-neutral-700"
                   >
-                    {tableId}
+                    {table.title}
                   </button>
                 </li>
               );
@@ -104,16 +106,20 @@ export function Editor() {
 
         {rollResults.length > 0 ? (
           <>
-            <ul className="flex flex-col gap-2">
+            <ul className="flex flex-col gap-4 min-h-0 overflow-auto">
               {rollResults.map((result, i) => {
                 return (
                   <li key={i} className="grid grid-cols-roll-results gap-2">
                     <span className="text-neutral-400 text-nowrap">
                       {new Date(result.timestamp).toLocaleTimeString()}
                     </span>
+
                     <span className="font-bold">{result.text}</span>
-                    <span className="text-sm bg-neutral-700 rounded-full px-2 py-1">
-                      {result.tableId}
+
+                    <span>
+                      <span className="text-sm bg-neutral-700 rounded-full px-2 py-1">
+                        {result.tableName}
+                      </span>
                     </span>
                   </li>
                 );

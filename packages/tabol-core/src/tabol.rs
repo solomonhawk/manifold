@@ -1,15 +1,11 @@
 use crate::nom_parser::{self, Span};
 use rand::distributions::{Uniform, WeightedIndex};
 use rand::prelude::*;
-use serde::{Deserialize, Serialize};
-use serde_wasm_bindgen::Error;
+use serde::Serialize;
 use std::collections::HashMap;
 use thiserror::Error;
-use tsify::Tsify;
 use wasm_bindgen::prelude::*;
 
-// #[derive(Tsify, Debug, Error, Serialize, Deserialize)]
-// #[tsify(into_wasm_abi, from_wasm_abi)]
 #[derive(Debug, Clone, Error)]
 pub enum TableError {
     #[error("Failed to parse: {0}")]
@@ -59,8 +55,11 @@ impl Tabol {
         Ok(self)
     }
 
-    pub fn table_ids(&self) -> Vec<String> {
-        self.table_map.keys().map(|s| s.to_string()).collect()
+    pub fn table_metadata(&self) -> Vec<JsValue> {
+        self.table_map
+            .values()
+            .map(|def| serde_wasm_bindgen::to_value(&def).unwrap())
+            .collect()
     }
 
     fn _gen(&self, id: &str) -> Result<String, TableError> {
@@ -94,15 +93,15 @@ impl Tabol {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct TableDefinition {
     pub id: String,
-    #[allow(unused)]
     pub title: String,
     #[allow(unused)]
     pub rules: Vec<Rule>,
     #[allow(unused)]
     pub weights: Vec<f32>,
+    #[serde(skip)]
     pub distribution: WeightedIndex<f32>,
 }
 
@@ -127,7 +126,7 @@ impl TableDefinition {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct Rule {
     pub raw: String,
     pub weight: f32,
@@ -161,14 +160,14 @@ impl Rule {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub enum RuleInst {
     DiceRoll(usize, usize), // (count, sides)
     Literal(String),
     Interpolation(String, Vec<FilterOp>),
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub enum FilterOp {
     DefiniteArticle,
     IndefiniteArticle,

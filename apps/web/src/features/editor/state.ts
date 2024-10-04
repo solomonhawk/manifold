@@ -1,15 +1,21 @@
 import { atom } from "jotai";
 
-type RollResult = {
+export type RollResult = {
+  tableName: string;
   tableId: string;
   timestamp: number;
   text: string;
+};
+
+export type TableMetadata = {
+  id: string;
+  title: string;
 };
 
 export const tableError = atom<string | null>(null);
 
 export const currentTableHash = atom<string | null>(null);
 
-export const currentTableIds = atom<string[]>([]);
+export const currentTableMetadata = atom<TableMetadata[]>([]);
 
 export const rollHistory = atom<RollResult[]>([]);

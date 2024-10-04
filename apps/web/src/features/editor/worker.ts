@@ -20,7 +20,7 @@ export const parse = (text: string) => {
   }
 
   if (hashToTabol.has(hash)) {
-    console.log(hashToTabol.get(hash)!.table_ids());
+    console.log(hashToTabol.get(hash)!.table_metadata());
     return hash;
   }
 
@@ -29,14 +29,14 @@ export const parse = (text: string) => {
   return hash;
 };
 
-export const tableIds = (hash: string) => {
+export const tableMetadata = (hash: string) => {
   if (!hashToTabol.has(hash)) {
     throw new Error(`No data for ${hash}`);
   }
 
   const tabol = hashToTabol.get(hash)!;
 
-  return tabol.table_ids();
+  return tabol.table_metadata();
 };
 
 export const gen = (hash: string, text: string, tableId: string) => {
