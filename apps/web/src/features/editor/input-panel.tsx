@@ -20,7 +20,7 @@ export function InputPanel({ textAreaRef, onChange }: Props) {
         cols={48}
         onChange={onChange}
       ></textarea>
-      {error && <span className="p-2">{error}</span>}
+      {error && <span className="p-2 line-clamp-5 overflow-auto">{error}</span>}
     </>
   );
 }

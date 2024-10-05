@@ -41,6 +41,9 @@ export function Editor() {
 
           setTableHash(hash);
           setTableMetadata(metadata);
+        } else {
+          setTableHash(null);
+          setTableMetadata([]);
         }
 
         setError(null);
@@ -90,7 +93,7 @@ export function Editor() {
   return (
     <ResizablePanelGroup direction="horizontal" className="flex min-h-full">
       <ResizablePanel
-        minSize={30}
+        minSize={20}
         defaultSize={30}
         className="flex flex-col flex-1 lg:flex-initial"
       >
@@ -99,7 +102,7 @@ export function Editor() {
 
       <ResizableHandle withHandle />
 
-      <ResizablePanel minSize={30} className="flex flex-col flex-1">
+      <ResizablePanel minSize={50} className="flex flex-col flex-1">
         <ResultsPanel onRoll={handleRoll} onClear={handleClearResults} />
       </ResizablePanel>
     </ResizablePanelGroup>
