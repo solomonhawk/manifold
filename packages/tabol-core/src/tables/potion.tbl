@@ -1,6 +1,7 @@
 ---
 title: Potion
 id: potion
+export: true
 ---
 1: {{potion_descriptor|indefinite|capitalize}} {{color}} {{potion_substance}} {{containment}} {{container_descriptor|indefinite}} {{container_shape}} {{container_material}} {{container_type}}. It smells like {{smell}} and {{potion_attribute}}. {{potion_effect}}
 

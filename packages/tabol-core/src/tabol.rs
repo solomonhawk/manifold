@@ -5,6 +5,7 @@ use serde::Serialize;
 use std::collections::HashMap;
 use thiserror::Error;
 use wasm_bindgen::prelude::*;
+use web_sys::console;
 
 #[derive(Debug, Clone, Error)]
 pub enum TableError {
@@ -34,6 +35,7 @@ impl Tabol {
             table_map.insert(table.id.clone(), table);
         }
 
+        console::log_1(&JsValue::from(format!("{:?}", table_map.keys())));
         let tabol = Self { table_map };
 
         tabol.validate_tables()
@@ -41,6 +43,7 @@ impl Tabol {
 
     fn validate_tables(self) -> Result<Tabol, JsError> {
         for (table_id, table) in self.table_map.iter() {
+            console::log_1(&JsValue::from(format!("{}: {}", table.id, table.title)));
             for rule in table.rules.iter() {
                 if let Err(err) = rule.resolve(&self) {
                     return Err(TableError::InvalidDefinition(format!(
@@ -104,6 +107,7 @@ impl Tabol {
 pub struct TableDefinition {
     pub id: String,
     pub title: String,
+    pub export: bool,
     #[allow(unused)]
     pub rules: Vec<Rule>,
     #[allow(unused)]
@@ -113,12 +117,13 @@ pub struct TableDefinition {
 }
 
 impl TableDefinition {
-    pub fn new(title: String, id: String, rules: Vec<Rule>) -> Self {
+    pub fn new(id: String, title: String, export: bool, rules: Vec<Rule>) -> Self {
         let weights: Vec<f32> = rules.iter().map(|rule| rule.weight).collect();
 
         Self {
-            title,
             id,
+            title,
+            export,
             rules,
             weights: weights.to_owned(),
             distribution: WeightedIndex::new(&weights).unwrap(),

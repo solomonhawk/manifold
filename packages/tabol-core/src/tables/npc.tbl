@@ -193,6 +193,7 @@ id: skill_level
 ---
 title: NPC
 id: npc
+export: true
 ---
 1: {{first_name}} {{last_name}} is {{alignment|indefinite}} {{race}} {{class}} originally from {{birthplace}}, known as {{reputation|indefinite}} {{skill_level}} {{profession}}.
 3: {{first_name}} {{last_name}} is a commoner from {{birthplace}}, known as {{skill_level|indefinite}} {{profession}}.

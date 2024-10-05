@@ -2,6 +2,7 @@ use nom::{
     bytes::complete::{take_until, take_while1},
     character::complete::{alphanumeric1, digit1, line_ending, multispace0, not_line_ending},
     combinator::map_parser,
+    complete::bool,
     error::make_error,
     multi::{fold_many1, many0, many1, separated_list1},
     number::complete::float,
@@ -16,6 +17,11 @@ use std::collections::HashMap;
 use crate::tabol::{FilterOp, Rule, RuleInst, TableDefinition};
 
 pub type Span<'a> = LocatedSpan<&'a str>;
+
+enum AttrValue<'a> {
+    Text(Span<'a>),
+    Bool(bool),
+}
 
 // --------- Tabol ---------
 pub fn parse_tables(input: Span) -> Result<Vec<TableDefinition>, ErrorTree<Span>> {
@@ -39,8 +45,9 @@ fn table(input: Span) -> IResult<Span, TableDefinition, ErrorTree<Span>> {
         .context("Invalid table definition")
         .map(|(frontmatter, rules)| {
             TableDefinition::new(
-                frontmatter.title.to_string(),
                 frontmatter.id.to_string(),
+                frontmatter.title.to_string(),
+                frontmatter.export.unwrap(),
                 rules,
             )
         })
@@ -50,10 +57,11 @@ fn table(input: Span) -> IResult<Span, TableDefinition, ErrorTree<Span>> {
 struct Frontmatter<'a> {
     pub title: &'a str,
     pub id: &'a str,
+    pub export: Option<bool>,
 }
 
 fn frontmatter(input: Span) -> IResult<Span, Frontmatter, ErrorTree<Span>> {
-    let (input, attrs): (Span, HashMap<&str, Span>) = fold_many1(
+    let (input, attrs): (Span, HashMap<&str, AttrValue>) = fold_many1(
         frontmatter_attr,
         HashMap::new,
         |mut acc: HashMap<_, _>, (k, v)| {
@@ -70,28 +78,71 @@ fn frontmatter(input: Span) -> IResult<Span, Frontmatter, ErrorTree<Span>> {
     // XXX: this sucks
     // - allows "title: ", but not "title:"
     // TODO: arbitary frontmatter???
-    let id = attrs.get("id").ok_or(nom::Err::Failure(make_error(
+    let id = (match attrs.get("id") {
+        Some(AttrValue::Text(s)) => Some(s.fragment()),
+        _ => None,
+    })
+    .ok_or(nom::Err::Failure(make_error(
         input,
         // XXX: not great display
         nom::error::ErrorKind::Many1,
     )))?;
 
-    let title = attrs.get("title").ok_or(nom::Err::Failure(make_error(
+    let title = (match attrs.get("title") {
+        Some(AttrValue::Text(s)) => Some(s.fragment()),
+        _ => None,
+    })
+    .ok_or(nom::Err::Failure(make_error(
         input,
+        // XXX: not great display
         nom::error::ErrorKind::Many1,
     )))?;
 
-    Ok((input, Frontmatter { id, title }))
+    let export = (match attrs.get("export") {
+        Some(AttrValue::Bool(b)) => Some(*b),
+        _ => None,
+    })
+    .or(Some(false));
+
+    Ok((input, Frontmatter { id, title, export }))
 }
 
-fn frontmatter_attr(input: Span) -> IResult<Span, (Span, Span), ErrorTree<Span>> {
+fn frontmatter_attr(input: Span) -> IResult<Span, (Span, AttrValue), ErrorTree<Span>> {
+    id_attr
+        .or(title_attr)
+        .or(export_attr)
+        .context("Table attributes should be formatted like `name: value`")
+        .terminated(line_ending)
+        .parse(input)
+}
+
+fn id_attr(input: Span) -> IResult<Span, (Span, AttrValue), ErrorTree<Span>> {
     separated_pair(
-        alphanumeric1.context("Table attributes can only contain alphanumeric characters"),
+        tag("id").context("Table attributes can only contain alphanumeric characters"),
         tag(": ").context("Missing table attribute separator, expected `:`"),
-        not_line_ending, // XXX: happily matches nothing ("")
+        ident.map_res(|s| Ok::<AttrValue, ErrorTree<Span>>(AttrValue::Text(s))),
     )
-    .context("Table attributes should be formatted like `name: value`")
-    .terminated(line_ending)
+    .parse(input)
+}
+
+fn title_attr(input: Span) -> IResult<Span, (Span, AttrValue), ErrorTree<Span>> {
+    separated_pair(
+        tag("title").context("Table attributes can only contain alphanumeric characters"),
+        tag(": ").context("Missing table attribute separator, expected `:`"),
+        map_parser(not_line_ending, literal)
+            .map_res(|s| Ok::<AttrValue, ErrorTree<Span>>(AttrValue::Text(s))),
+    )
+    .parse(input)
+}
+
+fn export_attr(input: Span) -> IResult<Span, (Span, AttrValue), ErrorTree<Span>> {
+    separated_pair(
+        tag("export").context("Table attributes can only contain alphanumeric characters"),
+        tag(": ").context("Missing table attribute separator, expected `:`"),
+        tag("true").or(tag("false")).map_res(|b: Span| {
+            Ok::<AttrValue, ErrorTree<Span>>(AttrValue::Bool(b.fragment() == &"true"))
+        }),
+    )
     .parse(input)
 }
 
