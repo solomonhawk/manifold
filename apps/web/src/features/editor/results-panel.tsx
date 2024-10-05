@@ -5,6 +5,7 @@ import {
 import { Badge } from "@repo/ui/components/ui/badge";
 import { Button } from "@repo/ui/components/ui/button";
 import { Card, CardContent } from "@repo/ui/components/ui/card";
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { useAtomValue } from "jotai";
 import {
   currentTableHash,
@@ -18,15 +19,22 @@ type Props = {
   onClear: (e: React.MouseEvent) => void;
 };
 
+const transition = {
+  type: "spring",
+  damping: 40,
+  stiffness: 500,
+  mass: 0.5,
+};
+
 export function ResultsPanel({ onRoll, onClear }: Props) {
   const tableHash = useAtomValue(currentTableHash);
   const tableMetadata = useAtomValue(currentTableMetadata);
   const rollResults = useAtomValue(rollHistory);
 
   return (
-    <div className="flex flex-1 flex-col gap-2 p-2 min-h-0">
+    <div className="flex flex-1 flex-col min-h-0">
       {tableHash && tableMetadata.length > 0 ? (
-        <ul className="flex flex-wrap gap-1 mb-2">
+        <ul className="flex flex-wrap gap-1 p-2">
           {tableMetadata.map((table) => {
             return (
               <li key={table.id}>
@@ -39,12 +47,18 @@ export function ResultsPanel({ onRoll, onClear }: Props) {
         </ul>
       ) : null}
 
-      {rollResults.length > 0 ? (
-        <>
-          <ul className="flex flex-col gap-2 min-h-0 overflow-auto">
-            {rollResults.map((result, i) => {
+      <LayoutGroup>
+        <ul className="flex flex-col min-h-0 px-2 gap-2 overflow-auto">
+          <AnimatePresence initial={false} mode="popLayout">
+            {rollResults.map((result) => {
               return (
-                <li key={i}>
+                <motion.li
+                  key={`${result.timestamp}-${result.text}`}
+                  layout
+                  initial={{ opacity: 0, y: -100 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={transition}
+                >
                   <Card>
                     <CardContent className="flex items-start gap-2 p-4">
                       <span className="font-bold grow">{result.text}</span>
@@ -63,12 +77,18 @@ export function ResultsPanel({ onRoll, onClear }: Props) {
                       </span>
                     </CardContent>
                   </Card>
-                </li>
+                </motion.li>
               );
             })}
-          </ul>
+          </AnimatePresence>
+        </ul>
 
-          <div className="flex justify-end">
+        {rollResults.length > 0 ? (
+          <motion.div
+            className="flex justify-end p-2"
+            layout
+            transition={transition}
+          >
             <Button
               type="button"
               onClick={onClear}
@@ -78,18 +98,22 @@ export function ResultsPanel({ onRoll, onClear }: Props) {
               <CircleBackslashIcon />
               Clear Results
             </Button>
+          </motion.div>
+        ) : null}
+
+        {rollResults.length === 0 ? (
+          <div className="p-2">
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 justify-center text-slate-500">
+                  <QuestionMarkCircledIcon className="size-6" />
+                  Your roll results will show up here.
+                </div>
+              </CardContent>
+            </Card>
           </div>
-        </>
-      ) : (
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 justify-center text-slate-500">
-              <QuestionMarkCircledIcon className="size-6" />
-              Your roll results will show up here.
-            </div>
-          </CardContent>
-        </Card>
-      )}
+        ) : null}
+      </LayoutGroup>
     </div>
   );
 }

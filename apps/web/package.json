@@ -17,6 +17,7 @@
     "@repo/tailwind-config": "*",
     "@repo/ui": "*",
     "comlink": "^4.4.1",
+    "framer-motion": "^11.11.1",
     "jotai": "^2.10.0",
     "lru-cache": "^11.0.1",
     "react": "^18.3.1",
