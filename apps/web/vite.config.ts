@@ -1,8 +1,8 @@
-import { defineConfig } from "vite";
-import { comlink } from "vite-plugin-comlink";
 import react from "@vitejs/plugin-react";
 import jotaiDebugLabel from "jotai/babel/plugin-debug-label";
 import jotaiReactRefresh from "jotai/babel/plugin-react-refresh";
+import { defineConfig } from "vite";
+import { comlink } from "vite-plugin-comlink";
 
 export default defineConfig({
   plugins: [
@@ -11,16 +11,5 @@ export default defineConfig({
   ],
   worker: {
     plugins: () => [comlink()],
-  },
-  build: {
-    target: "esnext",
-  },
-  resolve: {
-    alias: [
-      {
-        find: "./runtimeConfig",
-        replacement: "./runtimeConfig.browser",
-      },
-    ],
   },
 });
