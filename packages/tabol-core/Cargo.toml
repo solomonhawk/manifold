@@ -32,7 +32,3 @@ crate-type = ["cdylib", "rlib"]
 
 [package.metadata.wasm-pack.profile.dev.wasm-bindgen]
 dwarf-debug-info = true
-
-[profile.release]
-lto = true
-opt-level = "s"
