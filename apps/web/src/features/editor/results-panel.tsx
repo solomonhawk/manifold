@@ -2,15 +2,18 @@ import {
   CircleBackslashIcon,
   QuestionMarkCircledIcon,
 } from "@radix-ui/react-icons";
+import { AnimatedList } from "@repo/ui/components/animated-list";
 import { Badge } from "@repo/ui/components/ui/badge";
 import { Button } from "@repo/ui/components/ui/button";
 import { Card, CardContent } from "@repo/ui/components/ui/card";
-import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
+import { LayoutGroup, motion } from "framer-motion";
 import { useAtomValue } from "jotai";
+import { memo } from "react";
 import {
   currentTableHash,
   currentTableMetadata,
   rollHistory,
+  type RollResult,
   type TableMetadata,
 } from "./state";
 
@@ -48,40 +51,19 @@ export function ResultsPanel({ onRoll, onClear }: Props) {
       ) : null}
 
       <LayoutGroup>
-        <ul className="flex flex-col min-h-0 px-2 gap-2 overflow-auto">
-          <AnimatePresence initial={false} mode="popLayout">
-            {rollResults.map((result) => {
-              return (
-                <motion.li
-                  key={`${result.timestamp}-${result.text}`}
-                  layout
-                  initial={{ opacity: 0, y: -100 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={transition}
-                >
-                  <Card>
-                    <CardContent className="flex items-start gap-2 p-4">
-                      <span className="font-bold grow">{result.text}</span>
-
-                      <span className="flex items-center gap-2">
-                        <Badge
-                          variant="secondary"
-                          className="whitespace-nowrap"
-                        >
-                          {result.tableName}
-                        </Badge>
-
-                        <span className="text-slate-400 text-nowrap text-sm">
-                          {new Date(result.timestamp).toLocaleTimeString()}
-                        </span>
-                      </span>
-                    </CardContent>
-                  </Card>
-                </motion.li>
-              );
-            })}
-          </AnimatePresence>
-        </ul>
+        <AnimatedList
+          className="flex flex-col min-h-0 px-2 gap-2 overflow-auto"
+          data={rollResults}
+          transition={transition}
+          computeKey={(result) => `${result.timestamp}-${result.text}`}
+          renderRow={(result) => (
+            <ListItem
+              text={result.text}
+              tableName={result.tableName}
+              timestamp={result.timestamp}
+            />
+          )}
+        />
 
         {rollResults.length > 0 ? (
           <motion.div
@@ -117,3 +99,27 @@ export function ResultsPanel({ onRoll, onClear }: Props) {
     </div>
   );
 }
+
+const ListItem = memo(function ({
+  text,
+  tableName,
+  timestamp,
+}: Pick<RollResult, "text" | "tableName" | "timestamp">) {
+  return (
+    <Card>
+      <CardContent className="flex items-start gap-2 p-4">
+        <span className="font-bold grow">{text}</span>
+
+        <span className="flex items-center gap-2">
+          <Badge variant="secondary" className="whitespace-nowrap">
+            {tableName}
+          </Badge>
+
+          <span className="text-slate-400 text-nowrap text-sm">
+            {new Date(timestamp).toLocaleTimeString()}
+          </span>
+        </span>
+      </CardContent>
+    </Card>
+  );
+});
