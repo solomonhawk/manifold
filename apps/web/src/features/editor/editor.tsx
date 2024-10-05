@@ -4,7 +4,7 @@ import {
   ResizablePanelGroup,
 } from "@repo/ui/components/ui/resizable";
 import { useAtom, useSetAtom } from "jotai";
-import { useRef, type ChangeEvent } from "react";
+import { useCallback, useRef, type ChangeEvent } from "react";
 import { InputPanel } from "./input-panel";
 import { ResultsPanel } from "./results-panel";
 import {
@@ -31,57 +31,61 @@ export function Editor() {
   const setTableMetadata = useSetAtom(currentTableMetadata);
   const setRollResults = useSetAtom(rollHistory);
 
-  async function handleChange(e: ChangeEvent<HTMLTextAreaElement>) {
-    const value = e.target.value.trim();
+  const handleChange = useCallback(
+    async function handleChange(e: ChangeEvent<HTMLTextAreaElement>) {
+      const value = e.target.value.trim();
 
-    try {
-      console.clear();
+      try {
+        if (value) {
+          const { hash, metadata } = await workerInstance.parse(value);
 
-      if (value) {
-        const hash = await workerInstance.parse(value);
-        const tableMetadata = await workerInstance.tableMetadata(hash);
+          setTableHash(hash);
+          setTableMetadata(metadata);
+        }
 
-        setTableHash(hash);
-        setTableMetadata(tableMetadata);
+        setError(null);
+      } catch (e: unknown) {
+        console.error(e);
+        setError(String(e));
+      }
+    },
+    [setError, setTableHash, setTableMetadata]
+  );
 
-        console.log("main", hash, tableMetadata);
+  const handleRoll = useCallback(
+    async function handleRoll(e: React.MouseEvent, table: TableMetadata) {
+      e.preventDefault();
+
+      if (!tableHash) {
+        throw new Error("Missing table hash!");
       }
 
-      setError(null);
-    } catch (e: unknown) {
-      console.error(e);
-      setError(String(e));
-    }
-  }
+      const result = await workerInstance.gen(
+        tableHash,
+        textAreaRef.current?.value || "",
+        table.id
+      );
 
-  async function handleRoll(e: React.MouseEvent, table: TableMetadata) {
-    e.preventDefault();
+      setRollResults((results) =>
+        [
+          {
+            tableName: table.title,
+            tableId: table.id,
+            timestamp: Date.now(),
+            text: result,
+          },
+        ].concat(results)
+      );
+    },
+    [setRollResults, tableHash]
+  );
 
-    if (!tableHash) {
-      throw new Error("Missing table hash!");
-    }
-
-    const result = await workerInstance.gen(
-      tableHash,
-      textAreaRef.current?.value || "",
-      table.id
-    );
-
-    setRollResults((results) =>
-      [
-        {
-          tableName: table.title,
-          tableId: table.id,
-          timestamp: Date.now(),
-          text: result,
-        },
-      ].concat(results)
-    );
-  }
-
-  function handleClearResults() {
-    setRollResults([]);
-  }
+  const handleClearResults = useCallback(
+    function handleClearResults() {
+      setRollResults([]);
+    },
+    [setRollResults]
+  );
 
   return (
     <ResizablePanelGroup direction="horizontal" className="flex min-h-full">

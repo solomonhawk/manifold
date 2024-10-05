@@ -5,11 +5,12 @@ declare const self: DedicatedWorkerGlobalScope;
 
 import init, { Tabol, table_hash } from "@repo/tabol-core";
 import { LRUCache } from "lru-cache";
+import type { TableMetadata } from "./state";
 
 const initPromise = init({});
 
 const textToHash = new LRUCache<string, string>({ max: 500 });
-const hashToTabol = new LRUCache<string, Tabol>({ max: 30 });
+const hashToTabol = new LRUCache<string, Tabol>({ max: 100 });
 
 function afterInit<U extends unknown[], R>(f: (...args: U) => R) {
   return (...args: U) => {
@@ -32,28 +33,20 @@ export const parse = afterInit((text: string) => {
 
   // return cached instance, if present
   if (hashToTabol.has(hash)) {
-    console.log(hashToTabol.get(hash)!.table_metadata());
-    return hash;
+    return {
+      hash,
+      metadata: hashToTabol.get(hash)!.table_metadata() as TableMetadata[],
+    };
   }
 
   // otherwise, create a new instance and cache it
   const tabol = new Tabol(text);
   hashToTabol.set(hash, tabol);
 
-  return hash;
-});
-
-/**
- * Look up table metadata by hash. Assumes the table was previously parsed and cached.
- */
-export const tableMetadata = afterInit((hash: string) => {
-  if (!hashToTabol.has(hash)) {
-    throw new Error(`No data for ${hash}`);
-  }
-
-  const tabol = hashToTabol.get(hash)!;
-
-  return tabol.table_metadata();
+  return {
+    hash,
+    metadata: tabol.table_metadata() as TableMetadata[],
+  };
 });
 
 /**
