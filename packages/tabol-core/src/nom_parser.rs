@@ -1,8 +1,7 @@
 use nom::{
     bytes::complete::{take_until, take_while1},
-    character::complete::{alphanumeric1, digit1, line_ending, multispace0, not_line_ending},
+    character::complete::{digit1, line_ending, multispace0, not_line_ending},
     combinator::map_parser,
-    complete::bool,
     error::make_error,
     multi::{fold_many1, many0, many1, separated_list1},
     number::complete::float,

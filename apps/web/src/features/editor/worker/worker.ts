@@ -5,7 +5,7 @@ declare const self: DedicatedWorkerGlobalScope;
 
 import init, { Tabol, table_hash } from "@repo/tabol-core";
 import { LRUCache } from "lru-cache";
-import type { TableMetadata } from "./state";
+import type { TableMetadata } from "../state";
 
 const initPromise = init({});
 
