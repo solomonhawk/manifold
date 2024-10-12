@@ -13,7 +13,7 @@ use nom_supreme::{error::ErrorTree, tag::complete::tag};
 use nom_supreme::{final_parser::final_parser, parser_ext::ParserExt};
 use std::collections::HashMap;
 
-use crate::tabol::{FilterOp, Rule, RuleInst, TableDefinition};
+use crate::table_collection::{FilterOp, Rule, RuleInst, TableDefinition};
 
 pub type Span<'a> = LocatedSpan<&'a str>;
 
@@ -23,7 +23,7 @@ enum AttrValue<'a> {
 }
 
 // --------- Tabol ---------
-pub fn parse_tables(input: Span) -> Result<Vec<TableDefinition>, ErrorTree<Span>> {
+pub(crate) fn parse_tables(input: Span) -> Result<Vec<TableDefinition>, ErrorTree<Span>> {
     final_parser(many1(table).context("Expected 1 or more table definitions"))(input)
 }
 

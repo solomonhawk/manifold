@@ -3,14 +3,14 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 declare const self: DedicatedWorkerGlobalScope;
 
-import init, { Tabol, table_hash } from "@repo/tabol-core";
+import init, { TableCollection, table_hash } from "@repo/tabol-core";
 import { LRUCache } from "lru-cache";
 import type { TableMetadata } from "../state";
 
 const initPromise = init({});
 
 const textToHash = new LRUCache<string, string>({ max: 500 });
-const hashToTabol = new LRUCache<string, Tabol>({ max: 100 });
+const hashToTabol = new LRUCache<string, TableCollection>({ max: 100 });
 
 function afterInit<U extends unknown[], R>(f: (...args: U) => R) {
   return (...args: U) => {
@@ -40,7 +40,7 @@ export const parse = afterInit((text: string) => {
   }
 
   // otherwise, create a new instance and cache it
-  const tabol = new Tabol(text);
+  const tabol = new TableCollection(text);
   hashToTabol.set(hash, tabol);
 
   return {

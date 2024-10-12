@@ -18,14 +18,14 @@ pub enum TableError {
 
 #[wasm_bindgen]
 #[derive(Debug, Clone)]
-pub struct Tabol {
+pub struct TableCollection {
     table_map: HashMap<String, TableDefinition>,
 }
 
 #[wasm_bindgen]
-impl Tabol {
+impl TableCollection {
     #[wasm_bindgen(constructor)]
-    pub fn new(table_definitions: &str) -> Result<Tabol, JsError> {
+    pub fn new(table_definitions: &str) -> Result<TableCollection, JsError> {
         let mut table_map = HashMap::new();
         let tables = nom_parser::parse_tables(Span::new(table_definitions))
             .map_err(|_e| TableError::ParseError(table_definitions.to_string()))?;
@@ -39,7 +39,7 @@ impl Tabol {
         tabol.validate_tables()
     }
 
-    fn validate_tables(self) -> Result<Tabol, JsError> {
+    fn validate_tables(self) -> Result<TableCollection, JsError> {
         for (table_id, table) in self.table_map.iter() {
             for rule in table.rules.iter() {
                 if let Err(err) = rule.resolve(&self) {
@@ -127,7 +127,7 @@ impl TableDefinition {
         }
     }
 
-    pub fn gen(&self, tables: &Tabol) -> Result<String, TableError> {
+    pub fn gen(&self, tables: &TableCollection) -> Result<String, TableError> {
         let mut rng = rand::thread_rng();
         let rule = &self.rules[self.distribution.sample(&mut rng)];
 
@@ -143,7 +143,7 @@ pub struct Rule {
 }
 
 impl Rule {
-    pub fn resolve(&self, tables: &Tabol) -> Result<String, TableError> {
+    pub fn resolve(&self, tables: &TableCollection) -> Result<String, TableError> {
         // keep track of context
         // forward pass to resolve all interpolations
         // backwards pass to resolve built-ins (e.g. article)
