@@ -4,7 +4,7 @@ import { Badge } from "@repo/ui/components/ui/badge";
 import { Button } from "@repo/ui/components/ui/button";
 import { Card, CardContent } from "@repo/ui/components/ui/card";
 import { Checkbox } from "@repo/ui/components/ui/checkbox";
-import { LayoutGroup, motion } from "framer-motion";
+import { LayoutGroup, motion, type Variants } from "framer-motion";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { memo, useCallback, type RefObject } from "react";
 import {
@@ -16,6 +16,7 @@ import {
   type TableMetadata,
 } from "./state";
 import { workerInstance } from "./worker";
+import { TextTyper } from "@repo/ui/components/text-typer";
 
 const transition = {
   type: "spring",
@@ -172,7 +173,9 @@ const ListItem = memo(function ({
   return (
     <Card>
       <CardContent className="flex items-start gap-2 p-4">
-        <span className="font-bold grow">{text}</span>
+        <span className="font-bold grow">
+          <TextTyper transition={transition}>{text}</TextTyper>
+        </span>
 
         <span className="flex items-center gap-2">
           <Badge variant="secondary" className="whitespace-nowrap">
