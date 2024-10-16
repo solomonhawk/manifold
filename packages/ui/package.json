@@ -40,7 +40,7 @@
   },
   "lint-staged": {
     "**/*.{js,ts,tsx}": [
-      "bash -c \"tsc\"",
+      "bash -c \"tsc --noEmit -p ./tsconfig.json\"",
       "prettier --write",
       "eslint --fix"
     ]

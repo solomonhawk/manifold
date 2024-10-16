@@ -22,6 +22,7 @@ type Props = {
 };
 
 export function TextTyper({ className, children, transition }: Props) {
+  console.log("hey");
   return (
     <motion.span
       className={className}

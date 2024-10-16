@@ -10,7 +10,7 @@ module.exports = {
     "plugin:react-hooks/recommended",
     "prettier",
   ],
-  plugins: ["@typescript-eslint"],
+  plugins: ["@typescript-eslint", "simple-import-sort", "import"],
   parserOptions: {
     sourceType: "module",
     ecmaVersion: 2020,
@@ -24,5 +24,10 @@ module.exports = {
         varsIgnorePattern: "^_",
       },
     ],
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
+    "import/first": "error",
+    "import/newline-after-import": "error",
+    "import/no-duplicates": "error",
   },
 };

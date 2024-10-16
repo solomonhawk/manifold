@@ -1,6 +1,9 @@
 {
   "biome.enabled": false,
   "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
   "github.copilot.editor.enableAutoCompletions": true,
   "files.exclude": {
     "target/*": true

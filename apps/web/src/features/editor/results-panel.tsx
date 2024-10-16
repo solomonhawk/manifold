@@ -7,14 +7,15 @@ import { Card, CardContent } from "@repo/ui/components/ui/card";
 import { Checkbox } from "@repo/ui/components/ui/checkbox";
 import { LayoutGroup, motion, type Transition } from "framer-motion";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { memo, useCallback, type RefObject } from "react";
+import { memo, type RefObject, useCallback } from "react";
+
 import {
   currentTableHash,
   exportedOnly,
   rollHistory,
-  visibleTableMetadata,
   type RollResult,
   type TableMetadata,
+  visibleTableMetadata,
 } from "./state";
 import { workerInstance } from "./worker";
 

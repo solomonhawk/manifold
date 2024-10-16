@@ -1,5 +1,6 @@
 import { useAtomValue, useSetAtom } from "jotai";
-import { useCallback, type ChangeEvent, type RefObject } from "react";
+import { type ChangeEvent, type RefObject, useCallback } from "react";
+
 import { currentTableHash, currentTableMetadata, tableError } from "./state";
 import { workerInstance } from "./worker";
 
