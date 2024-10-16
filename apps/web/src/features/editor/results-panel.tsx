@@ -1,5 +1,6 @@
 import { CircleBackslashIcon, CubeIcon } from "@radix-ui/react-icons";
 import { AnimatedList } from "@repo/ui/components/animated-list";
+import { TextTyper } from "@repo/ui/components/text-typer";
 import { Badge } from "@repo/ui/components/ui/badge";
 import { Button } from "@repo/ui/components/ui/button";
 import { Card, CardContent } from "@repo/ui/components/ui/card";
@@ -16,7 +17,6 @@ import {
   type TableMetadata,
 } from "./state";
 import { workerInstance } from "./worker";
-import { TextTyper } from "@repo/ui/components/text-typer";
 
 const transition = {
   type: "spring",

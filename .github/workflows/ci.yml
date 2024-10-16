@@ -34,6 +34,9 @@ jobs:
       - name: Build
         run: npm run lint
 
+      - name: Format
+        run: npm run format:ci
+
       - name: Build
         run: npm run build
 

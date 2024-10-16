@@ -44,6 +44,7 @@ id: variable_frequency
 ```
 
 ## CLI
+
 | Flag                 | Description                                                          |
 | -------------------- | -------------------------------------------------------------------- |
 | `-d`, `--definition` | the file name of the `.tbl` file in the `src/tables` folder to use   |
@@ -52,6 +53,7 @@ id: variable_frequency
 | `--debug`            | turn on debug logging                                                |
 
 ## TODO
+
 - [ ] optional interpolations?
 - [ ] built-ins
 - [ ] extensibility
@@ -69,6 +71,7 @@ id: variable_frequency
 - [ ] fix a table value
 
 ### Future
+
 - parameters/filtering (e.g. count, distinct, conjunctions, context-aware of previous matches)
 - better validation
 - distribution? referencing tables other people maintain
@@ -96,9 +99,9 @@ id: variable_frequency
 - Pippin Brandybuck is a Chaotic Evil Dwarf Paladin originally from a large desert city, known as a(n)untrustworthy - grandmaster butcher.
 - Gimli Took is a Neutral Human Rogue originally from a large island city, known as a(n) sketchy apprentice baker.
 - Bilbo the Grey is a commoner from a small jungle city, known as a(n) expert fisherman.
-Boromir the Grey is a Lawful Neutral Gnome Paladin originally from a small tundra city, known as a(n) famousapprentice hunter.
+  Boromir the Grey is a Lawful Neutral Gnome Paladin originally from a small tundra city, known as a(n) famousapprentice hunter.
 - Boromir Oakenshield is a commoner from a small swamp city, known as a(n) journeyman gambler.
-Sam Hornblower is a Lawful Evil Elf Paladin originally from the wilds outside Waterdeep, known as a(n) well-liked novice cook.
+  Sam Hornblower is a Lawful Evil Elf Paladin originally from the wilds outside Waterdeep, known as a(n) well-liked novice cook.
 - Legolas Greenleaf is a commoner from a small logging village outside Triboar, known as a(n) expert banker.
 - Boromir Gamgee is a Neutral Good Half-Dwarf Paladin originally from a small merchant village outside Waterdeep, known as a(n) tolerated novice baker.
 - Gimli Gamgee is a commoner from a small swamp city, known as a(n) novice logger.

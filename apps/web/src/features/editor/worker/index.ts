@@ -3,5 +3,5 @@ export const workerInstance = new ComlinkWorker<typeof import("./worker.js")>(
   {
     name: "wasm-bridge-worker",
     type: "module",
-  }
+  },
 );
