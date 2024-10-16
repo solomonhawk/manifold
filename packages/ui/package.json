@@ -37,5 +37,12 @@
     "react-resizable-panels": "^2.1.4",
     "tailwind-merge": "^2.5.3",
     "tailwindcss-animate": "^1.0.7"
+  },
+  "lint-staged": {
+    "**/*.{js,ts,tsx}": [
+      "bash -c \"tsc\"",
+      "prettier --write",
+      "eslint --fix"
+    ]
   }
 }

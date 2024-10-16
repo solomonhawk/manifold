@@ -37,5 +37,12 @@
     "vite": "^5.1.4",
     "vite-plugin-comlink": "^5.0.1",
     "vitest": "^2.1.1"
+  },
+  "lint-staged": {
+    "**/*.{js,ts,tsx}": [
+      "bash -c \"tsc\"",
+      "prettier --write",
+      "eslint --fix"
+    ]
   }
 }

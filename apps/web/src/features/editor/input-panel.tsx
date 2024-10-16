@@ -35,7 +35,7 @@ export function InputPanel({ textAreaRef }: Props) {
         setError(String(e));
       }
     },
-    [setError, setTableHash, setTableMetadata]
+    [setError, setTableHash, setTableMetadata],
   );
 
   return (
@@ -43,9 +43,7 @@ export function InputPanel({ textAreaRef }: Props) {
       <textarea
         ref={textAreaRef}
         name="tabol-definition"
-        className="w-full flex-1 p-4 font-mono text-sm"
-        rows={20}
-        cols={48}
+        className="w-full flex-1 p-4 font-mono text-sm resize-none"
         onChange={handleChange}
       ></textarea>
 
