@@ -7,7 +7,7 @@
     "dev": "vite --clearScreen false --force",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "lint": "eslint \"src/**/*{.ts,.tsx}\"",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "test": "vitest run",
     "test:watch": "vitest"
   },
