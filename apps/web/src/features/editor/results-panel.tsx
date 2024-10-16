@@ -4,7 +4,7 @@ import { Badge } from "@repo/ui/components/ui/badge";
 import { Button } from "@repo/ui/components/ui/button";
 import { Card, CardContent } from "@repo/ui/components/ui/card";
 import { Checkbox } from "@repo/ui/components/ui/checkbox";
-import { LayoutGroup, motion, type Variants } from "framer-motion";
+import { LayoutGroup, motion, type Transition } from "framer-motion";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { memo, useCallback, type RefObject } from "react";
 import {
@@ -23,7 +23,7 @@ const transition = {
   damping: 40,
   stiffness: 500,
   mass: 0.5,
-};
+} satisfies Transition;
 
 export const AvailableTables = memo(function AvailableTables({
   textAreaRef,
@@ -46,7 +46,7 @@ export const AvailableTables = memo(function AvailableTables({
       const result = await workerInstance.gen(
         tableHash,
         textAreaRef.current?.value || "",
-        table.id
+        table.id,
       );
 
       setRollResults((results) =>
@@ -57,10 +57,10 @@ export const AvailableTables = memo(function AvailableTables({
             timestamp: Date.now(),
             text: result,
           },
-        ].concat(results)
+        ].concat(results),
       );
     },
-    [setRollResults, tableHash, textAreaRef]
+    [setRollResults, tableHash, textAreaRef],
   );
 
   return (
@@ -112,7 +112,7 @@ export const RollResults = memo(function RollResults() {
     function handleClearResults() {
       setRollResults([]);
     },
-    [setRollResults]
+    [setRollResults],
   );
 
   return (

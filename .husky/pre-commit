@@ -1,1 +1,2 @@
+npm run build -- --ui stream
 npx lint-staged
