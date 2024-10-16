@@ -1,11 +1,12 @@
 /// <reference lib="webworker" />
 
+import init, { table_hash, TableCollection } from "@repo/tabol-core";
+import { LRUCache } from "lru-cache";
+
+import type { TableMetadata } from "../state";
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 declare const self: DedicatedWorkerGlobalScope;
-
-import init, { TableCollection, table_hash } from "@repo/tabol-core";
-import { LRUCache } from "lru-cache";
-import type { TableMetadata } from "../state";
 
 const initPromise = init({});
 
