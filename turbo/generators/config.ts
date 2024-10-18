@@ -1,5 +1,5 @@
-import { PlopTypes } from "@turbo/gen";
 import isPascalCase from "@stdlib/assert-is-pascalcase";
+import { PlopTypes } from "@turbo/gen";
 
 export default function generator(plop: PlopTypes.NodePlopAPI): void {
   plop.setGenerator("ui/component", {

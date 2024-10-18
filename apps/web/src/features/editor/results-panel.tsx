@@ -1,6 +1,6 @@
 import { CircleBackslashIcon, CubeIcon } from "@radix-ui/react-icons";
 import { AnimatedList } from "@repo/ui/components/animated-list";
-import { TextTyper } from "@repo/ui/components/text-typer";
+import { Typewriter } from "@repo/ui/components/typewriter";
 import { Badge } from "@repo/ui/components/ui/badge";
 import { Button } from "@repo/ui/components/ui/button";
 import { Card, CardContent } from "@repo/ui/components/ui/card";
@@ -175,7 +175,7 @@ const ListItem = memo(function ({
     <Card>
       <CardContent className="flex items-start gap-2 p-4">
         <span className="font-bold grow">
-          <TextTyper transition={transition}>{text}</TextTyper>
+          <Typewriter transition={transition}>{text}</Typewriter>
         </span>
 
         <span className="flex items-center gap-2">

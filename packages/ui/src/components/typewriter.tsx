@@ -2,7 +2,7 @@ import type { Transition, Variants } from "framer-motion";
 import { motion } from "framer-motion";
 import { Fragment } from "react";
 
-const textTyperVariants = {
+const typewriterVariants = {
   show: {
     transition: {
       staggerChildren: 0.05,
@@ -10,7 +10,7 @@ const textTyperVariants = {
   },
 } as const satisfies Variants;
 
-const textTyperWordVariants = {
+const typewriterWordVariants = {
   initial: { y: 3, opacity: 0 },
   show: { y: 0, opacity: 1 },
 } as const satisfies Variants;
@@ -21,12 +21,11 @@ type Props = {
   transition?: Transition;
 };
 
-export function TextTyper({ className, children, transition }: Props) {
-  console.log("hey");
+export function Typewriter({ className, children, transition }: Props) {
   return (
     <motion.span
       className={className}
-      variants={textTyperVariants}
+      variants={typewriterVariants}
       initial="initial"
       animate="show"
     >
@@ -34,7 +33,7 @@ export function TextTyper({ className, children, transition }: Props) {
         return (
           <Fragment key={`${word}-${i}`}>
             <motion.span
-              variants={textTyperWordVariants}
+              variants={typewriterWordVariants}
               className="inline-block"
               transition={transition}
             >
