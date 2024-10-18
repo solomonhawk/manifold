@@ -1,10 +1,10 @@
+import { AnimatedList } from "@manifold/ui/components/animated-list";
+import { Typewriter } from "@manifold/ui/components/typewriter";
+import { Badge } from "@manifold/ui/components/ui/badge";
+import { Button } from "@manifold/ui/components/ui/button";
+import { Card, CardContent } from "@manifold/ui/components/ui/card";
+import { Checkbox } from "@manifold/ui/components/ui/checkbox";
 import { CircleBackslashIcon, CubeIcon } from "@radix-ui/react-icons";
-import { AnimatedList } from "@repo/ui/components/animated-list";
-import { Typewriter } from "@repo/ui/components/typewriter";
-import { Badge } from "@repo/ui/components/ui/badge";
-import { Button } from "@repo/ui/components/ui/button";
-import { Card, CardContent } from "@repo/ui/components/ui/card";
-import { Checkbox } from "@repo/ui/components/ui/checkbox";
 import { LayoutGroup, motion, type Transition } from "framer-motion";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { memo, type RefObject, useCallback } from "react";

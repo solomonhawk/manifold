@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 
-import init, { table_hash, TableCollection } from "@repo/tabol-core";
+import init, { table_hash, TableCollection } from "@manifold/tabol-core";
 import { LRUCache } from "lru-cache";
 
 import type { TableMetadata } from "../state";

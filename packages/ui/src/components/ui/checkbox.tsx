@@ -1,6 +1,6 @@
+import { cn } from "@manifold/ui/lib/utils";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { CheckIcon } from "@radix-ui/react-icons";
-import { cn } from "@repo/ui/lib/utils";
 import * as React from "react";
 
 const Checkbox = React.forwardRef<

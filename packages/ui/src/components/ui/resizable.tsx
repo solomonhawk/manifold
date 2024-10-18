@@ -1,5 +1,5 @@
+import { cn } from "@manifold/ui/lib/utils";
 import { DragHandleDots2Icon } from "@radix-ui/react-icons";
-import { cn } from "@repo/ui/lib/utils";
 import * as ResizablePrimitive from "react-resizable-panels";
 
 const ResizablePanelGroup = ({

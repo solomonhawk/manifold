@@ -2,7 +2,7 @@ import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from "@repo/ui/components/ui/resizable";
+} from "@manifold/ui/components/ui/resizable";
 import { useRef } from "react";
 
 import { InputPanel } from "./input-panel";

@@ -1,5 +1,5 @@
 {
-  "name": "@repo/tabol-core",
+  "name": "@manifold/tabol-core",
   "scripts": {
     "dev": "cargo watch -i .gitignore -s \"npm run build\"",
     "build": "RUST_LOG=info wasm-pack build --release --target web --out-dir web/dist",

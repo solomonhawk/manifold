@@ -11,10 +11,10 @@
     "prefix": ""
   },
   "aliases": {
-    "components": "@repo/ui/components",
-    "ui": "@repo/ui/components/ui",
-    "utils": "@repo/ui/lib/utils",
-    "lib": "@repo/ui/lib",
-    "hooks": "@repo/ui/hooks"
+    "components": "@manifold/ui/components",
+    "ui": "@manifold/ui/components/ui",
+    "utils": "@manifold/ui/lib/utils",
+    "lib": "@manifold/ui/lib",
+    "hooks": "@manifold/ui/hooks"
   }
 }

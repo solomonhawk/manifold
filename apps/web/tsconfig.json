@@ -1,5 +1,5 @@
 {
-  "extends": "@repo/typescript-config/vite.json",
+  "extends": "@manifold/typescript-config/vite.json",
   "include": ["src"],
   "compilerOptions": {
     "declaration": false,

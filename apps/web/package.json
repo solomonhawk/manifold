@@ -8,14 +8,15 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "lint:fix": "eslint --fix \"src/**/*.{ts,tsx}\"",
     "test": "vitest run",
     "test:watch": "vitest"
   },
   "dependencies": {
     "@radix-ui/react-icons": "^1.3.0",
-    "@repo/tabol-core": "*",
-    "@repo/tailwind-config": "*",
-    "@repo/ui": "*",
+    "@manifold/tabol-core": "*",
+    "@manifold/tailwind-config": "*",
+    "@manifold/ui": "*",
     "comlink": "^4.4.1",
     "framer-motion": "^11.11.1",
     "jotai": "^2.10.0",
@@ -24,8 +25,8 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@repo/eslint-config": "*",
-    "@repo/typescript-config": "*",
+    "@manifold/eslint-config": "*",
+    "@manifold/typescript-config": "*",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.2",

@@ -1,4 +1,4 @@
-# Tabol
+# Manifold
 
 This is a place to explore building for the web with a local Rust WASM package
 dependency.
