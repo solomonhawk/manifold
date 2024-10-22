@@ -5,11 +5,15 @@ import {
 } from "@manifold/ui/components/ui/resizable";
 import { useRef } from "react";
 
+import { trpc } from "../../utils/trpc";
 import { InputPanel } from "./input-panel";
 import { AvailableTables, RollResults } from "./results-panel";
 
 export function Editor() {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const query = trpc.hello.useQuery("gamer");
+
+  console.log(query.status, query.isLoading, query.data);
 
   return (
     <ResizablePanelGroup direction="horizontal" className="flex min-h-full">

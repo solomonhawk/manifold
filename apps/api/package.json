@@ -1,0 +1,20 @@
+{
+  "name": "api",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "lint": "eslint \"**/*.{ts,tsx}\"",
+    "lint:fix": "eslint --fix \"**/*.{ts,tsx}\""
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.2",
+    "@hono/trpc-server": "^0.3.2",
+    "@manifold/eslint-config": "^0.0.0",
+    "@manifold/router": "^0.0.0",
+    "hono": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "tsx": "^4.7.1"
+  }
+}
