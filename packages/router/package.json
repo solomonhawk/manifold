@@ -1,0 +1,23 @@
+{
+  "name": "@manifold/router",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "lint": "eslint \"**/*.{ts,tsx}\"",
+    "lint:fix": "eslint --fix \"**/*.{ts,tsx}\""
+  },
+  "devDependencies": {
+    "@manifold/eslint-config": "*",
+    "@manifold/typescript-config": "*",
+    "eslint": "^8.57.0"
+  },
+  "dependencies": {
+    "superjson": "^2.2.1",
+    "zod": "^3.23.8"
+  }
+}
