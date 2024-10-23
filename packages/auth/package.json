@@ -1,0 +1,21 @@
+{
+  "name": "@manifold/auth",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts"
+  },
+  "scripts": {
+    "lint": "echo 'Add lint script here'"
+  },
+  "devDependencies": {
+    "@manifold/eslint-config": "*",
+    "@manifold/typescript-config": "*"
+  },
+  "dependencies": {
+    "@auth/core": "^0.37.2",
+    "@hono/auth-js": "^1.0.12"
+  }
+}

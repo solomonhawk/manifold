@@ -6,10 +6,10 @@ import superjson from "superjson";
 export const trpc = createTRPCReact<AppRouter>();
 
 export const trpcClient = trpc.createClient({
+  transformer: superjson,
   links: [
     httpBatchLink({
-      url: "http://localhost:3000/trpc",
+      url: "http://localhost:5173/api/trpc",
     }),
   ],
-  transformer: superjson,
 });

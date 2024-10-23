@@ -13,6 +13,7 @@
     "access": "public"
   },
   "devDependencies": {
+    "eslint-config-turbo": "^2.2.3",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-simple-import-sort": "^12.1.1"
   }

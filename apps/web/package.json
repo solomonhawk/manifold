@@ -13,7 +13,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@manifold/router": "^0.0.0",
+    "@manifold/auth": "*",
+    "@manifold/router": "*",
     "@manifold/tabol-core": "*",
     "@manifold/tailwind-config": "*",
     "@manifold/ui": "*",
@@ -42,6 +43,7 @@
     "typescript": "^5.3.3",
     "vite": "^5.1.4",
     "vite-plugin-comlink": "^5.0.1",
+    "vite-tsconfig-paths": "^5.0.1",
     "vitest": "^2.1.1"
   },
   "lint-staged": {

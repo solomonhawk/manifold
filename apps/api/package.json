@@ -9,8 +9,10 @@
   "dependencies": {
     "@hono/node-server": "^1.13.2",
     "@hono/trpc-server": "^0.3.2",
-    "@manifold/eslint-config": "^0.0.0",
-    "@manifold/router": "^0.0.0",
+    "@manifold/auth": "*",
+    "@manifold/eslint-config": "*",
+    "@manifold/router": "*",
+    "dotenv": "^16.4.5",
     "hono": "^4.6.5"
   },
   "devDependencies": {
