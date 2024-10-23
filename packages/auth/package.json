@@ -11,11 +11,13 @@
     "lint": "echo 'Add lint script here'"
   },
   "devDependencies": {
+    "@manifold/db": "*",
     "@manifold/eslint-config": "*",
     "@manifold/typescript-config": "*"
   },
   "dependencies": {
     "@auth/core": "^0.37.2",
+    "@auth/drizzle-adapter": "^1.7.2",
     "@hono/auth-js": "^1.0.12"
   }
 }

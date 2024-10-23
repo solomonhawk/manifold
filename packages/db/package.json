@@ -1,0 +1,27 @@
+{
+  "name": "@manifold/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint \"**/*.{ts,tsx}\"",
+    "generate": "drizzle-kit generate",
+    "migrate": "drizzle-kit migrate",
+    "studio": "drizzle-kit studio"
+  },
+  "devDependencies": {
+    "@manifold/eslint-config": "*",
+    "@manifold/typescript-config": "*",
+    "@types/pg": "^8.11.10",
+    "drizzle-kit": "^0.26.2"
+  },
+  "dependencies": {
+    "@auth/core": "^0.37.2",
+    "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.35.3",
+    "pg": "^8.13.0"
+  }
+}

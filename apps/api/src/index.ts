@@ -1,14 +1,13 @@
+import "dotenv/config";
+
 import { serve } from "@hono/node-server";
 import { trpcServer } from "@hono/trpc-server";
 import { auth, authHandler, verifyAuth } from "@manifold/auth";
 import { appRouter } from "@manifold/router";
-import dotenv from "dotenv";
 import { type Context, Hono } from "hono";
 import { env } from "hono/adapter";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
-
-dotenv.config();
 
 type Bindings = {
   AUTH_SECRET: string;
@@ -37,6 +36,8 @@ app.use("*", cors());
 
 app.use("/api/auth/*", authHandler());
 
+// @TODO: this prevents public procetures in the trpc router from working, so
+// it needs to be scoped properly
 // app.use("/api/*", verifyAuth());
 
 app.use(
@@ -47,14 +48,10 @@ app.use(
   }),
 );
 
-// app.get("/", (c) => {
-//   console.log(c.get("authConfig"));
-//   console.log(c.get("authUser"));
-//   return c.text("Hello, world!");
-// });
-
 app.onError((err, c) => {
   console.error(`${err}`);
+
+  // @TODO: do something better here
   return c.text(err.message, 500);
 });
 

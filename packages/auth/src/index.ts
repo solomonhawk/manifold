@@ -1,5 +1,7 @@
 import Google from "@auth/core/providers/google";
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { initAuthConfig } from "@hono/auth-js";
+import { db } from "@manifold/db";
 import type { Context } from "hono";
 
 export * from "@hono/auth-js";
@@ -22,5 +24,6 @@ export const auth = (getConfig: (c: Context) => AuthInit) =>
           clientSecret,
         }),
       ],
+      adapter: DrizzleAdapter(db),
     };
   });

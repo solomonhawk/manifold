@@ -1,11 +1,13 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
+  "globalEnv": ["DATABASE_URL"],
   "tasks": {
     "dev": {
       "cache": false,
       "persistent": true,
-      "inputs": [".env"]
+      "inputs": [".env"],
+      "env": ["DATABASE_URL"]
     },
     "build": {
       "dependsOn": ["^build"],
