@@ -4,10 +4,12 @@ import { Badge } from "@manifold/ui/components/ui/badge";
 import { Button } from "@manifold/ui/components/ui/button";
 import { Card, CardContent } from "@manifold/ui/components/ui/card";
 import { Checkbox } from "@manifold/ui/components/ui/checkbox";
+import { cn } from "@manifold/ui/lib/utils";
 import { CircleBackslashIcon, CubeIcon } from "@radix-ui/react-icons";
 import { LayoutGroup, motion, type Transition } from "framer-motion";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { memo, type RefObject, useCallback } from "react";
+import { memo, type RefObject, useCallback, useEffect, useState } from "react";
+import { GoX } from "react-icons/go";
 
 import {
   currentTableHash,
@@ -28,8 +30,10 @@ const transition = {
 
 export const AvailableTables = memo(function AvailableTables({
   textAreaRef,
+  onRoll,
 }: {
   textAreaRef: RefObject<HTMLTextAreaElement>;
+  onRoll?: () => void;
 }) {
   const tableHash = useAtomValue(currentTableHash);
   const tableMetadata = useAtomValue(visibleTableMetadata);
@@ -60,12 +64,14 @@ export const AvailableTables = memo(function AvailableTables({
           },
         ].concat(results),
       );
+
+      onRoll?.();
     },
-    [setRollResults, tableHash, textAreaRef],
+    [onRoll, setRollResults, tableHash, textAreaRef],
   );
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="flex flex-col gap-16 p-16">
       <div className="flex items-center">
         <span className="mr-auto">Available Tables:</span>
 
@@ -78,14 +84,14 @@ export const AvailableTables = memo(function AvailableTables({
         />
         <label
           htmlFor="exported"
-          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 pl-2"
+          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 pl-8"
         >
           Exported Only
         </label>
       </div>
 
       {tableHash && tableMetadata.length > 0 ? (
-        <ul className="flex flex-wrap gap-2">
+        <ul className="flex flex-wrap gap-8">
           {tableMetadata.map((table) => {
             return (
               <li key={table.id}>
@@ -106,7 +112,12 @@ export const AvailableTables = memo(function AvailableTables({
   );
 });
 
-export const RollResults = memo(function RollResults() {
+export const RollResults = memo(function RollResults({
+  listRef,
+}: {
+  listRef: RefObject<HTMLUListElement>;
+}) {
+  const [listOverflowing, setListOverflowing] = useState(false);
   const [rollResults, setRollResults] = useAtom(rollHistory);
 
   const handleClearResults = useCallback(
@@ -116,10 +127,33 @@ export const RollResults = memo(function RollResults() {
     [setRollResults],
   );
 
+  function handleScroll(e: React.UIEvent<HTMLUListElement>) {
+    const { scrollHeight, clientHeight } = e.currentTarget;
+
+    updateListOverflowing(scrollHeight, clientHeight);
+  }
+
+  function updateListOverflowing(scrollHeight: number, clientHeight: number) {
+    setListOverflowing(scrollHeight > clientHeight);
+  }
+
+  useEffect(() => {
+    if (listRef.current) {
+      updateListOverflowing(
+        listRef.current.scrollHeight,
+        listRef.current.clientHeight,
+      );
+    }
+  }, [listRef, rollResults]);
+
   return (
     <LayoutGroup>
       <AnimatedList
-        className="flex flex-col min-h-0 px-4 gap-2 overflow-auto"
+        listRef={listRef}
+        className={cn("flex flex-col min-h-0 px-16 gap-8 overflow-auto", {
+          "fade-bottom-90 pb-[5%]": listOverflowing,
+        })}
+        onScroll={handleScroll}
         data={rollResults}
         transition={transition}
         computeKey={(result) => `${result.timestamp}-${result.text}`}
@@ -128,20 +162,25 @@ export const RollResults = memo(function RollResults() {
             text={result.text}
             tableName={result.tableName}
             timestamp={result.timestamp}
+            onRemove={() => {
+              setRollResults((results) =>
+                results.filter((r) => r.timestamp !== result.timestamp),
+              );
+            }}
           />
         )}
       />
 
       {rollResults.length > 0 ? (
         <motion.div
-          className="flex justify-end p-4"
+          className="flex justify-end p-16"
           layout
           transition={transition}
         >
           <Button
             type="button"
             onClick={handleClearResults}
-            className="gap-1"
+            className="gap-4"
             variant="destructive"
           >
             <CircleBackslashIcon />
@@ -151,11 +190,11 @@ export const RollResults = memo(function RollResults() {
       ) : null}
 
       {rollResults.length === 0 ? (
-        <div className="p-4">
+        <div className="p-16">
           <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 justify-center text-slate-500">
-                <CubeIcon className="size-6" />
+            <CardContent className="p-16">
+              <div className="flex items-center gap-8 justify-center text-slate-500">
+                <CubeIcon className="size-24" />
                 Your roll results will show up here.
               </div>
             </CardContent>
@@ -170,23 +209,38 @@ const ListItem = memo(function ({
   text,
   tableName,
   timestamp,
-}: Pick<RollResult, "text" | "tableName" | "timestamp">) {
+  onRemove,
+}: Pick<RollResult, "text" | "tableName" | "timestamp"> & {
+  onRemove?: () => void;
+}) {
   return (
-    <Card>
-      <CardContent className="flex items-start gap-2 p-4">
-        <span className="font-bold grow">
+    <Card className="group">
+      <CardContent className="flex flex-col items-stretch gap-8 p-16 @md:flex-row">
+        <span className="grow">
           <Typewriter transition={transition}>{text}</Typewriter>
         </span>
 
-        <span className="flex items-center gap-2">
-          <Badge variant="secondary" className="whitespace-nowrap">
-            {tableName}
-          </Badge>
+        <div className="flex grow w-full flex-row items-end justify-between @md:flex-col @md:w-auto gap-8">
+          <span className="flex items-center gap-8">
+            <Badge variant="secondary" className="whitespace-nowrap">
+              {tableName}
+            </Badge>
 
-          <span className="text-slate-400 text-nowrap text-sm">
-            {new Date(timestamp).toLocaleTimeString()}
+            <span className="text-slate-400 text-nowrap text-sm">
+              {new Date(timestamp).toLocaleTimeString()}
+            </span>
           </span>
-        </span>
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="-mr-6 -mb-6 @md:m-0 opacity-0 group-hover:opacity-100 transition-opacity"
+            onClick={onRemove}
+          >
+            <GoX />
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

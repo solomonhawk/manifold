@@ -1,6 +1,7 @@
+import containerQueriesPlugin from "@tailwindcss/container-queries";
 import { rem, remPair } from "@viget/tailwindcss-plugins/utilities/fns";
 import type { Config } from "tailwindcss";
-import tailwindcssAnimate from "tailwindcss-animate";
+import tailwindcssAnimatePlugin from "tailwindcss-animate";
 
 const config = {
   darkMode: ["class"],
@@ -109,7 +110,7 @@ const config = {
       },
     },
   },
-  plugins: [tailwindcssAnimate],
+  plugins: [tailwindcssAnimatePlugin, containerQueriesPlugin],
 } satisfies Config;
 
 export default config;

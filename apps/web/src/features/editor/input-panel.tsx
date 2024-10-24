@@ -44,7 +44,7 @@ export function InputPanel({ textAreaRef }: Props) {
       <textarea
         ref={textAreaRef}
         name="tabol-definition"
-        className="w-full flex-1 p-4 font-mono text-sm resize-none"
+        className="w-full flex-1 p-16 font-mono text-xs resize-none bg-background"
         onChange={handleChange}
       ></textarea>
 
