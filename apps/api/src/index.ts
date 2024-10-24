@@ -1,20 +1,17 @@
 import "dotenv/config";
 
 import { serve } from "@hono/node-server";
-import { trpcServer } from "@hono/trpc-server";
-import { auth, authHandler } from "@manifold/auth";
-import { appRouter } from "@manifold/router";
+import { auth, authHandler, verifyAuth } from "@manifold/auth";
 import { type Context, Hono } from "hono";
 import { env } from "hono/adapter";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 
-import { errorHandler } from "#error-handler.ts";
+import { errorHandler } from "#handlers/error.ts";
+import { trpc } from "#handlers/trpc.ts";
 import type { Env } from "#types.ts";
 
-const app = new Hono<Env>({
-  strict: true,
-});
+const app = new Hono<Env>();
 
 /**
  * Enable stdout logging
@@ -46,37 +43,30 @@ app.use(
 );
 
 /**
- * Auth endpoints
+ * Auth flow endpoints (sign in, sign out, oauth callbacks, etc.)
  */
 app.use("/api/auth/*", authHandler());
 
 /**
- * Verify authenticated user for all trpc endpoints
+ * Verify authentication for protected endpoints
  *
- * @TODO: this prevents public procetures in the trpc router from working, so
- * an approach is needed to allow for both public and private procedures
+ * @NOTE: As of right now all endpoints are defined in the trpc handler which
+ * has it's own auth middleware. This is here to allow for non-trpc protected
+ * endpoints, should they be needed.
  */
-// app.use("/api/trpc/*", verifyAuth());
+app.use("/api/protected/*", verifyAuth());
 
 /**
  * TRPC endpoints, the bulk of the application logic
  */
-app.use(
-  "/api/trpc/*",
-  trpcServer({
-    router: appRouter,
-    endpoint: "/api/trpc",
-    createContext(_opts, c) {
-      return {
-        user: c.get("authUser")?.user,
-      };
-    },
-  }),
-);
+app.use("/api/trpc/*", trpc());
 
+/**
+ * Format errors consistently and respond with JSON
+ */
 app.onError(errorHandler());
 
-const port = 3000;
+const port = Number(process.env.PORT!);
 console.log(`Server is running on port ${port}`);
 
 serve({
