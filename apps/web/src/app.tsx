@@ -1,9 +1,9 @@
 import { SessionProvider } from "@manifold/auth/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
+import { RouterProvider } from "react-router-dom";
 
-import { AuthTest } from "#auth-test.tsx";
-import { Editor } from "#features/editor/editor.tsx";
+import { router } from "#features/routing/index.tsx";
 import { trpc, trpcClient } from "#utils/trpc.ts";
 
 export function App() {
@@ -13,10 +13,11 @@ export function App() {
     <SessionProvider>
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
         <QueryClientProvider client={queryClient}>
-          <div className="flex flex-col h-full">
+          <RouterProvider router={router} />
+          {/* <div className="flex flex-col h-full">
             <AuthTest />
             <Editor />
-          </div>
+          </div> */}
         </QueryClientProvider>
       </trpc.Provider>
     </SessionProvider>

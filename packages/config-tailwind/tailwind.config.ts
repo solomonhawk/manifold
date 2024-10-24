@@ -1,3 +1,4 @@
+import { rem, remPair } from "@viget/tailwindcss-plugins/utilities/fns";
 import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
 
@@ -11,6 +12,45 @@ const config = {
       screens: {
         "2xl": "1400px",
       },
+    },
+    spacing: {
+      0: "0",
+      none: "0",
+      px: "1px",
+      "avatar-sm": rem(20),
+      avatar: rem(24),
+      ...remPair(1),
+      ...remPair(2),
+      ...remPair(4),
+      ...remPair(6),
+      ...remPair(8),
+      ...remPair(10),
+      ...remPair(12),
+      ...remPair(14),
+      ...remPair(16),
+      ...remPair(18),
+      ...remPair(20),
+      ...remPair(24),
+      ...remPair(28),
+      ...remPair(32),
+      ...remPair(36),
+      ...remPair(40),
+      ...remPair(44),
+      ...remPair(48),
+      ...remPair(56),
+      ...remPair(64),
+      ...remPair(80),
+      ...remPair(96),
+      ...remPair(112),
+      ...remPair(128),
+      ...remPair(144),
+      ...remPair(160),
+      ...remPair(176),
+      ...remPair(192),
+      ...remPair(208),
+      ...remPair(224),
+      ...remPair(240),
+      ...remPair(256),
     },
     extend: {
       colors: {
