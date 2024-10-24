@@ -1,17 +1,19 @@
 import type { AdapterAccountType } from "@auth/core/adapters";
-import { createTable } from "@manifold/db/schema/_table";
 import { relations } from "drizzle-orm";
 import {
   boolean,
   index,
   integer,
+  pgTable,
   primaryKey,
   text,
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
 
-export const users = createTable("user", {
+import { createTable } from "#schema/_table.ts";
+
+export const users = pgTable("user", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name"),
   email: text("email").unique(),

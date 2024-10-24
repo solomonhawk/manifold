@@ -1,5 +1,5 @@
 {
-  "name": "@manifold/tabol-core",
+  "name": "@manifold/engine",
   "scripts": {
     "dev": "cargo watch -i .gitignore -s \"npm run build\"",
     "build": "RUST_LOG=info wasm-pack build --release --target web --out-dir web/dist",
@@ -8,8 +8,8 @@
   },
   "exports": {
     ".": {
-      "import": "./web/dist/tabol_rust.js",
-      "types": "./web/dist/tabol_rust.d.ts"
+      "import": "./web/dist/engine.js",
+      "types": "./web/dist/engine.d.ts"
     }
   }
 }

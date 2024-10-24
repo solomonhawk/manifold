@@ -96,6 +96,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "engine"
+version = "0.1.0"
+dependencies = [
+ "console_error_panic_hook",
+ "getrandom",
+ "hex",
+ "miette",
+ "nom",
+ "nom-supreme",
+ "nom_locate",
+ "rand",
+ "serde",
+ "serde-wasm-bindgen",
+ "sha2",
+ "thiserror",
+ "tsify",
+ "wasm-bindgen",
+ "web-sys",
+ "wee_alloc",
+]
+
+[[package]]
 name = "generic-array"
 version = "0.14.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -408,28 +430,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
-]
-
-[[package]]
-name = "tabol-rust"
-version = "0.1.0"
-dependencies = [
- "console_error_panic_hook",
- "getrandom",
- "hex",
- "miette",
- "nom",
- "nom-supreme",
- "nom_locate",
- "rand",
- "serde",
- "serde-wasm-bindgen",
- "sha2",
- "thiserror",
- "tsify",
- "wasm-bindgen",
- "web-sys",
- "wee_alloc",
 ]
 
 [[package]]

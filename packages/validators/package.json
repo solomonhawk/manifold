@@ -1,14 +1,10 @@
 {
-  "name": "@manifold/router",
+  "name": "@manifold/validators",
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "imports": {
-    "#*": "./src/*"
-  },
   "exports": {
-    ".": "./src/index.ts",
-    "./*": "./src/*.ts"
+    ".": "./src/index.ts"
   },
   "scripts": {
     "lint": "eslint \"**/*.ts\"",
@@ -20,11 +16,7 @@
     "eslint": "^8.57.0"
   },
   "dependencies": {
-    "@manifold/auth": "^0.0.0",
-    "@manifold/db": "*",
-    "@manifold/validators": "^0.0.0",
-    "@trpc/server": "^10.45.2",
-    "ts-deepmerge": "^7.0.1",
+    "@manifold/db": "^0.0.0",
     "zod": "^3.23.8"
   }
 }

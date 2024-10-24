@@ -1,18 +1,11 @@
-import { initTRPC } from "@trpc/server";
-import superjson from "superjson";
-import { z } from "zod";
+import { tableRouter } from "#routers/table.ts";
+import { t } from "#trpc.ts";
 
-const t = initTRPC.create({
-  transformer: superjson,
-});
-
-const publicProcedure = t.procedure;
-const router = t.router;
-
-export const appRouter = router({
-  hello: publicProcedure.input(z.string().nullish()).query(({ input }) => {
-    return { message: `Hello ${input ?? "World"}!`, at: new Date() };
-  }),
+export const appRouter = t.router({
+  table: tableRouter,
 });
 
 export type AppRouter = typeof appRouter;
+
+export { TRPCError } from "@trpc/server";
+export * from "@trpc/server/http";

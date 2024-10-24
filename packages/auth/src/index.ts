@@ -17,13 +17,13 @@ export const auth = (getConfig: (c: Context) => AuthInit) =>
     const { secret, clientId, clientSecret } = getConfig(c);
 
     return {
-      secret,
+      adapter: DrizzleAdapter(db),
       providers: [
         Google({
           clientId,
           clientSecret,
         }),
       ],
-      adapter: DrizzleAdapter(db),
+      secret,
     };
   });

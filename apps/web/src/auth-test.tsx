@@ -3,13 +3,11 @@ import { signIn, signOut, useSession } from "@manifold/auth/client";
 export function AuthTest() {
   const { data: session, status } = useSession();
 
-  console.log(session, status);
-
   if (status === "loading") {
     return null;
   }
 
-  if (status === "unauthenticated") {
+  if (status === "unauthenticated" || !session?.user) {
     return (
       <button type="button" onClick={() => signIn("google")}>
         Sign in
@@ -18,8 +16,11 @@ export function AuthTest() {
   }
 
   return (
-    <button type="button" onClick={() => signOut({ redirect: false })}>
-      Sign Out
-    </button>
+    <>
+      <h1>Welcome back, {session.user.name}</h1>
+      <button type="button" onClick={() => signOut({ redirect: false })}>
+        Sign Out
+      </button>
+    </>
   );
 }

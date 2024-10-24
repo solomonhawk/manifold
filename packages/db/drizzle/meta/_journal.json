@@ -8,6 +8,20 @@
       "when": 1729665956101,
       "tag": "0000_windy_bishop",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1729666563103,
+      "tag": "0001_aromatic_diamondback",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1729673718836,
+      "tag": "0002_pretty_captain_britain",
+      "breakpoints": true
     }
   ]
 }

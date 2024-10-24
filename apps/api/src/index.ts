@@ -2,25 +2,28 @@ import "dotenv/config";
 
 import { serve } from "@hono/node-server";
 import { trpcServer } from "@hono/trpc-server";
-import { auth, authHandler, verifyAuth } from "@manifold/auth";
+import { auth, authHandler } from "@manifold/auth";
 import { appRouter } from "@manifold/router";
 import { type Context, Hono } from "hono";
 import { env } from "hono/adapter";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 
-type Bindings = {
-  AUTH_SECRET: string;
-  GOOGLE_CLIENT_ID: string;
-  GOOGLE_CLIENT_SECRET: string;
-};
+import { errorHandler } from "#error-handler.ts";
+import type { Env } from "#types.ts";
 
-type Env = { Bindings: Bindings };
+const app = new Hono<Env>({
+  strict: true,
+});
 
-const app = new Hono<Env>();
-
+/**
+ * Enable stdout logging
+ */
 app.use(logger());
 
+/**
+ * Auth middleware - initializes configuration (e.g. providers) for auth.js
+ */
 app.use(
   "*",
   auth((c: Context<Env>) => {
@@ -32,28 +35,46 @@ app.use(
   }),
 );
 
-app.use("*", cors());
+/**
+ * Enable Cross-Origin Resource Sharing (CORS) for the client
+ */
+app.use(
+  "*",
+  cors({
+    origin: ["http://localhost:5173"],
+  }),
+);
 
+/**
+ * Auth endpoints
+ */
 app.use("/api/auth/*", authHandler());
 
-// @TODO: this prevents public procetures in the trpc router from working, so
-// it needs to be scoped properly
-// app.use("/api/*", verifyAuth());
+/**
+ * Verify authenticated user for all trpc endpoints
+ *
+ * @TODO: this prevents public procetures in the trpc router from working, so
+ * an approach is needed to allow for both public and private procedures
+ */
+// app.use("/api/trpc/*", verifyAuth());
 
+/**
+ * TRPC endpoints, the bulk of the application logic
+ */
 app.use(
   "/api/trpc/*",
   trpcServer({
     router: appRouter,
     endpoint: "/api/trpc",
+    createContext(_opts, c) {
+      return {
+        user: c.get("authUser")?.user,
+      };
+    },
   }),
 );
 
-app.onError((err, c) => {
-  console.error(`${err}`);
-
-  // @TODO: do something better here
-  return c.text(err.message, 500);
-});
+app.onError(errorHandler());
 
 const port = 3000;
 console.log(`Server is running on port ${port}`);

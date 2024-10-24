@@ -1,4 +1,3 @@
-import { signIn, useSession } from "@manifold/auth/client";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -6,31 +5,11 @@ import {
 } from "@manifold/ui/components/ui/resizable";
 import { useRef } from "react";
 
-import { trpc } from "~/utils/trpc";
-
 import { InputPanel } from "./input-panel";
 import { AvailableTables, RollResults } from "./results-panel";
 
 export function Editor() {
-  const { data: session, status } = useSession();
-  console.log(session, status);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  const query = trpc.hello.useQuery();
-
-  console.log(query.status, query.isLoading, query.data);
-
-  async function handleSignIn() {
-    const result = await signIn("google");
-    console.log(result);
-  }
-
-  if (status === "loading") {
-    return null;
-  }
-
-  if (status === "unauthenticated") {
-    return <button onClick={handleSignIn}>Sign in</button>;
-  }
 
   return (
     <ResizablePanelGroup direction="horizontal" className="flex min-h-full">

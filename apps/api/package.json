@@ -1,8 +1,11 @@
 {
   "name": "api",
   "type": "module",
+  "imports": {
+    "#*": "./src/*"
+  },
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch --inspect src/index.ts",
     "lint": "eslint \"**/*.{ts,tsx}\"",
     "lint:fix": "eslint --fix \"**/*.{ts,tsx}\""
   },

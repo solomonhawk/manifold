@@ -7,5 +7,6 @@
   "github.copilot.editor.enableAutoCompletions": true,
   "files.exclude": {
     "target/*": true
-  }
+  },
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

@@ -1,7 +1,7 @@
 [workspace]
 resolver = "2"
 
-members = ["packages/tabol-core"]
+members = ["packages/engine"]
 
 [profile.release]
 lto = true

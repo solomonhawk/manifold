@@ -2,7 +2,7 @@
   "name": "tabol",
   "private": true,
   "scripts": {
-    "work": "turbo dev lint test:watch",
+    "work": "docker-compose up -d postgres && turbo dev lint test:watch",
     "build": "turbo build",
     "preview": "turbo preview",
     "dev": "turbo dev",

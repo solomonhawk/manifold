@@ -1,11 +1,5 @@
 {
   "extends": "@manifold/typescript-config/base.json",
-  "include": ["."],
-  "exclude": ["node_modules"],
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@manifold/ui/*": ["./src/*"]
-    }
-  }
+  "include": ["src"],
+  "exclude": ["node_modules"]
 }

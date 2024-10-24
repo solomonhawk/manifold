@@ -1,11 +1,9 @@
 {
   "extends": "@manifold/typescript-config/vite.json",
   "include": ["src"],
+  "exclude": ["node_modules"],
   "compilerOptions": {
     "declaration": false,
-    "declarationMap": false,
-    "paths": {
-      "~/*": ["./src/*"]
-    }
+    "declarationMap": false
   }
 }
