@@ -5,7 +5,7 @@ import { timestamps } from "#schema/helpers/timestamps.ts";
 
 export const table = pgTable("table", {
   id: uuid("id").defaultRandom().primaryKey(),
-  userId: uuid("userId")
+  userId: uuid("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   title: text("title").notNull(),
@@ -13,4 +13,5 @@ export const table = pgTable("table", {
   ...timestamps,
 });
 
+export type TableModel = typeof table.$inferSelect;
 export type TableInsert = typeof table.$inferInsert;

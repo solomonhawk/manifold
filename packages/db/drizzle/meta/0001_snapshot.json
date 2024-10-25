@@ -9,7 +9,7 @@
       "schema": "",
       "columns": {
         "userId": {
-          "name": "userId",
+          "name": "user_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -27,7 +27,7 @@
           "notNull": true
         },
         "providerAccountId": {
-          "name": "providerAccountId",
+          "name": "provider_account_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -76,11 +76,11 @@
         }
       },
       "indexes": {
-        "accounts_userId_idx": {
-          "name": "accounts_userId_idx",
+        "accounts_user_id_idx": {
+          "name": "accounts_user_id_idx",
           "columns": [
             {
-              "expression": "userId",
+              "expression": "user_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -93,27 +93,20 @@
         }
       },
       "foreignKeys": {
-        "account_userId_user_id_fk": {
-          "name": "account_userId_user_id_fk",
+        "account_user_id_user_id_fk": {
+          "name": "account_user_id_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
-        "account_provider_providerAccountId_pk": {
-          "name": "account_provider_providerAccountId_pk",
-          "columns": [
-            "provider",
-            "providerAccountId"
-          ]
+        "account_provider_provider_account_id_pk": {
+          "name": "account_provider_provider_account_id_pk",
+          "columns": ["provider", "provider_account_id"]
         }
       },
       "uniqueConstraints": {},
@@ -124,25 +117,25 @@
       "schema": "",
       "columns": {
         "credentialID": {
-          "name": "credentialID",
+          "name": "credential_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "userId": {
-          "name": "userId",
+          "name": "user_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
         "providerAccountId": {
-          "name": "providerAccountId",
+          "name": "provider_account_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "credentialPublicKey": {
-          "name": "credentialPublicKey",
+          "name": "credential_public_key",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -154,13 +147,13 @@
           "notNull": true
         },
         "credentialDeviceType": {
-          "name": "credentialDeviceType",
+          "name": "credential_device_type",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "credentialBackedUp": {
-          "name": "credentialBackedUp",
+          "name": "credential_backed_up",
           "type": "boolean",
           "primaryKey": false,
           "notNull": true
@@ -174,36 +167,27 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "authenticator_userId_user_id_fk": {
-          "name": "authenticator_userId_user_id_fk",
+        "authenticator_user_id_user_id_fk": {
+          "name": "authenticator_user_id_user_id_fk",
           "tableFrom": "authenticator",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
-        "authenticator_userId_credentialID_pk": {
-          "name": "authenticator_userId_credentialID_pk",
-          "columns": [
-            "userId",
-            "credentialID"
-          ]
+        "authenticator_user_id_credential_id_pk": {
+          "name": "authenticator_user_id_credential_id_pk",
+          "columns": ["user_id", "credential_id"]
         }
       },
       "uniqueConstraints": {
-        "authenticator_credentialID_unique": {
-          "name": "authenticator_credentialID_unique",
+        "authenticator_credential_id_unique": {
+          "name": "authenticator_credential_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "credentialID"
-          ]
+          "columns": ["credential_id"]
         }
       },
       "checkConstraints": {}
@@ -213,13 +197,13 @@
       "schema": "",
       "columns": {
         "sessionToken": {
-          "name": "sessionToken",
+          "name": "session_token",
           "type": "text",
           "primaryKey": true,
           "notNull": true
         },
         "userId": {
-          "name": "userId",
+          "name": "user_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -232,11 +216,11 @@
         }
       },
       "indexes": {
-        "sessions_userId_idx": {
-          "name": "sessions_userId_idx",
+        "sessions_user_id_idx": {
+          "name": "sessions_user_id_idx",
           "columns": [
             {
-              "expression": "userId",
+              "expression": "user_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -249,16 +233,12 @@
         }
       },
       "foreignKeys": {
-        "session_userId_user_id_fk": {
-          "name": "session_userId_user_id_fk",
+        "session_user_id_user_id_fk": {
+          "name": "session_user_id_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -291,7 +271,7 @@
           "notNull": false
         },
         "emailVerified": {
-          "name": "emailVerified",
+          "name": "email_verified",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
@@ -310,15 +290,13 @@
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "checkConstraints": {}
     },
     "public.verificationToken": {
-      "name": "verificationToken",
+      "name": "verification_token",
       "schema": "",
       "columns": {
         "identifier": {
@@ -343,12 +321,9 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "verificationToken_identifier_token_pk": {
-          "name": "verificationToken_identifier_token_pk",
-          "columns": [
-            "identifier",
-            "token"
-          ]
+        "verification_token_identifier_token_pk": {
+          "name": "verification_token_identifier_token_pk",
+          "columns": ["identifier", "token"]
         }
       },
       "uniqueConstraints": {},
@@ -366,7 +341,7 @@
           "default": "gen_random_uuid()"
         },
         "userId": {
-          "name": "userId",
+          "name": "user_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -386,16 +361,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "table_userId_user_id_fk": {
-          "name": "table_userId_user_id_fk",
+        "table_user_id_user_id_fk": {
+          "name": "table_user_id_user_id_fk",
           "tableFrom": "table",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }

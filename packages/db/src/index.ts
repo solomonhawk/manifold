@@ -9,6 +9,13 @@ const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
-export const db = drizzle({ client: pool, casing: "snake_case", schema });
+export const db = drizzle({
+  client: pool,
+  casing: "snake_case",
+  schema,
+  // @TODO: make this configurable
+  logger: true,
+});
 
+export * from "drizzle-orm";
 export { schema };
