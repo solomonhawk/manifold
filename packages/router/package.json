@@ -25,6 +25,7 @@
     "@manifold/db": "*",
     "@manifold/validators": "*",
     "@trpc/server": "^10.45.2",
+    "superjson": "^2.2.1",
     "ts-deepmerge": "^7.0.1",
     "zod": "^3.23.8"
   }

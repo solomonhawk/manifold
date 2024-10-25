@@ -19,7 +19,11 @@ export function TableNew() {
         </CardHeader>
 
         <CardContent>
-          <TableCreateForm onCreate={(id) => navigate(`/table/${id}/edit`)} />
+          <TableCreateForm
+            onCreate={(table) =>
+              navigate(`/table/${table.id}/edit`, { state: { table } })
+            }
+          />
         </CardContent>
       </Card>
     </div>

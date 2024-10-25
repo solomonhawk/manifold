@@ -1,3 +1,4 @@
+import { FlexCol } from "@manifold/ui/components/ui/flex";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -36,35 +37,34 @@ export function Editor({
   }, []);
 
   return (
-    <ResizablePanelGroup
-      direction="horizontal"
-      className="flex h-full min-h-0 border"
-    >
-      <ResizablePanel
-        minSize={20}
-        defaultSize={50}
-        className="flex flex-col flex-1 lg:flex-initial"
-      >
-        <InputPanel
-          inputRef={inputRef as MutableRefObject<HTMLTextAreaElement>}
-          name={name}
-          value={value ?? ""}
-          onChange={onChange}
-          onBlur={onBlur}
-          refCallback={refCallback}
-          onParseError={onParseError}
-          onParseSuccess={onParseSuccess}
-        />
-      </ResizablePanel>
+    <FlexCol asChild>
+      <ResizablePanelGroup direction="horizontal" className="border">
+        <ResizablePanel
+          minSize={20}
+          defaultSize={50}
+          className="flex flex-col flex-1 lg:flex-initial"
+        >
+          <InputPanel
+            inputRef={inputRef as MutableRefObject<HTMLTextAreaElement>}
+            name={name}
+            value={value ?? ""}
+            onChange={onChange}
+            onBlur={onBlur}
+            refCallback={refCallback}
+            onParseError={onParseError}
+            onParseSuccess={onParseSuccess}
+          />
+        </ResizablePanel>
 
-      <ResizableHandle withHandle />
+        <ResizableHandle withHandle />
 
-      <ResizablePanel minSize={50} className="flex flex-col flex-1">
-        <div className="flex flex-1 flex-col min-h-0 @container bg-background/60">
-          <AvailableTables inputRef={inputRef} onRoll={handleRoll} />
-          <RollResults listRef={listRef} />
-        </div>
-      </ResizablePanel>
-    </ResizablePanelGroup>
+        <ResizablePanel minSize={50} className="flex flex-col flex-1">
+          <FlexCol className="@container bg-background/60">
+            <AvailableTables inputRef={inputRef} onRoll={handleRoll} />
+            <RollResults listRef={listRef} />
+          </FlexCol>
+        </ResizablePanel>
+      </ResizablePanelGroup>
+    </FlexCol>
   );
 }

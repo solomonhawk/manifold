@@ -1,3 +1,5 @@
+import type { TableModel } from "@manifold/db/schema/table";
+import { FlexCol } from "@manifold/ui/components/ui/flex";
 import {
   Form,
   FormControl,
@@ -19,15 +21,13 @@ import { Header } from "./header";
 type FormData = z.infer<typeof tableUpdateInput>;
 
 export function TableUpdateForm({
-  id,
-  title,
-  initialDefinition,
+  table,
   onUpdate,
+  isDisabled = false,
 }: {
-  id: string;
-  title: string;
-  initialDefinition: string;
+  table: TableModel;
   onUpdate?: (id: string) => void | Promise<unknown>;
+  isDisabled?: boolean;
 }) {
   const form = useZodForm({
     mode: "onChange",
@@ -55,16 +55,19 @@ export function TableUpdateForm({
       }),
     }),
     defaultValues: {
-      id,
-      definition: initialDefinition,
+      id: table.id,
+      definition: table.definition,
     },
   });
 
   const updateTableMutation = trpc.table.update.useMutation();
 
   useEffect(() => {
-    form.reset({ id, definition: initialDefinition });
-  }, [form, id, initialDefinition]);
+    form.reset({
+      id: table.id,
+      definition: table.definition,
+    });
+  }, [form, table.id, table.definition]);
 
   const handleSubmit: SubmitHandler<FormData> = async (data) => {
     try {
@@ -88,42 +91,45 @@ export function TableUpdateForm({
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(handleSubmit)}
-        className="flex flex-col grow min-h-0"
-      >
-        <fieldset
-          disabled={form.formState.isSubmitting}
-          className="flex flex-col grow min-h-0 space-y-12 sm:space-y-16"
-        >
-          <Header title={title}>
-            <FormSubmitButton>Save Changes</FormSubmitButton>
-          </Header>
+      <FlexCol asChild>
+        <form onSubmit={form.handleSubmit(handleSubmit)}>
+          <FlexCol asChild>
+            <fieldset
+              disabled={form.formState.isSubmitting || isDisabled}
+              className="space-y-12 sm:space-y-16"
+            >
+              <Header title={table.title}>
+                <FormSubmitButton>Save Changes</FormSubmitButton>
+              </Header>
 
-          <FormField
-            control={form.control}
-            name="definition"
-            render={({ field }) => {
-              const { ref, ...props } = field;
+              <FormField
+                control={form.control}
+                name="definition"
+                render={({ field }) => {
+                  const { ref, ...props } = field;
 
-              return (
-                <FormItem className="flex flex-col grow min-h-0">
-                  <FormControl>
-                    <Editor
-                      onParseError={handleParseError}
-                      onParseSuccess={handleParseSuccess}
-                      refCallback={ref}
-                      {...props}
-                    />
-                  </FormControl>
+                  return (
+                    <FlexCol asChild>
+                      <FormItem>
+                        <FormControl>
+                          <Editor
+                            onParseError={handleParseError}
+                            onParseSuccess={handleParseSuccess}
+                            refCallback={ref}
+                            {...props}
+                          />
+                        </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              );
-            }}
-          />
-        </fieldset>
-      </form>
+                        <FormMessage />
+                      </FormItem>
+                    </FlexCol>
+                  );
+                }}
+              />
+            </fieldset>
+          </FlexCol>
+        </form>
+      </FlexCol>
     </Form>
   );
 }

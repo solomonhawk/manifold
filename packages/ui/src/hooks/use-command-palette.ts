@@ -16,7 +16,13 @@ export function useCommandPalette() {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  const close = useCallback(() => setIsOpen(false), []);
+  const close = useCallback(() => {
+    setIsOpen(false);
+
+    return new Promise((resolve) => {
+      setTimeout(resolve, 0);
+    });
+  }, []);
 
   return [isOpen, close] as const;
 }

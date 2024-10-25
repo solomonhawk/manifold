@@ -1,4 +1,6 @@
-import { useParams } from "react-router-dom";
+import { LoadingIndicator } from "@manifold/ui/components/loading-indicator";
+import { FlexCol } from "@manifold/ui/components/ui/flex";
+import { useLocation, useParams } from "react-router-dom";
 
 import { TableUpdateForm } from "~features/table/components/table-update-form";
 import { RoutingError } from "~utils/errors";
@@ -6,35 +8,43 @@ import { trpc } from "~utils/trpc";
 
 export function TableEdit() {
   const { id } = useParams();
+  const location = useLocation();
 
   if (!id) {
     throw new RoutingError("No ID provided");
   }
 
-  const query = trpc.table.get.useQuery(id);
+  const query = trpc.table.get.useQuery(id, {
+    placeholderData: location.state?.table,
+  });
+
   const trpcUtils = trpc.useUtils();
 
   if (query.isLoading) {
-    return <div>Loading...</div>;
+    // @TODO: replace with skeleton
+    return (
+      <FlexCol className="items-center justify-center">
+        <LoadingIndicator />
+      </FlexCol>
+    );
   }
 
   if (query.isSuccess && query.data) {
     const table = query.data;
 
     return (
-      <div className="flex flex-col grow min-h-0 p-12 sm:p-16">
+      <FlexCol className="p-12 sm:p-16">
         <TableUpdateForm
-          id={table.id}
-          title={table.title}
-          initialDefinition={table.definition}
+          table={table}
+          isDisabled={query.isPlaceholderData}
           onUpdate={() =>
             Promise.all([
-              trpcUtils.table.list.invalidate(),
-              trpcUtils.table.get.invalidate(id),
+              trpcUtils.table.list.refetch(),
+              trpcUtils.table.get.refetch(id),
             ])
           }
         />
-      </div>
+      </FlexCol>
     );
   }
 

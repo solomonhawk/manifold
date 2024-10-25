@@ -1,3 +1,4 @@
+import type { TableModel } from "@manifold/db/schema/table";
 import {
   Form,
   FormControl,
@@ -20,7 +21,7 @@ type FormData = z.infer<typeof tableCreateInput>;
 export function TableCreateForm({
   onCreate,
 }: {
-  onCreate: (id: string) => void;
+  onCreate: (table: TableModel) => void;
 }) {
   const form = useZodForm({
     schema: tableCreateInput,
@@ -34,7 +35,7 @@ export function TableCreateForm({
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     const table = await createTableMutation.mutateAsync(data);
-    onCreate(table.id);
+    onCreate(table);
   };
 
   return (

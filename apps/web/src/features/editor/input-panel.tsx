@@ -7,7 +7,7 @@ import {
 } from "react";
 import type { RefCallBack } from "react-hook-form";
 
-import { currentTableHash, currentTableMetadata } from "./state";
+import { currentTableHash, currentTableMetadata, rollHistory } from "./state";
 import { workerInstance } from "./worker";
 
 type Props = {
@@ -32,7 +32,7 @@ export function InputPanel({
   onParseSuccess,
 }: Props) {
   const setTableHash = useSetAtom(currentTableHash);
-
+  const setRollResults = useSetAtom(rollHistory);
   const setTableMetadata = useSetAtom(currentTableMetadata);
 
   const parseAndValidate = useCallback(
@@ -43,11 +43,12 @@ export function InputPanel({
 
           setTableHash(hash);
           setTableMetadata(metadata);
-          onParseSuccess();
         } else {
           setTableHash(null);
           setTableMetadata([]);
         }
+
+        onParseSuccess();
       } catch (e: unknown) {
         console.error(e);
 
@@ -70,6 +71,13 @@ export function InputPanel({
     if (value) {
       parseAndValidate(value);
     }
+
+    return () => {
+      // oof, maybe I can put the jotai atoms into a context?
+      setRollResults([]);
+      setTableHash(null);
+      setTableMetadata([]);
+    };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (

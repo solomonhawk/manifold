@@ -55,12 +55,25 @@ export function RootLayout() {
       <CommandPalette
         isOpen={isCommandPaletteOpen}
         onClose={closeCommandPalette}
-        onCreateTable={() => {
+        onCreateTable={async () => {
           closeCommandPalette();
 
           /**
            * @NOTE: Give the dialog a chance to close before navigating so that
            * `autoFocus` works as expected on the subsequent page.
+           *
+           * This raises a warning in the console related to
+           * `@radix-ui/react-dialog` calling `hideOthers` from the
+           * `aria-hidden` package which sets `aria-hidden` on the body element.
+           *
+           * > Blocked aria-hidden on an element because its descendant retained
+           * > focus. The focus must not be hidden from assistive technology
+           * > users. Avoid using aria-hidden on a focused element or its
+           * > ancestor. Consider using the inert attribute instead, which will
+           * > also prevent focus.
+           *
+           * That package supports `inert`, but it hasn't been adopted by Radix
+           * as of right now.
            */
           requestAnimationFrame(() => {
             navigate("/table/new");

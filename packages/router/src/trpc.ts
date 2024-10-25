@@ -1,10 +1,12 @@
 import { initTRPC, TRPCError } from "@trpc/server";
+import superjson from "superjson";
 import { merge } from "ts-deepmerge";
 import { ZodError } from "zod";
 
 import type { Context } from "#types.ts";
 
 export const t = initTRPC.context<Context>().create({
+  transformer: superjson,
   errorFormatter({ shape, error }) {
     return merge(shape, {
       data: {

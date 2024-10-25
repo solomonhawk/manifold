@@ -5,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@manifold/ui/components/ui/card";
+import { cn } from "@manifold/ui/lib/utils";
 import { formatRelative } from "date-fns";
 import { Link } from "react-router-dom";
 
@@ -29,7 +30,14 @@ export function TableList() {
         <CardTitle>Recently Edited:</CardTitle>
       </CardHeader>
 
-      <CardContent className="grid grid-cols-[repeat(auto-fill,minmax(150px,200px))] gap-12 sm:gap-16">
+      <CardContent
+        className={cn(
+          "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-[repeat(auto-fill,minmax(150px,200px))] gap-12 sm:gap-16 transition-opacity",
+          {
+            "opacity-50": query.isRefetching,
+          },
+        )}
+      >
         {data.map((table) => {
           return (
             <div key={table.id} className="border rounded-sm">
@@ -39,7 +47,10 @@ export function TableList() {
                   variant="link"
                   asChild
                 >
-                  <Link to={`/table/${table.id}/edit`}>
+                  <Link
+                    to={query.isRefetching ? "#" : `/table/${table.id}/edit`}
+                    state={{ table }}
+                  >
                     <h3 className="text-lg sm:text-xl group-hover:underline decoration-from-font underline-offset-2 text-center whitespace-normal">
                       {table.title}
                     </h3>

@@ -8,6 +8,7 @@ import {
   CommandItem,
   CommandList,
 } from "#components/ui/command.tsx";
+import { DialogDescription, DialogTitle } from "#components/ui/dialog.tsx";
 
 // @TODO: Make this more generic, pass in a list of command groups, etc.
 export function CommandPalette({
@@ -28,6 +29,11 @@ export function CommandPalette({
         }
       }}
     >
+      <span className="sr-only">
+        <DialogTitle>Command Launcher</DialogTitle>
+        <DialogDescription>Quickly find common actions</DialogDescription>
+      </span>
+
       <CommandInput placeholder="Type a command or search..." />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>

@@ -1,6 +1,7 @@
 import type { AppRouter } from "@manifold/router";
 import { httpBatchLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
+import superjson from "superjson";
 
 /**
  * This type annotation feels unnecessary, but `tsc` chokes without it.
@@ -12,6 +13,7 @@ export const trpc: ReturnType<typeof createTRPCReact<AppRouter>> =
   createTRPCReact<AppRouter>();
 
 export const trpcClient = trpc.createClient({
+  transformer: superjson,
   links: [
     httpBatchLink({
       url: "http://localhost:5173/api/trpc",
