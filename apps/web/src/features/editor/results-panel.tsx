@@ -8,7 +8,7 @@ import { cn } from "@manifold/ui/lib/utils";
 import { CircleBackslashIcon, CubeIcon } from "@radix-ui/react-icons";
 import { LayoutGroup, motion, type Transition } from "framer-motion";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { memo, type RefObject, useCallback, useEffect, useState } from "react";
+import { memo, type RefObject, useCallback, useState } from "react";
 import { GoX } from "react-icons/go";
 
 import {
@@ -127,24 +127,13 @@ export const RollResults = memo(function RollResults({
     [setRollResults],
   );
 
-  function handleScroll(e: React.UIEvent<HTMLUListElement>) {
-    const { scrollHeight, clientHeight } = e.currentTarget;
-
-    updateListOverflowing(scrollHeight, clientHeight);
-  }
-
-  function updateListOverflowing(scrollHeight: number, clientHeight: number) {
-    setListOverflowing(scrollHeight > clientHeight);
-  }
-
-  useEffect(() => {
+  const updateListOverflowing = useCallback(() => {
     if (listRef.current) {
-      updateListOverflowing(
-        listRef.current.scrollHeight,
-        listRef.current.clientHeight,
+      setListOverflowing(
+        listRef.current.scrollHeight > listRef.current.clientHeight,
       );
     }
-  }, [listRef, rollResults]);
+  }, [listRef]);
 
   return (
     <LayoutGroup>
@@ -153,7 +142,8 @@ export const RollResults = memo(function RollResults({
         className={cn("flex flex-col min-h-0 px-16 gap-8 overflow-auto", {
           "fade-bottom-90 pb-[5%]": listOverflowing,
         })}
-        onScroll={handleScroll}
+        onLayoutAnimationStart={updateListOverflowing}
+        onLayoutAnimationComplete={updateListOverflowing}
         data={rollResults}
         transition={transition}
         computeKey={(result) => `${result.timestamp}-${result.text}`}

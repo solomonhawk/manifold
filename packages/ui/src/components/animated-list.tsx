@@ -3,6 +3,8 @@ import { AnimatePresence, motion, type Transition } from "framer-motion";
 type Props<T> = {
   listRef: React.RefObject<HTMLUListElement>;
   onScroll?: (e: React.UIEvent<HTMLUListElement>) => void;
+  onLayoutAnimationStart?: () => void;
+  onLayoutAnimationComplete?: () => void;
   className: string;
   data: T[];
   transition: Transition;
@@ -13,6 +15,8 @@ type Props<T> = {
 export function AnimatedList<T>({
   listRef,
   onScroll,
+  onLayoutAnimationStart,
+  onLayoutAnimationComplete,
   className,
   data,
   transition,
@@ -26,6 +30,8 @@ export function AnimatedList<T>({
       className={className}
       onScroll={onScroll}
       transition={transition}
+      onLayoutAnimationStart={onLayoutAnimationStart}
+      onLayoutAnimationComplete={onLayoutAnimationComplete}
     >
       <AnimatePresence initial={false} mode="popLayout">
         {data.map((item) => {
