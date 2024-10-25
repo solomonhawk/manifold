@@ -1,12 +1,13 @@
 import "dotenv/config";
 
 import { serve } from "@hono/node-server";
-import { auth, authHandler, verifyAuth } from "@manifold/auth";
+import { auth, authHandler } from "@manifold/auth";
 import { type Context, Hono } from "hono";
 import { env } from "hono/adapter";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 
+import { setAuthUser } from "#handlers/auth.js";
 import { errorHandler } from "#handlers/error.ts";
 import { trpc } from "#handlers/trpc.ts";
 import type { Env } from "#types.ts";
@@ -48,13 +49,10 @@ app.use(
 app.use("/api/auth/*", authHandler());
 
 /**
- * Verify authentication for protected endpoints
- *
- * @NOTE: As of right now all endpoints are defined in the trpc handler which
- * has it's own auth middleware. This is here to allow for non-trpc protected
- * endpoints, should they be needed.
+ * Set the authed user on the hono request context, if authenticated, otherwise
+ * continues to the next middleware/handler
  */
-app.use("/api/protected/*", verifyAuth());
+app.use("/api/*", setAuthUser());
 
 /**
  * TRPC endpoints, the bulk of the application logic
