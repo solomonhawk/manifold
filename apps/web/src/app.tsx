@@ -3,8 +3,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import { RouterProvider } from "react-router-dom";
 
-import { router } from "#features/routing/index.tsx";
-import { trpc, trpcClient } from "#utils/trpc.ts";
+import { router } from "~features/routing";
+import { trpc, trpcClient } from "~utils/trpc";
 
 export function App() {
   const [queryClient] = useState(() => new QueryClient());

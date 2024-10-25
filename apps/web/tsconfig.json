@@ -8,6 +8,9 @@
      * @ref https://github.com/microsoft/TypeScript/issues/5711#issuecomment-157793294
      */
     "declaration": false,
-    "declarationMap": false
+    "declarationMap": false,
+    "paths": {
+      "~*": ["./src/*"]
+    }
   }
 }

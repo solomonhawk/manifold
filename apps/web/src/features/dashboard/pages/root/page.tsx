@@ -1,5 +1,5 @@
-import { DashboardHeader } from "./components/dashboard-header";
-import { TableList } from "./components/table-list";
+import { DashboardHeader } from "~features/dashboard/components/dashboard-header";
+import { TableList } from "~features/dashboard/components/table-list";
 
 export function Component() {
   return (

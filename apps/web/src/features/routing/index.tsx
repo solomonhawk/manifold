@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import { RootLayout } from "#features/routing/routes/root/layout.tsx";
-import { rootLoader } from "#features/routing/routes/root/loader.ts";
+import { RootLayout } from "~features/routing/routes/root/layout";
+import { rootLoader } from "~features/routing/routes/root/loader";
 
 export const router = createBrowserRouter(
   [
@@ -12,7 +12,7 @@ export const router = createBrowserRouter(
       children: [
         {
           index: true,
-          lazy: () => import("./routes/dashboard/page"),
+          lazy: () => import("~features/dashboard/pages/root/page"),
         },
       ],
     },
