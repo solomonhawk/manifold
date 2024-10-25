@@ -1,7 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import { RootLayout } from "~features/routing/routes/root/layout";
-import { rootLoader } from "~features/routing/routes/root/loader";
+import { RootError } from "~features/routing/root/error";
+import { RootLayout } from "~features/routing/root/layout";
+import { rootLoader } from "~features/routing/root/loader";
 
 export const router = createBrowserRouter(
   [
@@ -9,10 +10,15 @@ export const router = createBrowserRouter(
       path: "/",
       element: <RootLayout />,
       loader: rootLoader,
+      errorElement: <RootError />,
       children: [
         {
           index: true,
           lazy: () => import("~features/dashboard/pages/root/page"),
+        },
+        {
+          path: "*",
+          lazy: () => import("~features/routing/root/not-found"),
         },
       ],
     },

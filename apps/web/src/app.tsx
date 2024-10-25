@@ -14,10 +14,6 @@ export function App() {
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
         <QueryClientProvider client={queryClient}>
           <RouterProvider router={router} />
-          {/* <div className="flex flex-col h-full">
-            <AuthTest />
-            <Editor />
-          </div> */}
         </QueryClientProvider>
       </trpc.Provider>
     </SessionProvider>
