@@ -18,6 +18,7 @@
   "dependencies": {
     "@manifold/auth": "*",
     "@manifold/engine": "*",
+    "@manifold/lib": "*",
     "@manifold/router": "*",
     "@manifold/tailwind-config": "*",
     "@manifold/ui": "*",

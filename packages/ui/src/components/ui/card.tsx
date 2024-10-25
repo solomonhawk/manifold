@@ -1,5 +1,6 @@
-import { cn } from "@manifold/ui/lib/utils";
 import * as React from "react";
+
+import { cn } from "#lib/utils.ts";
 
 const Card = React.forwardRef<
   HTMLDivElement,
@@ -22,7 +23,7 @@ const CardHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("flex flex-col space-y-6 p-24", className)}
+    className={cn("flex flex-col space-y-6 p-16 sm:p-20 md:p-24", className)}
     {...props}
   />
 ));
@@ -54,9 +55,19 @@ CardDescription.displayName = "CardDescription";
 
 const CardContent = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-24 pt-0", className)} {...props} />
+  React.HTMLAttributes<HTMLDivElement> & { flush?: boolean }
+>(({ className, flush = true, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "p-16 sm:p-20 md:p-24",
+      {
+        "!pt-0": flush,
+      },
+      className,
+    )}
+    {...props}
+  />
 ));
 CardContent.displayName = "CardContent";
 
