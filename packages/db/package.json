@@ -20,7 +20,8 @@
     "@manifold/eslint-config": "*",
     "@manifold/typescript-config": "*",
     "@types/pg": "^8.11.10",
-    "drizzle-kit": "^0.26.2"
+    "drizzle-kit": "^0.26.2",
+    "eslint-plugin-drizzle": "^0.2.3"
   },
   "dependencies": {
     "@auth/core": "^0.37.2",
