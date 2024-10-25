@@ -1,9 +1,10 @@
 import { signIn, signOut, useSession } from "@manifold/auth/client";
 import { CommandPalette } from "@manifold/ui/components/command-palette";
 import { GlobalHeader } from "@manifold/ui/components/global-header";
+import { Button } from "@manifold/ui/components/ui/button";
 import { Skeleton } from "@manifold/ui/components/ui/skeleton";
 import { useCommandPalette } from "@manifold/ui/hooks/use-command-palette";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { match } from "ts-pattern";
 
 export function RootLayout() {
@@ -15,7 +16,21 @@ export function RootLayout() {
   return (
     <div className="flex flex-col h-full bg-architect">
       <GlobalHeader.Root>
-        <GlobalHeader.LogoMark />
+        <div className="flex items-center gap-12">
+          <Link to="/">
+            <GlobalHeader.LogoMark />
+          </Link>
+
+          <Button
+            asChild
+            size="sm"
+            variant="outline"
+            className="bg-transparent"
+          >
+            <Link to="/table/new">Create Table</Link>
+          </Button>
+        </div>
+
         {match(auth)
           .with({ status: "loading" }, () => (
             <Skeleton className="rounded-full size-avatar-sm sm:size-avatar" />
@@ -43,7 +58,7 @@ export function RootLayout() {
         isOpen={isCommandPaletteOpen}
         onClose={closeCommandPalette}
         onCreateTable={() => {
-          navigate("/tables/new");
+          navigate("/table/new");
           closeCommandPalette();
         }}
       />
