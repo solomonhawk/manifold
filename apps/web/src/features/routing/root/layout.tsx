@@ -42,11 +42,9 @@ export function RootLayout() {
             <GlobalHeader.Authed
               name={session.user.name}
               image={session.user.image}
-              onSignOut={() =>
-                signOut({
-                  redirect: false,
-                })
-              }
+              onSignOut={() => {
+                signOut({ redirect: false });
+              }}
             />
           ))
           .exhaustive()}
@@ -58,8 +56,15 @@ export function RootLayout() {
         isOpen={isCommandPaletteOpen}
         onClose={closeCommandPalette}
         onCreateTable={() => {
-          navigate("/table/new");
           closeCommandPalette();
+
+          /**
+           * @NOTE: Give the dialog a chance to close before navigating so that
+           * `autoFocus` works as expected on the subsequent page.
+           */
+          requestAnimationFrame(() => {
+            navigate("/table/new");
+          });
         }}
       />
     </div>

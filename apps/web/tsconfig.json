@@ -1,6 +1,11 @@
 {
   "extends": "@manifold/typescript-config/vite.json",
-  "include": ["src", "../../packages/auth/src/auth.d.ts"],
+  "include": [
+    "src",
+    "../../packages/auth/src/auth.d.ts",
+    // Sometimes this is needed for UI auto-imports to work but not always???
+    "../../packages/ui/**/*.tsx"
+  ],
   "exclude": ["node_modules"],
   "compilerOptions": {
     /**

@@ -26,7 +26,7 @@ export const parse = afterInit((text: string) => {
   // compute hash based on table definition text, cache for later
   let hash: string;
   if (textToHash.has(text)) {
-    hash = textToHash.get(text)!;
+    hash = textToHash.get(text)!; // eslint-disable-line @typescript-eslint/no-non-null-assertion
   } else {
     hash = table_hash(text);
     textToHash.set(text, hash);
@@ -36,6 +36,7 @@ export const parse = afterInit((text: string) => {
   if (hashToTabol.has(hash)) {
     return {
       hash,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       metadata: hashToTabol.get(hash)!.table_metadata() as TableMetadata[],
     };
   }
@@ -63,6 +64,7 @@ export const gen = afterInit((hash: string, text: string, tableId: string) => {
     parse(text);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const tabol = hashToTabol.get(hash)!;
 
   return tabol.gen(tableId);

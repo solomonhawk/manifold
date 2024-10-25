@@ -29,10 +29,10 @@ const transition = {
 } satisfies Transition;
 
 export const AvailableTables = memo(function AvailableTables({
-  textAreaRef,
+  inputRef,
   onRoll,
 }: {
-  textAreaRef: RefObject<HTMLTextAreaElement>;
+  inputRef: RefObject<HTMLTextAreaElement>;
   onRoll?: () => void;
 }) {
   const tableHash = useAtomValue(currentTableHash);
@@ -50,7 +50,7 @@ export const AvailableTables = memo(function AvailableTables({
 
       const result = await workerInstance.gen(
         tableHash,
-        textAreaRef.current?.value || "",
+        inputRef.current?.value || "",
         table.id,
       );
 
@@ -67,7 +67,7 @@ export const AvailableTables = memo(function AvailableTables({
 
       onRoll?.();
     },
-    [onRoll, setRollResults, tableHash, textAreaRef],
+    [onRoll, setRollResults, tableHash, inputRef],
   );
 
   return (
@@ -128,6 +128,7 @@ export const RollResults = memo(function RollResults({
   );
 
   const updateListOverflowing = useCallback(() => {
+    console.log(listRef.current);
     if (listRef.current) {
       setListOverflowing(
         listRef.current.scrollHeight > listRef.current.clientHeight,
@@ -171,7 +172,7 @@ export const RollResults = memo(function RollResults({
             type="button"
             onClick={handleClearResults}
             className="gap-4"
-            variant="destructive"
+            variant="destructive-outline"
           >
             <CircleBackslashIcon />
             Clear Results
@@ -182,7 +183,7 @@ export const RollResults = memo(function RollResults({
       {rollResults.length === 0 ? (
         <div className="p-16">
           <Card>
-            <CardContent className="p-16">
+            <CardContent className="!p-16">
               <div className="flex items-center gap-8 justify-center text-slate-500">
                 <CubeIcon className="size-24" />
                 Your roll results will show up here.
@@ -205,7 +206,7 @@ const ListItem = memo(function ({
 }) {
   return (
     <Card className="group">
-      <CardContent className="flex flex-col items-stretch gap-8 p-16 @md:flex-row">
+      <CardContent className="flex flex-col items-stretch gap-8 !p-16 @md:flex-row">
         <span className="grow">
           <Typewriter transition={transition}>{text}</Typewriter>
         </span>

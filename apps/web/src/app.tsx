@@ -1,5 +1,6 @@
 import { SessionProvider } from "@manifold/auth/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
 import { RouterProvider } from "react-router-dom";
 
@@ -14,6 +15,7 @@ export function App() {
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
         <QueryClientProvider client={queryClient}>
           <RouterProvider router={router} />
+          <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
       </trpc.Provider>
     </SessionProvider>

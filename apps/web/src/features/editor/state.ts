@@ -13,8 +13,6 @@ export type TableMetadata = {
   export: boolean;
 };
 
-export const tableError = atom<string | null>(null);
-
 export const currentTableHash = atom<string | null>(null);
 
 export const currentTableMetadata = atom<TableMetadata[]>([]);

@@ -1,5 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 
+import { AuthGuard } from "~features/auth/components/auth-guard";
+import { GuestGuard } from "~features/auth/components/guest-guard";
 import { RootError } from "~features/routing/root/error";
 import { RootLayout } from "~features/routing/root/layout";
 import { rootLoader } from "~features/routing/root/loader";
@@ -13,8 +15,44 @@ export const router = createBrowserRouter(
       errorElement: <RootError />,
       children: [
         {
-          index: true,
-          lazy: () => import("~features/dashboard/pages/root/page"),
+          element: <GuestGuard />,
+          children: [
+            {
+              index: true,
+              lazy: () => import("~features/landing/pages/root/page"),
+            },
+            {
+              path: "/login",
+              lazy: () => import("~features/auth/pages/login/page"),
+            },
+          ],
+        },
+        {
+          element: <AuthGuard />,
+          children: [
+            {
+              path: "dashboard",
+              lazy: () => import("~features/dashboard/pages/root/page"),
+            },
+            {
+              path: "table",
+              children: [
+                {
+                  path: "new",
+                  lazy: () => import("~features/table/pages/new/page"),
+                },
+                {
+                  path: ":id",
+                  children: [
+                    {
+                      path: "edit",
+                      lazy: () => import("~features/table/pages/edit/page"),
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
         },
         {
           path: "*",
