@@ -19,7 +19,7 @@ export function RootError() {
     <div className="flex flex-col grow items-center justify-center">
       <Card className="min-w-256 max-w-sm text-center">
         <CardHeader>
-          <GiDiceTwentyFacesOne className="text-emerald-100 size-40 mx-auto mb-8" />
+          <GiDiceTwentyFacesOne className="text-green-300 size-40 mx-auto mb-8" />
 
           <CardTitle>Unlucky!</CardTitle>
           <CardDescription>We rolled a natural 1…</CardDescription>

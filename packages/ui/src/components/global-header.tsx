@@ -18,9 +18,11 @@ function Root({ children }: Props) {
 
 function LogoMark() {
   return (
-    <div className="flex items-center gap-10 p-4">
-      <GiPlatform className="text-emerald-100 size-16 sm:size-20" />
-      <h1 className="font-bold text-sm sm:text-base">Manifold</h1>
+    <div className="flex items-center gap-10 p-4 group-hover:text-green-300">
+      <GiPlatform className="text-green-300 size-16 sm:size-20" />
+      <h1 className="font-bold text-sm sm:text-base transition-colors">
+        Manifold
+      </h1>
     </div>
   );
 }
@@ -44,7 +46,7 @@ function Authed({
         className="flex items-center gap-8"
       >
         <span>Safe travels…</span>
-        <GiSecretDoor className="text-emerald-100 size-18 sm:size-20" />
+        <GiSecretDoor className="text-green-300 size-18 sm:size-20" />
       </Button>
 
       <Avatar>

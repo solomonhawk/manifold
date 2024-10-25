@@ -15,7 +15,7 @@ export function NotFound() {
     <div className="flex flex-col grow items-center justify-center">
       <Card className="min-w-256 max-w-sm text-center">
         <CardHeader>
-          <GiSuspicious className="text-emerald-100 size-40 mx-auto mb-8" />
+          <GiSuspicious className="text-green-300 size-40 mx-auto mb-8" />
 
           <CardTitle>An empty room…</CardTitle>
           <CardDescription>…how suspicious!</CardDescription>

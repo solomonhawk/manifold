@@ -1,7 +1,9 @@
 import { signIn, signOut, useSession } from "@manifold/auth/client";
 import { CommandPalette } from "@manifold/ui/components/command-palette";
 import { GlobalHeader } from "@manifold/ui/components/global-header";
+import { Badge } from "@manifold/ui/components/ui/badge";
 import { Button } from "@manifold/ui/components/ui/button";
+import { Separator } from "@manifold/ui/components/ui/separator";
 import { Skeleton } from "@manifold/ui/components/ui/skeleton";
 import { useCommandPalette } from "@manifold/ui/hooks/use-command-palette";
 import { Link, Outlet, useNavigate } from "react-router-dom";
@@ -17,9 +19,18 @@ export function RootLayout() {
     <div className="flex flex-col h-full bg-architect">
       <GlobalHeader.Root>
         <div className="flex items-center gap-12">
-          <Link to="/">
+          <Link to="/" className="flex items-center gap-4 group">
             <GlobalHeader.LogoMark />
+
+            <Badge size="sm" variant="secondary">
+              Alpha
+            </Badge>
           </Link>
+
+          <Separator
+            orientation="vertical"
+            className="bg-foreground/10 self-stretch h-auto"
+          />
 
           <Button
             asChild
