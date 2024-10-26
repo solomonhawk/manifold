@@ -98,7 +98,11 @@ export function TableUpdateForm({
               disabled={form.formState.isSubmitting || isDisabled}
               className="space-y-12 sm:space-y-16"
             >
-              <Header title={table.title}>
+              <Header
+                id={table.id}
+                title={table.title}
+                updatedAt={table.updatedAt}
+              >
                 <FormSubmitButton>Save Changes</FormSubmitButton>
               </Header>
 

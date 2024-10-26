@@ -6,10 +6,12 @@ import { Card, CardContent } from "@manifold/ui/components/ui/card";
 import { Checkbox } from "@manifold/ui/components/ui/checkbox";
 import { cn } from "@manifold/ui/lib/utils";
 import { CircleBackslashIcon, CubeIcon } from "@radix-ui/react-icons";
-import { LayoutGroup, motion, type Transition } from "framer-motion";
+import { LayoutGroup, motion } from "framer-motion";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { memo, type RefObject, useCallback, useState } from "react";
 import { GoX } from "react-icons/go";
+
+import { transitionAlpha } from "~utils/animation";
 
 import {
   currentTableHash,
@@ -20,13 +22,6 @@ import {
   visibleTableMetadata,
 } from "./state";
 import { workerInstance } from "./worker";
-
-const transition = {
-  type: "spring",
-  damping: 40,
-  stiffness: 500,
-  mass: 0.5,
-} satisfies Transition;
 
 export const AvailableTables = memo(function AvailableTables({
   inputRef,
@@ -128,7 +123,6 @@ export const RollResults = memo(function RollResults({
   );
 
   const updateListOverflowing = useCallback(() => {
-    console.log(listRef.current);
     if (listRef.current) {
       setListOverflowing(
         listRef.current.scrollHeight > listRef.current.clientHeight,
@@ -140,13 +134,13 @@ export const RollResults = memo(function RollResults({
     <LayoutGroup>
       <AnimatedList
         listRef={listRef}
+        data={rollResults}
+        transition={transitionAlpha}
         className={cn("flex flex-col min-h-0 px-16 gap-8 overflow-auto", {
           "fade-bottom-90 pb-[5%]": listOverflowing,
         })}
         onLayoutAnimationStart={updateListOverflowing}
         onLayoutAnimationComplete={updateListOverflowing}
-        data={rollResults}
-        transition={transition}
         computeKey={(result) => `${result.timestamp}-${result.text}`}
         renderRow={(result) => (
           <ListItem
@@ -166,7 +160,7 @@ export const RollResults = memo(function RollResults({
         <motion.div
           className="flex justify-end p-16"
           layout
-          transition={transition}
+          transition={transitionAlpha}
         >
           <Button
             type="button"
@@ -208,7 +202,7 @@ const ListItem = memo(function ({
     <Card className="group">
       <CardContent className="flex flex-col items-stretch gap-8 !p-16 @md:flex-row">
         <span className="grow">
-          <Typewriter transition={transition}>{text}</Typewriter>
+          <Typewriter transition={transitionAlpha}>{text}</Typewriter>
         </span>
 
         <div className="flex grow w-full flex-row items-end justify-between @md:flex-col @md:w-auto gap-8">

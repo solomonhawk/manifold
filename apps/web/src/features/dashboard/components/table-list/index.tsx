@@ -7,8 +7,10 @@ import {
 } from "@manifold/ui/components/ui/card";
 import { cn } from "@manifold/ui/lib/utils";
 import { formatRelative } from "date-fns";
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
+import { transitionBeta } from "~utils/animation";
 import { trpc } from "~utils/trpc";
 
 const NOW = new Date();
@@ -43,22 +45,33 @@ export function TableList() {
             <div key={table.id} className="border rounded-sm">
               <div className="w-full aspect-square">
                 <Button
-                  className="group w-full h-full flex flex-col items-center justify-center p-16 gap-6 !no-underline"
-                  variant="link"
+                  className="group w-full h-full flex flex-col items-center justify-center p-16 gap-6"
+                  variant="secondary"
                   asChild
                 >
                   <Link
                     to={query.isRefetching ? "#" : `/table/${table.id}/edit`}
                     state={{ table }}
                   >
-                    <h3 className="text-lg sm:text-xl group-hover:underline decoration-from-font underline-offset-2 text-center whitespace-normal">
-                      {table.title}
-                    </h3>
+                    <div className="translate-y-14 group-hover:translate-y-0 transition-transform z-20">
+                      <motion.h2
+                        layoutId={`table-title-${table.id}`}
+                        className="text-lg sm:text-xl text-center whitespace-normal !leading-tight"
+                        transition={transitionBeta}
+                      >
+                        {table.title}
+                      </motion.h2>
+                    </div>
 
-                    <span className="text-gray-500 text-sm text-balance text-center">
-                      Last edited{" "}
-                      {formatRelative(new Date(table.updatedAt), NOW)}
-                    </span>
+                    <div className="-translate-y-12 scale-95 opacity-0 group-hover:translate-y-0 group-hover:scale-100 group-hover:opacity-100 transition-all z-10">
+                      <motion.span
+                        layoutId={`table-updated-at-${table.id}`}
+                        className="text-gray-500 text-sm text-balance text-center"
+                        transition={transitionBeta}
+                      >
+                        {formatRelative(new Date(table.updatedAt), NOW)}
+                      </motion.span>
+                    </div>
                   </Link>
                 </Button>
               </div>
