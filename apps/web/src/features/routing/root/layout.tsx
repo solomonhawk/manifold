@@ -32,14 +32,16 @@ export function RootLayout() {
             className="bg-foreground/10 self-stretch h-auto"
           />
 
-          <Button
-            asChild
-            size="sm"
-            variant="outline"
-            className="bg-transparent"
-          >
-            <Link to="/table/new">Create Table</Link>
-          </Button>
+          {auth.status === "authenticated" && (
+            <Button
+              asChild
+              size="sm"
+              variant="outline"
+              className="bg-transparent"
+            >
+              <Link to="/table/new">Create Table</Link>
+            </Button>
+          )}
         </div>
 
         {match(auth)
