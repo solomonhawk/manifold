@@ -64,6 +64,7 @@ export function TableList() {
                   >
                     <div className="translate-y-14 group-hover:translate-y-0 transition-transform z-20">
                       <motion.h2
+                        layout="position"
                         layoutId={`table-title-${table.id}`}
                         className="text-lg sm:text-xl text-center whitespace-normal !leading-tight"
                         transition={transitionBeta}

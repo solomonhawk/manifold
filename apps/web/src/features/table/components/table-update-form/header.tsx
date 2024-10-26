@@ -20,6 +20,7 @@ export function Header({
     <header className="flex justify-between items-center">
       <div className="flex flex-col gap-2 justify-center">
         <motion.h2
+          layout="position"
           layoutId={`table-title-${id}`}
           className="text-lg font-bold leading-tight"
           transition={transitionBeta}
