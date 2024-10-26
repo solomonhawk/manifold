@@ -10,6 +10,7 @@ import {
   FormSubmitButton,
 } from "@manifold/ui/components/ui/form";
 import { Input } from "@manifold/ui/components/ui/input";
+import { toast } from "@manifold/ui/components/ui/toaster";
 import { useZodForm } from "@manifold/ui/hooks/use-zod-form";
 import { tableCreateInput, type z } from "@manifold/validators";
 import { type SubmitHandler } from "react-hook-form";
@@ -35,6 +36,12 @@ export function TableCreateForm({
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     const table = await createTableMutation.mutateAsync(data);
+
+    toast.success("Table created", {
+      duration: 3000,
+      dismissible: true,
+    });
+
     onCreate(table);
   };
 
@@ -65,7 +72,7 @@ export function TableCreateForm({
             )}
           />
 
-          <FormSubmitButton className="!mt-20 w-full">
+          <FormSubmitButton className="!mt-20 w-full" savingText="Creating…">
             Create Table
           </FormSubmitButton>
         </fieldset>

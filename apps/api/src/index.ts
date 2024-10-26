@@ -7,7 +7,7 @@ import { env } from "hono/adapter";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 
-import { setAuthUser } from "#handlers/auth.js";
+import { setAuthUser } from "#handlers/auth.ts";
 import { errorHandler } from "#handlers/error.ts";
 import { trpc } from "#handlers/trpc.ts";
 import type { Env } from "#types.ts";

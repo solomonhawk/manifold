@@ -1,7 +1,7 @@
 import { Slot } from "@radix-ui/react-slot";
 import React from "react";
 
-import { cn } from "#lib/utils.js";
+import { cn } from "#lib/utils.ts";
 
 export interface FlexColProps extends React.HTMLAttributes<HTMLDivElement> {
   asChild?: boolean;

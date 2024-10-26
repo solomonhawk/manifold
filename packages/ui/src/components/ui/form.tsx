@@ -167,31 +167,60 @@ const FormMessage = React.forwardRef<
 });
 FormMessage.displayName = "FormMessage";
 
+const FormSubmitStatus = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ ...props }, ref) => {
+  const { formState } = useFormContext();
+
+  const isDirty = formState.isDirty;
+  const message = isDirty
+    ? "You have unsaved changes"
+    : "Everything is up to date";
+
+  return (
+    <div ref={ref} {...props}>
+      {message}
+    </div>
+  );
+});
+
+FormSubmitStatus.displayName = "FormSubmitStatus";
+
 const FormSubmitButton = React.forwardRef<
   HTMLButtonElement,
   React.HTMLAttributes<HTMLButtonElement> & {
     isPending?: boolean;
     disabled?: boolean;
+    savingText?: string;
   }
->(({ children, disabled = false, isPending = false, ...props }, ref) => {
-  const { formState } = useFormContext();
+>(
+  (
+    { children, savingText, disabled = false, isPending = false, ...props },
+    ref,
+  ) => {
+    const { formState } = useFormContext();
 
-  const showPendingState = isPending || formState.isSubmitting;
-  const isDisabled = disabled || showPendingState;
+    const isDirty = formState.isDirty;
+    const showPendingState = isPending || formState.isSubmitting;
+    const isDisabled = disabled || showPendingState || !isDirty;
 
-  return (
-    <Button ref={ref} {...props} disabled={isDisabled} type="submit">
-      {showPendingState ? (
-        <span className="flex gap-6 items-center">
-          Saving
-          <RiLoader3Line className="animate-spin -mr-4 size-16" />
-        </span>
-      ) : (
-        <>{children || "Save"}</>
-      )}
-    </Button>
-  );
-});
+    const defaultChildren = children || "Save";
+
+    return (
+      <Button ref={ref} {...props} disabled={isDisabled} type="submit">
+        {showPendingState ? (
+          <span className="flex gap-6 items-center">
+            {savingText || defaultChildren}
+            <RiLoader3Line className="animate-spin -mr-4 size-16" />
+          </span>
+        ) : (
+          <>{defaultChildren}</>
+        )}
+      </Button>
+    );
+  },
+);
 
 FormSubmitButton.displayName = "FormSubmitButton";
 
@@ -204,5 +233,6 @@ export {
   FormLabel,
   FormMessage,
   FormSubmitButton,
+  FormSubmitStatus,
   useFormField,
 };
