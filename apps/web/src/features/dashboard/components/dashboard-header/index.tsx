@@ -42,6 +42,4 @@ export function DashboardHeader({ className }: { className?: string }) {
       </CardContent>
     </Card>
   );
-
-  // <h2 className="mb-16">{greeting}</h2>;
 }
