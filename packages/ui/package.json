@@ -34,6 +34,7 @@
   "dependencies": {
     "@floating-ui/react": "^0.26.25",
     "@hookform/resolvers": "^3.9.0",
+    "@manifold/types": "*",
     "@manifold/validators": "*",
     "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-checkbox": "^1.1.2",

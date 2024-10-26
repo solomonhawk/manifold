@@ -1,3 +1,4 @@
+import "@manifold/types";
 import "@manifold/ui/globals.css";
 
 import { StrictMode } from "react";

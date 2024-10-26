@@ -1,0 +1,15 @@
+{
+  "name": "@manifold/types",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": "./src/index.d.ts",
+    "./react": "./src/react.d.ts",
+    "./auth": "./src/auth.d.ts"
+  },
+  "dependencies": {
+    "@auth/core": "^0.37.2"
+  }
+}
