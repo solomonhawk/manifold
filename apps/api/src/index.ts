@@ -1,12 +1,10 @@
-import "dotenv/config";
-
 import { serve } from "@hono/node-server";
 import { auth, authHandler } from "@manifold/auth";
 import { type Context, Hono } from "hono";
-import { env } from "hono/adapter";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 
+import { getEnv } from "#env.ts";
 import { setAuthUser } from "#handlers/auth.ts";
 import { errorHandler } from "#handlers/error.ts";
 import { trpc } from "#handlers/trpc.ts";
@@ -26,9 +24,9 @@ app.use(
   "*",
   auth((c: Context<Env>) => {
     return {
-      secret: env(c).AUTH_SECRET,
-      clientId: env(c).GOOGLE_CLIENT_ID,
-      clientSecret: env(c).GOOGLE_CLIENT_SECRET,
+      secret: getEnv(c).AUTH_SECRET,
+      clientId: getEnv(c).GOOGLE_CLIENT_ID,
+      clientSecret: getEnv(c).GOOGLE_CLIENT_SECRET,
     };
   }),
 );
@@ -64,10 +62,11 @@ app.use("/api/trpc/*", trpc());
  */
 app.onError(errorHandler());
 
-const port = Number(process.env.PORT!);
-console.log(`Server is running on port ${port}`);
+const env = getEnv();
+
+console.log(`Server is running on port ${env.PORT}`);
 
 serve({
   fetch: app.fetch,
-  port,
+  port: env.PORT,
 });
