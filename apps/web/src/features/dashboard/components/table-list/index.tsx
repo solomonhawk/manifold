@@ -40,6 +40,15 @@ export function TableList() {
           },
         )}
       >
+        {data.length === 0 && (
+          <div className="col-span-full text-center text-gray-500 flex gap-16 items-center">
+            You haven't created any tables yet.
+            <Button asChild>
+              <Link to="/table/new">Create a table</Link>
+            </Button>
+          </div>
+        )}
+
         {data.map((table) => {
           return (
             <div key={table.id} className="border rounded-sm">
