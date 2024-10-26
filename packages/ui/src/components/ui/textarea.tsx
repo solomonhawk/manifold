@@ -18,13 +18,15 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     React.useEffect(() => {
       const input = inputRef.current;
 
-      if (input && autoSize) {
-        autosize(input);
-
-        return () => {
-          autosize.destroy(input);
-        };
+      if (!(input && autoSize)) {
+        return;
       }
+
+      autosize(input);
+
+      return () => {
+        autosize.destroy(input);
+      };
     }, [autoSize]);
 
     return (
