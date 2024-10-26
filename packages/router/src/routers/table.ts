@@ -54,4 +54,15 @@ export const tableRouter = t.router({
       })
       .execute();
   }),
+
+  favorites: authedProcedure.query(({ ctx }) => {
+    return db.query.table
+      .findMany({
+        where: and(
+          eq(schema.table.userId, ctx.user.id),
+          eq(schema.table.favorited, true),
+        ),
+      })
+      .execute();
+  }),
 });

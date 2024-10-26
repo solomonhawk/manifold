@@ -22,6 +22,20 @@
       "when": 1729673718836,
       "tag": "0002_pretty_captain_britain",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1729973449568,
+      "tag": "0003_ancient_stingray",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1729974188709,
+      "tag": "0004_harsh_surge",
+      "breakpoints": true
     }
   ]
 }

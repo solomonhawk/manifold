@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 
 import { AuthGuard } from "~features/auth/components/auth-guard";
 import { GuestGuard } from "~features/auth/components/guest-guard";
@@ -47,6 +47,10 @@ export const router = createBrowserRouter(
                     {
                       path: "edit",
                       lazy: () => import("~features/table/pages/edit/page"),
+                    },
+                    {
+                      index: true,
+                      element: <Navigate to="edit" replace />,
                     },
                   ],
                 },

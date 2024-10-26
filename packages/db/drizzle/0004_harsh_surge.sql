@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS "tables_user_id_favorited_idx" ON "table" USING btree ("user_id","favorited" DESC NULLS LAST);

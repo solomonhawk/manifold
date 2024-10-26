@@ -1,4 +1,4 @@
-import { GiHobbitDoor, GiPlatform, GiSecretDoor } from "react-icons/gi";
+import { GiPlatform, GiSecretDoor } from "react-icons/gi";
 
 import { Avatar, AvatarFallback, AvatarImage } from "#components/ui/avatar.tsx";
 import { Button } from "#components/ui/button.tsx";
@@ -59,17 +59,8 @@ function Authed({
 
 function Unauthed({ onSignIn }: { onSignIn: () => void }) {
   return (
-    <Button
-      type="button"
-      onClick={onSignIn}
-      size="sm"
-      className="flex items-center gap-8"
-    >
-      <span>
-        Say <em>friend</em>…
-      </span>
-
-      <GiHobbitDoor className="size-12 sm:size-16" />
+    <Button type="button" onClick={onSignIn} size="sm">
+      Sign In
     </Button>
   );
 }

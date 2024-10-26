@@ -17,6 +17,7 @@ import { useCallback, useEffect } from "react";
 import { type SubmitHandler } from "react-hook-form";
 
 import { Editor } from "~features/editor";
+import { ToggleFavoriteButton } from "~features/table/components/table-update-form/toggle-favorite-button";
 import { trpc } from "~utils/trpc";
 
 import { Header } from "./header";
@@ -127,6 +128,10 @@ export function TableUpdateForm({
                 <div className="flex items-center gap-8">
                   <FormSubmitStatus className="text-sm text-muted-foreground" />
                   <FormSubmitButton>Save Changes</FormSubmitButton>
+                  <ToggleFavoriteButton
+                    tableId={table.id}
+                    isFavorited={table.favorited ?? false}
+                  />
                 </div>
               </Header>
 

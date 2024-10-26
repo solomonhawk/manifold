@@ -219,7 +219,7 @@ const ListItem = memo(function ({
           <Button
             type="button"
             variant="ghost"
-            size="icon"
+            size="icon-sm"
             className="-mr-6 -mb-6 @md:m-0 opacity-0 group-hover:opacity-100 transition-opacity"
             onClick={onRemove}
           >

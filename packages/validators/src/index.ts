@@ -10,6 +10,7 @@ export const tableUpdateInput = z.object({
   id: z.string(),
   title: z.string().min(1).optional(),
   definition: z.string().optional(),
+  favorited: z.boolean().optional(),
 }) satisfies ZodType<Partial<TableInsert>>;
 
 export * from "zod";
