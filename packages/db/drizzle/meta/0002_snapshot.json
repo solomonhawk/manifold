@@ -295,7 +295,7 @@
       },
       "checkConstraints": {}
     },
-    "public.verificationToken": {
+    "public.verification_token": {
       "name": "verification_token",
       "schema": "",
       "columns": {

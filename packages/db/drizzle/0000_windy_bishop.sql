@@ -19,8 +19,8 @@ CREATE TABLE IF NOT EXISTS "authenticator" (
 	"provider_account_id" text NOT NULL,
 	"credential_public_key" text NOT NULL,
 	"counter" integer NOT NULL,
-	"credentialDeviceType" text NOT NULL,
-	"credentialBackedUp" boolean NOT NULL,
+	"credential_device_type" text NOT NULL,
+	"credential_backed_up" boolean NOT NULL,
 	"transports" text,
 	CONSTRAINT "authenticator_user_id_credential_id_pk" PRIMARY KEY("user_id","credential_id"),
 	CONSTRAINT "authenticator_credential_id_unique" UNIQUE("credential_id")
@@ -41,11 +41,11 @@ CREATE TABLE IF NOT EXISTS "user" (
 	CONSTRAINT "user_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "verificationToken" (
+CREATE TABLE IF NOT EXISTS "verification_token" (
 	"identifier" text NOT NULL,
 	"token" text NOT NULL,
 	"expires" timestamp NOT NULL,
-	CONSTRAINT "verificationToken_identifier_token_pk" PRIMARY KEY("identifier","token")
+	CONSTRAINT "verification_token_identifier_token_pk" PRIMARY KEY("identifier","token")
 );
 --> statement-breakpoint
 DO $$ BEGIN

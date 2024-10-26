@@ -123,7 +123,7 @@
           "notNull": true
         },
         "userId": {
-          "name": "userId",
+          "name": "user_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -295,7 +295,7 @@
       },
       "checkConstraints": {}
     },
-    "public.verificationToken": {
+    "public.verification_token": {
       "name": "verification_token",
       "schema": "",
       "columns": {
