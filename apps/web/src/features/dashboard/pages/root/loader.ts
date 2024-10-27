@@ -6,7 +6,9 @@ export function loaderBuilder(trpcUtils: TrpcUtils) {
   return async (_args: LoaderFunctionArgs) => {
     await Promise.all([
       trpcUtils.table.list.prefetch(),
-      trpcUtils.table.favorites.prefetch(),
+      trpcUtils.table.favorites.getData()
+        ? Promise.resolve()
+        : trpcUtils.table.favorites.prefetch(),
     ]);
 
     return null;

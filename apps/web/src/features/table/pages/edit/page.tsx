@@ -14,14 +14,12 @@ export function TableEdit() {
     throw new RoutingError("No ID provided");
   }
 
-  const query = trpc.table.get.useQuery(id, {
+  const tableQuery = trpc.table.get.useQuery(id, {
     placeholderData: location.state?.table,
   });
 
-  const trpcUtils = trpc.useUtils();
-
-  if (query.isLoading) {
-    // @TODO: replace with skeleton
+  // @TODO: replace with skeleton?
+  if (tableQuery.isLoading) {
     return (
       <FlexCol className="items-center justify-center">
         <LoadingIndicator />
@@ -29,24 +27,19 @@ export function TableEdit() {
     );
   }
 
-  if (query.isSuccess && query.data) {
-    const table = query.data;
-
-    return (
-      <FlexCol className="p-12 sm:p-16">
-        <TableUpdateForm
-          table={table}
-          isDisabled={query.isPlaceholderData}
-          onUpdate={() =>
-            Promise.all([
-              trpcUtils.table.list.refetch(),
-              trpcUtils.table.get.refetch(id),
-            ])
-          }
-        />
-      </FlexCol>
-    );
+  // @TODO: error state
+  if (tableQuery.isError) {
+    return <div>Error: {tableQuery.error?.message}</div>;
   }
 
-  return <div>Error: {query.error?.message}</div>;
+  const table = tableQuery.data;
+
+  return (
+    <FlexCol className="p-12 sm:p-16">
+      <TableUpdateForm
+        table={table}
+        isDisabled={tableQuery.isPlaceholderData}
+      />
+    </FlexCol>
+  );
 }

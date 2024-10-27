@@ -16,11 +16,16 @@ import { trpc } from "~utils/trpc";
 const NOW = new Date();
 
 export function TableList() {
-  const [data, query] = trpc.table.list.useSuspenseQuery();
+  const listQuery = trpc.table.list.useQuery();
 
   // @TODO: error state
-  if (query.isError) {
-    console.error(query.error);
+  if (listQuery.isError) {
+    console.error(listQuery.error);
+    return null;
+  }
+
+  // @TODO: loading state
+  if (listQuery.isLoading) {
     return null;
   }
 
@@ -35,11 +40,11 @@ export function TableList() {
         className={cn(
           "grid grid-cols-2 gap-12 transition-opacity sm:grid-cols-3 sm:gap-16 md:grid-cols-[repeat(auto-fill,minmax(150px,200px))]",
           {
-            "opacity-50": query.isRefetching,
+            "opacity-50": listQuery.isRefetching,
           },
         )}
       >
-        {data.length === 0 && (
+        {listQuery.data.length === 0 && (
           <div className="col-span-full flex items-center gap-16 text-center text-gray-500">
             You haven't created any tables yet.
             <Button asChild>
@@ -48,7 +53,7 @@ export function TableList() {
           </div>
         )}
 
-        {data.map((table) => {
+        {listQuery.data.map((table) => {
           return (
             <div key={table.id} className="rounded-sm border">
               <div className="aspect-square w-full">
@@ -58,7 +63,9 @@ export function TableList() {
                   asChild
                 >
                   <Link
-                    to={query.isRefetching ? "#" : `/table/${table.id}/edit`}
+                    to={
+                      listQuery.isRefetching ? "#" : `/table/${table.id}/edit`
+                    }
                     state={{ table }}
                   >
                     <div className="z-20 translate-y-14 transition-transform group-hover:translate-y-0">

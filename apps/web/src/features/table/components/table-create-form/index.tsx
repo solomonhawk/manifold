@@ -32,22 +32,36 @@ export function TableCreateForm({
     },
   });
 
-  const createTableMutation = trpc.table.create.useMutation();
+  const createTableMutation = trpc.table.create.useMutation({
+    onSuccess: () => {
+      toast.success("Table created", {
+        duration: 3000,
+        dismissible: true,
+      });
+    },
+    onError: (e) => {
+      toast.error("Failed to create table", {
+        description: e.message,
+        dismissible: true,
+        closeButton: true,
+        important: true,
+        duration: Infinity,
+      });
+    },
+  });
 
-  const onSubmit: SubmitHandler<FormData> = async (data) => {
-    const table = await createTableMutation.mutateAsync(data);
-
-    toast.success("Table created", {
-      duration: 3000,
-      dismissible: true,
-    });
-
-    onCreate(table);
+  const handleSubmit: SubmitHandler<FormData> = async (data) => {
+    try {
+      const table = await createTableMutation.mutateAsync(data);
+      onCreate(table);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(handleSubmit)}>
         <fieldset disabled={form.formState.isSubmitting} className="space-y-8">
           <FormField
             control={form.control}

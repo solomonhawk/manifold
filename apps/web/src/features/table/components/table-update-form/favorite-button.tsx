@@ -1,13 +1,12 @@
 import { LoadingIndicator } from "@manifold/ui/components/loading-indicator";
 import { Button } from "@manifold/ui/components/ui/button";
 import { toast } from "@manifold/ui/components/ui/toaster";
-import { isError } from "@tanstack/react-query";
 import { type MouseEvent, useDeferredValue } from "react";
 import { GoHeart, GoHeartFill } from "react-icons/go";
 
 import { trpc } from "~utils/trpc";
 
-export function ToggleFavoriteButton({
+export function FavoriteButton({
   tableId,
   isFavorited,
 }: {
@@ -16,9 +15,28 @@ export function ToggleFavoriteButton({
 }) {
   const trpcUtils = trpc.useUtils();
   const mutation = trpc.table.update.useMutation({
-    onSuccess: async () => {
+    onSuccess: async (data) => {
+      toast.success(data.favorited ? "Added favorite" : "Removed favorite", {
+        duration: 3000,
+        dismissible: true,
+      });
+
+      trpcUtils.table.get.setData(tableId, data);
+
+      // @TODO: this causes the dashboard loader to prefetch the table data again
+      // which means we no longer see the animation of the item entering/leaving
       trpcUtils.table.favorites.invalidate();
-      await trpcUtils.table.get.refetch(tableId);
+
+      trpcUtils.table.get.invalidate(tableId, { refetchType: "inactive" });
+    },
+    onError: (e) => {
+      toast.error("Failed to update favorite status", {
+        description: e.message,
+        dismissible: true,
+        closeButton: true,
+        important: true,
+        duration: Infinity,
+      });
     },
   });
 
@@ -28,25 +46,9 @@ export function ToggleFavoriteButton({
     e.preventDefault();
 
     try {
-      await mutation.mutateAsync({
-        id: tableId,
-        favorited: !isFavorited,
-      });
-
-      toast.success(isFavorited ? "Removed favorite" : "Added favorite", {
-        duration: 3000,
-        dismissible: true,
-      });
+      await mutation.mutateAsync({ id: tableId, favorited: !isFavorited });
     } catch (e) {
       console.error(e);
-
-      toast.error("Failed to update favorite status", {
-        description: isError(e) ? e.message : "An unknown error occurred",
-        dismissible: true,
-        closeButton: true,
-        important: true,
-        duration: Infinity,
-      });
     }
   }
 

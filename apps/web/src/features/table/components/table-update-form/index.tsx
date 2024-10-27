@@ -12,12 +12,12 @@ import {
 import { toast } from "@manifold/ui/components/ui/toaster";
 import { useZodForm } from "@manifold/ui/hooks/use-zod-form";
 import { tableUpdateInput, z } from "@manifold/validators";
-import { isError } from "@tanstack/react-query";
 import { useCallback, useEffect } from "react";
 import { type SubmitHandler } from "react-hook-form";
 
 import { Editor } from "~features/editor";
-import { ToggleFavoriteButton } from "~features/table/components/table-update-form/toggle-favorite-button";
+import { DeleteButton } from "~features/table/components/table-update-form/delete-button";
+import { FavoriteButton } from "~features/table/components/table-update-form/favorite-button";
 import { trpc } from "~utils/trpc";
 
 import { Header } from "./header";
@@ -26,13 +26,13 @@ type FormData = z.infer<typeof tableUpdateInput>;
 
 export function TableUpdateForm({
   table,
-  onUpdate,
   isDisabled = false,
 }: {
   table: TableModel;
-  onUpdate?: (id: string) => void | Promise<unknown>;
   isDisabled?: boolean;
 }) {
+  const trpcUtils = trpc.useUtils();
+
   const form = useZodForm({
     mode: "onChange",
     reValidateMode: "onChange",
@@ -64,7 +64,39 @@ export function TableUpdateForm({
     }),
   });
 
-  const updateTableMutation = trpc.table.update.useMutation();
+  const updateTableMutation = trpc.table.update.useMutation({
+    onSuccess: async (data) => {
+      toast.success("Table updated", {
+        duration: 3000,
+        dismissible: true,
+      });
+
+      // ensure form touched/dirty state is accurate
+      form.reset({
+        id: data.id,
+        definition: data.definition,
+      });
+
+      trpcUtils.table.list.setData(undefined, (list) => {
+        return list?.map((t) => (t.id === data.id ? data : t)) ?? [data];
+      });
+
+      // invalidate list to ensure order is accurate (based on `updatedAt`)
+      trpcUtils.table.list.invalidate(undefined, { type: "inactive" });
+
+      // invalidate the get query, but don't bother refetching until the next time it becomes active
+      trpcUtils.table.get.invalidate(table.id, { refetchType: "inactive" });
+    },
+    onError: (e) => {
+      toast.error("Table failed to save", {
+        description: e.message,
+        dismissible: true,
+        closeButton: true,
+        important: true,
+        duration: Infinity,
+      });
+    },
+  });
 
   /**
    * Reset the form when the table default values change.
@@ -78,25 +110,10 @@ export function TableUpdateForm({
 
   const handleSubmit: SubmitHandler<FormData> = async (data) => {
     try {
-      const table = await updateTableMutation.mutateAsync(data);
-
-      toast.success("Table updated", {
-        duration: 3000,
-        dismissible: true,
-      });
-
-      await onUpdate?.(table.id);
+      await updateTableMutation.mutateAsync(data);
     } catch (e) {
       // @TODO: handle server errors
       console.error(e);
-
-      toast.error("Table failed to save", {
-        description: isError(e) ? e.message : "An unknown error occurred",
-        dismissible: true,
-        closeButton: true,
-        important: true,
-        duration: Infinity,
-      });
     }
   };
 
@@ -126,12 +143,13 @@ export function TableUpdateForm({
                 updatedAt={table.updatedAt}
               >
                 <div className="flex items-center gap-8">
-                  <FormSubmitStatus className="text-sm text-muted-foreground" />
+                  <FormSubmitStatus className="text-muted-foreground text-sm" />
                   <FormSubmitButton>Save Changes</FormSubmitButton>
-                  <ToggleFavoriteButton
+                  <FavoriteButton
                     tableId={table.id}
                     isFavorited={table.favorited ?? false}
                   />
+                  <DeleteButton title={table.title} tableId={table.id} />
                 </div>
               </Header>
 
