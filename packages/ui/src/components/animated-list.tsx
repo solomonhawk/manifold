@@ -1,28 +1,33 @@
-import { AnimatePresence, motion, type Transition } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  type MotionProps,
+  type Transition,
+} from "framer-motion";
+import { forwardRef } from "react";
 
-type Props<T> = {
-  listRef: React.RefObject<HTMLUListElement>;
+type Props = {
+  className: string;
+  transition?: Transition;
+  listRef?: React.RefObject<HTMLUListElement>;
   onScroll?: (e: React.UIEvent<HTMLUListElement>) => void;
   onLayoutAnimationStart?: () => void;
   onLayoutAnimationComplete?: () => void;
-  className: string;
-  data: T[];
-  transition: Transition;
-  computeKey: (item: T) => string;
-  renderRow: (item: T) => React.ReactNode;
+  children: React.ReactNode;
+  // framer-motion doesn't export this union type sadly
+  mode?: "sync" | "popLayout" | "wait";
 };
 
-export function AnimatedList<T>({
+function AnimatedList({
+  className,
+  transition,
   listRef,
   onScroll,
   onLayoutAnimationStart,
   onLayoutAnimationComplete,
-  className,
-  data,
-  transition,
-  computeKey,
-  renderRow,
-}: Props<T>) {
+  children,
+  mode = "popLayout",
+}: Props) {
   return (
     <motion.ul
       layout
@@ -33,21 +38,28 @@ export function AnimatedList<T>({
       onLayoutAnimationStart={onLayoutAnimationStart}
       onLayoutAnimationComplete={onLayoutAnimationComplete}
     >
-      <AnimatePresence initial={false} mode="popLayout">
-        {data.map((item) => {
-          return (
-            <motion.li
-              key={computeKey(item)}
-              layout
-              initial={{ opacity: 0, y: -100 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={transition}
-            >
-              {renderRow(item)}
-            </motion.li>
-          );
-        })}
+      <AnimatePresence initial={false} mode={mode}>
+        {children}
       </AnimatePresence>
     </motion.ul>
   );
 }
+
+const AnimatedListItem = forwardRef<HTMLLIElement, MotionProps>(
+  ({ children, ...props }, ref) => {
+    return (
+      <motion.li
+        ref={ref}
+        layout
+        initial={{ opacity: 0, y: -100 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0 }}
+        {...props}
+      >
+        {children}
+      </motion.li>
+    );
+  },
+);
+
+export { AnimatedList, AnimatedListItem };

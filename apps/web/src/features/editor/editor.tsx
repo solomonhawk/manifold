@@ -8,7 +8,7 @@ import { type MutableRefObject, useCallback, useRef } from "react";
 import type { RefCallBack } from "react-hook-form";
 
 import { InputPanel } from "./input-panel";
-import { AvailableTables, RollResults } from "./results-panel";
+import { ResultsPanel } from "./results-panel";
 
 type Props = {
   name: string;
@@ -38,11 +38,11 @@ export function Editor({
 
   return (
     <FlexCol asChild>
-      <ResizablePanelGroup direction="horizontal" className="border">
+      <ResizablePanelGroup direction="horizontal" className="rounded-md border">
         <ResizablePanel
           minSize={20}
           defaultSize={50}
-          className="flex flex-col flex-1 lg:flex-initial"
+          className="flex flex-1 lg:flex-initial"
         >
           <InputPanel
             inputRef={inputRef as MutableRefObject<HTMLTextAreaElement>}
@@ -58,11 +58,12 @@ export function Editor({
 
         <ResizableHandle withHandle />
 
-        <ResizablePanel minSize={50} className="flex flex-col flex-1">
-          <FlexCol className="@container bg-background/60">
-            <AvailableTables inputRef={inputRef} onRoll={handleRoll} />
-            <RollResults listRef={listRef} />
-          </FlexCol>
+        <ResizablePanel minSize={50} className="flex flex-1">
+          <ResultsPanel
+            inputRef={inputRef}
+            listRef={listRef}
+            onRoll={handleRoll}
+          />
         </ResizablePanel>
       </ResizablePanelGroup>
     </FlexCol>
