@@ -8,10 +8,10 @@ import { trpc } from "~utils/trpc";
 
 export function FavoriteButton({
   tableId,
-  isFavorited,
+  isFavorite,
 }: {
   tableId: string;
-  isFavorited: boolean;
+  isFavorite: boolean;
 }) {
   const trpcUtils = trpc.useUtils();
   const mutation = trpc.table.update.useMutation({
@@ -39,7 +39,7 @@ export function FavoriteButton({
 
   function handleClick(e: MouseEvent) {
     e.preventDefault();
-    mutation.mutate({ id: tableId, favorited: !isFavorited });
+    mutation.mutate({ id: tableId, favorited: !isFavorite });
   }
 
   /**
@@ -55,7 +55,7 @@ export function FavoriteButton({
     >
       {isPending ? (
         <LoadingIndicator size="sm" />
-      ) : isFavorited ? (
+      ) : isFavorite ? (
         <GoHeartFill />
       ) : (
         <GoHeart />

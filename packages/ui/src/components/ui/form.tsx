@@ -136,7 +136,7 @@ const FormDescription = React.forwardRef<
     <p
       ref={ref}
       id={formDescriptionId}
-      className={cn("text-[0.8rem] text-muted-foreground", className)}
+      className={cn("text-muted-foreground text-[0.8rem]", className)}
       {...props}
     />
   );
@@ -158,7 +158,7 @@ const FormMessage = React.forwardRef<
     <p
       ref={ref}
       id={formMessageId}
-      className={cn("text-[0.8rem] font-medium text-destructive", className)}
+      className={cn("text-destructive text-[0.8rem] font-medium", className)}
       {...props}
     >
       {body}
@@ -210,9 +210,9 @@ const FormSubmitButton = React.forwardRef<
     return (
       <Button ref={ref} {...props} disabled={isDisabled} type="submit">
         {showPendingState ? (
-          <span className="flex gap-6 items-center">
+          <span className="flex items-center gap-6">
             {savingText || defaultChildren}
-            <RiLoader3Line className="animate-spin -mr-4 size-16" />
+            <RiLoader3Line className="-mr-4 size-16 animate-spin" />
           </span>
         ) : (
           <>{defaultChildren}</>

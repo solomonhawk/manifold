@@ -139,7 +139,7 @@ export function TableUpdateForm({
                   <FormSubmitButton>Save Changes</FormSubmitButton>
                   <FavoriteButton
                     tableId={table.id}
-                    isFavorited={table.favorited ?? false}
+                    isFavorite={table.favorited ?? false}
                   />
                   <DeleteButton title={table.title} tableId={table.id} />
                 </div>

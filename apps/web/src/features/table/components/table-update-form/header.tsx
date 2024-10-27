@@ -17,8 +17,8 @@ export function Header({
   children: React.ReactNode;
 }) {
   return (
-    <header className="flex justify-between items-center">
-      <div className="flex flex-col gap-2 justify-center">
+    <header className="flex items-center justify-between">
+      <div className="flex flex-col justify-center gap-2">
         <motion.h2
           layout="position"
           layoutId={`table-title-${id}`}
