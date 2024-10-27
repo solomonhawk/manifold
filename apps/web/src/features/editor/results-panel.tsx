@@ -1,4 +1,5 @@
 import { AnimatedList } from "@manifold/ui/components/animated-list";
+import { ClipboardCopy } from "@manifold/ui/components/clipboard-copy";
 import { Typewriter } from "@manifold/ui/components/typewriter";
 import { Badge } from "@manifold/ui/components/ui/badge";
 import { Button } from "@manifold/ui/components/ui/button";
@@ -9,7 +10,7 @@ import { CircleBackslashIcon, CubeIcon } from "@radix-ui/react-icons";
 import { LayoutGroup, motion } from "framer-motion";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { memo, type RefObject, useCallback, useState } from "react";
-import { GoX } from "react-icons/go";
+import { GoCheck, GoPaste, GoX } from "react-icons/go";
 
 import { transitionAlpha } from "~utils/animation";
 
@@ -79,7 +80,7 @@ export const AvailableTables = memo(function AvailableTables({
         />
         <label
           htmlFor="exported"
-          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 pl-8"
+          className="pl-8 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
         >
           Exported Only
         </label>
@@ -136,7 +137,7 @@ export const RollResults = memo(function RollResults({
         listRef={listRef}
         data={rollResults}
         transition={transitionAlpha}
-        className={cn("flex flex-col min-h-0 px-16 gap-8 overflow-auto", {
+        className={cn("flex min-h-0 flex-col gap-8 overflow-auto px-16", {
           "fade-bottom-90 pb-[5%]": listOverflowing,
         })}
         onLayoutAnimationStart={updateListOverflowing}
@@ -178,7 +179,7 @@ export const RollResults = memo(function RollResults({
         <div className="p-16">
           <Card>
             <CardContent className="!p-16">
-              <div className="flex items-center gap-8 justify-center text-slate-500">
+              <div className="flex items-center justify-center gap-8 text-slate-500">
                 <CubeIcon className="size-24" />
                 Your roll results will show up here.
               </div>
@@ -200,31 +201,47 @@ const ListItem = memo(function ({
 }) {
   return (
     <Card className="group">
-      <CardContent className="flex flex-col items-stretch gap-8 !p-16 @md:flex-row">
+      <CardContent className="@md:flex-row flex flex-col items-stretch gap-8 !p-16">
         <span className="grow">
           <Typewriter transition={transitionAlpha}>{text}</Typewriter>
         </span>
 
-        <div className="flex grow w-full flex-row items-end justify-between @md:flex-col @md:w-auto gap-8">
+        <div className="@md:flex-col @md:w-auto flex w-full grow flex-row items-end justify-between gap-8">
           <span className="flex items-center gap-8">
             <Badge variant="secondary" className="whitespace-nowrap">
               {tableName}
             </Badge>
 
-            <span className="text-slate-400 text-nowrap text-sm">
+            <span className="text-nowrap text-sm text-slate-400">
               {new Date(timestamp).toLocaleTimeString()}
             </span>
           </span>
 
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            className="-mr-6 -mb-6 @md:m-0 opacity-0 group-hover:opacity-100 transition-opacity"
-            onClick={onRemove}
-          >
-            <GoX />
-          </Button>
+          <div className="@md:m-0 -mb-6 -mr-6 flex items-center gap-8 opacity-0 transition-opacity group-hover:opacity-100">
+            <ClipboardCopy>
+              {({ copied, onCopy }) => {
+                return (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    onClick={() => onCopy(text)}
+                  >
+                    {copied ? <GoCheck /> : <GoPaste />}
+                  </Button>
+                );
+              }}
+            </ClipboardCopy>
+
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              onClick={onRemove}
+            >
+              <GoX />
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
