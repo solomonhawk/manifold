@@ -44,6 +44,7 @@
     "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-separator": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
+    "@tanem/react-nprogress": "^5.0.52",
     "autosize": "^6.0.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",

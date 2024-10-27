@@ -9,8 +9,8 @@ import { trpc } from "~utils/trpc";
 export function QuickLauncher() {
   const [data, query] = trpc.table.favorites.useSuspenseQuery();
 
-  // @TODO: error state
   if (query.isError) {
+    // @TODO: error state
     console.error(query.error);
   }
 
@@ -35,8 +35,8 @@ function QuickLaunchTile({ table }: { table: { id: string; title: string } }) {
       exit={{ opacity: 0, scale: 0.9 }}
     >
       <Card>
-        <CardContent className="!p-0 flex items-center h-full">
-          <Button asChild className="w-full h-full p-16" variant="link">
+        <CardContent className="flex h-full items-center !p-0">
+          <Button asChild className="h-full w-full p-16" variant="link">
             <Link to={`/table/${table.id}`}>
               <h3>{table.title}</h3>
             </Link>

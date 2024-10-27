@@ -5,11 +5,9 @@ import { TableList } from "~features/dashboard/components/table-list";
 
 export function DashboardRoot() {
   return (
-    <FlexCol className="p-12 sm:p-16 space-y-12 sm:space-y-16">
+    <FlexCol className="space-y-12 p-12 sm:space-y-16 sm:p-16">
       <DashboardHeader />
       <TableList />
     </FlexCol>
   );
 }
-
-export const Component = DashboardRoot;

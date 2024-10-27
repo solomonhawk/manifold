@@ -50,5 +50,3 @@ export function TableEdit() {
 
   return <div>Error: {query.error?.message}</div>;
 }
-
-export const Component = TableEdit;

@@ -18,10 +18,13 @@ export function RootLayout() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col h-full bg-architect">
+    <div className="bg-architect flex h-full flex-col">
       <GlobalHeader.Root>
         <div className="flex items-center gap-12">
-          <Link to="/" className="flex items-center gap-4 group">
+          <Link
+            to={auth.status === "authenticated" ? "/dashboard" : "/"}
+            className="group flex items-center gap-4"
+          >
             <GlobalHeader.LogoMark />
 
             <Badge size="sm" variant="secondary">
@@ -31,7 +34,7 @@ export function RootLayout() {
 
           <Separator
             orientation="vertical"
-            className="bg-foreground/10 self-stretch h-auto"
+            className="bg-foreground/10 h-auto self-stretch"
           />
 
           {auth.status === "authenticated" && (
@@ -48,7 +51,7 @@ export function RootLayout() {
 
         {match(auth)
           .with({ status: "loading" }, () => (
-            <Skeleton className="rounded-full size-avatar-sm sm:size-avatar" />
+            <Skeleton className="size-avatar-sm sm:size-avatar rounded-full" />
           ))
           .with({ status: "unauthenticated" }, () => (
             <GlobalHeader.Unauthed onSignIn={() => signIn("google")} />

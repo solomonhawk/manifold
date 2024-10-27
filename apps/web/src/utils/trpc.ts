@@ -20,3 +20,5 @@ export const trpcClient = trpc.createClient({
     }),
   ],
 });
+
+export type TrpcUtils = ReturnType<typeof trpc.useUtils>;
