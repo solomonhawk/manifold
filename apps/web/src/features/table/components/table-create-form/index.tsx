@@ -24,6 +24,8 @@ export function TableCreateForm({
 }: {
   onCreate?: (table: TableModel) => void;
 }) {
+  const trpcUtils = trpc.useUtils();
+
   const form = useZodForm({
     schema: tableCreateInput,
     defaultValues: {
@@ -35,6 +37,9 @@ export function TableCreateForm({
   const createTableMutation = trpc.table.create.useMutation({
     onSuccess: async (data) => {
       toastSuccess("Table created");
+
+      trpcUtils.table.list.invalidate();
+
       await onCreate?.(data);
     },
     onError: (e) => {
