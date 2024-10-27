@@ -8,11 +8,13 @@ export function loaderBuilder(trpcUtils: TrpcUtils) {
     const id = z.string().safeParse(params.id);
 
     if (id.success) {
-      console.log("prefetching table data", id.data);
-      await trpcUtils.table.get.prefetch(id.data);
-      return null;
+      return trpcUtils.table.get.fetch(id.data);
     }
 
     throw new Error("Invalid Table ID");
   };
 }
+
+export type TableEditLoaderData = Awaited<
+  ReturnType<ReturnType<typeof loaderBuilder>>
+>;

@@ -7,6 +7,8 @@ import {
 
 import { RootError } from "~features/routing/pages/root/error";
 import { RootLayout } from "~features/routing/pages/root/layout";
+import type { Handle } from "~features/routing/types";
+import type { TableEditLoaderData } from "~features/table/pages/edit";
 import type { TrpcUtils } from "~utils/trpc";
 
 function guestLoaderBuilder(auth: ReturnType<typeof useSession>) {
@@ -49,11 +51,17 @@ export const routerBuilder = (
             index: true,
             loader: guestLoader,
             lazy: () => import("~features/landing/pages/root/page"),
+            handle: {
+              title: () => "Manifold | Welcome",
+            } satisfies Handle,
           },
           {
             path: "login",
             loader: guestLoader,
             lazy: () => import("~features/auth/pages/login/page"),
+            handle: {
+              title: () => "Manifold | Login",
+            } satisfies Handle,
           },
           {
             path: "dashboard",
@@ -71,6 +79,9 @@ export const routerBuilder = (
                     Component: DashboardRoot,
                   };
                 },
+                handle: {
+                  title: () => "Manifold | Dashboard",
+                } satisfies Handle,
               },
             ],
           },
@@ -81,6 +92,9 @@ export const routerBuilder = (
               {
                 path: "new",
                 lazy: () => import("~features/table/pages/new/page"),
+                handle: {
+                  title: () => "Manifold | New Table",
+                } satisfies Handle,
               },
               {
                 path: ":id",
@@ -97,6 +111,9 @@ export const routerBuilder = (
                         Component: TableEdit,
                       };
                     },
+                    handle: {
+                      title: ({ data }) => `Manifold | Edit ${data.title}`,
+                    } satisfies Handle<TableEditLoaderData>,
                   },
                   {
                     index: true,

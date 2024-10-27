@@ -12,6 +12,7 @@ import { Link, Outlet, useNavigate } from "react-router-dom";
 import { match } from "ts-pattern";
 
 import { DialogManager } from "~features/dialog-manager";
+import { DocumentTitle } from "~features/routing/components/document-title";
 
 export function RootLayout() {
   const auth = useSession();
@@ -21,6 +22,8 @@ export function RootLayout() {
 
   return (
     <DialogManager.Provider>
+      <DocumentTitle />
+
       <div className="bg-architect flex h-full flex-col">
         <GlobalHeader.Root>
           <div className="flex items-center gap-12">

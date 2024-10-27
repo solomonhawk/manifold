@@ -1,2 +1,2 @@
-export { loaderBuilder } from "./loader";
+export { loaderBuilder, type TableEditLoaderData } from "./loader";
 export { TableEdit } from "./page";
