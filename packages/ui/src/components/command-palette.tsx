@@ -1,4 +1,3 @@
-import { useEffect, useRef } from "react";
 import { GoFileSymlinkFile } from "react-icons/go";
 
 import {
@@ -10,6 +9,7 @@ import {
   CommandList,
 } from "#components/ui/command.tsx";
 import { DialogDescription, DialogTitle } from "#components/ui/dialog.tsx";
+import { useReturnFocus } from "#hooks/use-return-focus.js";
 
 // @TODO: Make this more generic, pass in a list of command groups, etc.
 export function CommandPalette({
@@ -21,30 +21,7 @@ export function CommandPalette({
   onClose: () => void;
   onCreateTable: () => void;
 }) {
-  const shouldReturnFocus = useRef(true);
-  const focusedSource = useRef<HTMLElement | null>(null);
-
-  useEffect(() => {
-    if (isOpen && !focusedSource.current) {
-      focusedSource.current = document.activeElement as HTMLElement;
-    }
-
-    return () => {
-      focusedSource.current = null;
-    };
-  }, [isOpen]);
-
-  function returnFocusToSource() {
-    const elementToFocus = focusedSource.current;
-
-    if (elementToFocus) {
-      requestAnimationFrame(() => {
-        elementToFocus.focus();
-      });
-    }
-
-    focusedSource.current = null;
-  }
+  const returnFocus = useReturnFocus(isOpen);
 
   return (
     <CommandDialog
@@ -52,7 +29,7 @@ export function CommandPalette({
       onOpenChange={(state) => {
         if (!state) {
           onClose();
-          returnFocusToSource();
+          returnFocus();
         }
       }}
     >
@@ -65,12 +42,7 @@ export function CommandPalette({
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Suggestions">
-          <CommandItem
-            onSelect={() => {
-              shouldReturnFocus.current = false;
-              onCreateTable();
-            }}
-          >
+          <CommandItem onSelect={onCreateTable}>
             <GoFileSymlinkFile />
             <span>Create a new Table</span>
           </CommandItem>

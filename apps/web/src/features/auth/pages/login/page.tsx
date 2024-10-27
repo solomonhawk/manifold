@@ -10,6 +10,7 @@ export function Login() {
 
   useEffect(() => {
     signIn(undefined, { callbackUrl });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return <FullScreenLoader />;
