@@ -2,8 +2,8 @@ import { Button } from "@manifold/ui/components/ui/button";
 import { Card, CardContent } from "@manifold/ui/components/ui/card";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
 import { AnimatePresence, motion } from "framer-motion";
-import { Link } from "react-router-dom";
 
+import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
 import { trpc } from "~utils/trpc";
 
 export function QuickLauncher() {
@@ -47,9 +47,9 @@ function QuickLaunchTile({ table }: { table: { id: string; title: string } }) {
     <Card>
       <CardContent className="flex h-full items-center !p-0">
         <Button asChild className="h-full w-full p-16" variant="link">
-          <Link to={`/table/${table.id}`}>
+          <PrefetchableLink to={`/table/${table.id}/edit`}>
             <h3>{table.title}</h3>
-          </Link>
+          </PrefetchableLink>
         </Button>
       </CardContent>
     </Card>

@@ -146,7 +146,7 @@ export function TableUpdateForm({
               {portalRef.current &&
                 createPortal(
                   <>
-                    <FormSubmitStatus className="text-muted-foreground mr-8 text-sm" />
+                    <FormSubmitStatus className="text-muted-foreground/80 mr-8 text-xs" />
                     <FormSubmitButton form={TABLE_UPDATE_FORM_ID}>
                       Save Changes
                     </FormSubmitButton>

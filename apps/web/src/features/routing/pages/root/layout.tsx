@@ -13,6 +13,7 @@ import { match } from "ts-pattern";
 
 import { DialogManager } from "~features/dialog-manager";
 import { DocumentTitle } from "~features/routing/components/document-title";
+import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
 
 export function RootLayout() {
   const auth = useSession();
@@ -50,7 +51,9 @@ export function RootLayout() {
                 variant="outline"
                 className="bg-transparent"
               >
-                <Link to="/table/new">Create Table</Link>
+                <PrefetchableLink to="/table/new">
+                  Create Table
+                </PrefetchableLink>
               </Button>
             )}
           </div>

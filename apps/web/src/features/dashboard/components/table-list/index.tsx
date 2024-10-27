@@ -1,3 +1,4 @@
+import { capitalize } from "@manifold/lib/utils/string";
 import { Button } from "@manifold/ui/components/ui/button";
 import {
   Card,
@@ -9,8 +10,8 @@ import { transitionBeta } from "@manifold/ui/lib/animation";
 import { cn } from "@manifold/ui/lib/utils";
 import { formatRelative } from "date-fns";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
 
+import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
 import { trpc } from "~utils/trpc";
 
 const NOW = new Date();
@@ -48,7 +49,9 @@ export function TableList() {
           <div className="col-span-full flex items-center gap-16 text-center text-gray-500">
             You haven't created any tables yet.
             <Button asChild>
-              <Link to="/table/new">Create a table</Link>
+              <PrefetchableLink to="/table/new">
+                Create a table
+              </PrefetchableLink>
             </Button>
           </div>
         )}
@@ -62,7 +65,7 @@ export function TableList() {
                   variant="secondary"
                   asChild
                 >
-                  <Link
+                  <PrefetchableLink
                     to={
                       listQuery.isRefetching ? "#" : `/table/${table.id}/edit`
                     }
@@ -85,10 +88,12 @@ export function TableList() {
                         className="text-balance text-center text-sm text-gray-500"
                         transition={transitionBeta}
                       >
-                        {formatRelative(new Date(table.updatedAt), NOW)}
+                        {capitalize(
+                          formatRelative(new Date(table.updatedAt), NOW),
+                        )}
                       </motion.span>
                     </div>
-                  </Link>
+                  </PrefetchableLink>
                 </Button>
               </div>
             </div>

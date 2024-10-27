@@ -36,7 +36,7 @@ export function DashboardHeader({ className }: { className?: string }) {
 
       <CardContent
         flush={false}
-        className="flex-grow pt-0 sm:!p-16 overflow-auto"
+        className="-mt-16 flex-grow overflow-auto p-16 sm:m-0"
       >
         <QuickLauncher />
       </CardContent>

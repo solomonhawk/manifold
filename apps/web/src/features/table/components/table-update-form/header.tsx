@@ -1,11 +1,12 @@
 import type { TableModel } from "@manifold/db/schema/table";
+import { capitalize } from "@manifold/lib/utils/string";
 import { Button } from "@manifold/ui/components/ui/button";
 import { transitionBeta } from "@manifold/ui/lib/animation";
 import { formatRelative } from "date-fns";
 import { motion } from "framer-motion";
 import { GoArrowLeft } from "react-icons/go";
-import { Link } from "react-router-dom";
 
+import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
 import { DeleteButton } from "~features/table/components/table-update-form/delete-button";
 import { FavoriteButton } from "~features/table/components/table-update-form/favorite-button";
 
@@ -18,9 +19,9 @@ export function Header({ table }: { table: TableModel }) {
     <header className="flex items-center justify-between">
       <div className="flex items-center gap-12">
         <Button asChild size="icon" variant="ghost">
-          <Link to="/dashboard">
+          <PrefetchableLink to="/dashboard">
             <GoArrowLeft />
-          </Link>
+          </PrefetchableLink>
         </Button>
 
         <div className="flex flex-col justify-center">
@@ -35,10 +36,10 @@ export function Header({ table }: { table: TableModel }) {
 
           <motion.span
             layoutId={`table-updated-at-${table.id}`}
-            className="text-xs text-gray-500"
+            className="text-muted-foreground/80 text-xs"
             transition={transitionBeta}
           >
-            {formatRelative(new Date(table.updatedAt), NOW)}
+            {capitalize(formatRelative(new Date(table.updatedAt), NOW))}
           </motion.span>
         </div>
       </div>
