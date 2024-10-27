@@ -8,6 +8,7 @@ export function loaderBuilder(trpcUtils: TrpcUtils) {
     const id = z.string().safeParse(params.id);
 
     if (id.success) {
+      console.log("prefetching table data", id.data);
       await trpcUtils.table.get.prefetch(id.data);
       return null;
     }

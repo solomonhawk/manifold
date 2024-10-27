@@ -135,7 +135,7 @@ export function TableUpdateForm({
                 updatedAt={table.updatedAt}
               >
                 <div className="flex items-center gap-8">
-                  <FormSubmitStatus className="text-muted-foreground text-sm" />
+                  <FormSubmitStatus className="text-muted-foreground mr-8 text-sm" />
                   <FormSubmitButton>Save Changes</FormSubmitButton>
                   <FavoriteButton
                     tableId={table.id}

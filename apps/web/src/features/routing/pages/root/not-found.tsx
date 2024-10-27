@@ -12,10 +12,10 @@ import { Link } from "react-router-dom";
 
 export function NotFound() {
   return (
-    <div className="flex flex-col grow items-center justify-center">
+    <div className="flex grow flex-col items-center justify-center">
       <Card className="min-w-256 max-w-sm text-center">
         <CardHeader>
-          <GiSuspicious className="text-green-300 size-40 mx-auto mb-8" />
+          <GiSuspicious className="mx-auto mb-8 size-40 text-green-300" />
 
           <CardTitle>An empty room…</CardTitle>
           <CardDescription>…how suspicious!</CardDescription>
@@ -23,9 +23,9 @@ export function NotFound() {
 
         <CardContent>
           <Button asChild variant="outline">
-            <Link to="/" className="flex gap-8 items-center group">
+            <Link to="/" className="group flex items-center gap-8">
               Take me back to safety
-              <GoChevronRight className="group-hover:translate-x-4 transition-transform" />
+              <GoChevronRight className="transition-transform group-hover:translate-x-4" />
             </Link>
           </Button>
         </CardContent>

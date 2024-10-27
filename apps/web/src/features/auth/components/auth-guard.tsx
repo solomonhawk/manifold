@@ -1,17 +1,12 @@
 import { useSession } from "@manifold/auth/client";
-import { LoadingIndicator } from "@manifold/ui/components/loading-indicator";
-import { FlexCol } from "@manifold/ui/components/ui/flex";
+import { FullScreenLoader } from "@manifold/ui/components/full-screen-loader";
 import { Navigate, Outlet } from "react-router-dom";
 
 export function AuthGuard() {
   const { status } = useSession();
 
   if (status === "loading") {
-    return (
-      <FlexCol className="items-center justify-center">
-        <LoadingIndicator />
-      </FlexCol>
-    );
+    return <FullScreenLoader />;
   }
 
   if (status === "authenticated") {

@@ -1,4 +1,4 @@
-import { LoadingIndicator } from "@manifold/ui/components/loading-indicator";
+import { FullScreenLoader } from "@manifold/ui/components/full-screen-loader";
 import { FlexCol } from "@manifold/ui/components/ui/flex";
 import { useLocation, useParams } from "react-router-dom";
 
@@ -20,11 +20,7 @@ export function TableEdit() {
 
   // @TODO: replace with skeleton?
   if (tableQuery.isLoading) {
-    return (
-      <FlexCol className="items-center justify-center">
-        <LoadingIndicator />
-      </FlexCol>
-    );
+    return <FullScreenLoader />;
   }
 
   // @TODO: error state

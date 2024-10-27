@@ -16,10 +16,10 @@ export function RootError() {
   const error = useRouteError();
 
   return (
-    <div className="flex flex-col grow items-center justify-center">
+    <div className="flex grow flex-col items-center justify-center">
       <Card className="min-w-256 max-w-sm text-center">
         <CardHeader>
-          <GiDiceTwentyFacesOne className="text-green-300 size-40 mx-auto mb-8" />
+          <GiDiceTwentyFacesOne className="mx-auto mb-8 size-40 text-green-300" />
 
           <CardTitle>Unlucky!</CardTitle>
           <CardDescription>We rolled a natural 1…</CardDescription>
