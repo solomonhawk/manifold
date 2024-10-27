@@ -10,12 +10,6 @@
     ".": "./src/index.ts",
     "./*": "./src/*.ts"
   },
-  "scripts": {
-    "dev": "echo 'Add dev script here'",
-    "build": "echo 'Add build script here'",
-    "test": "echo 'Add test script here'",
-    "lint": "echo 'Add lint script here'"
-  },
   "devDependencies": {
     "@manifold/eslint-config": "*",
     "@manifold/typescript-config": "*"
