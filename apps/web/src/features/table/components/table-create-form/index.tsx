@@ -46,8 +46,8 @@ export function TableCreateForm({
     },
   });
 
-  const handleSubmit: SubmitHandler<FormData> = (data) => {
-    createTableMutation.mutate(data);
+  const handleSubmit: SubmitHandler<FormData> = async (data) => {
+    await createTableMutation.mutateAsync(data);
   };
 
   return (

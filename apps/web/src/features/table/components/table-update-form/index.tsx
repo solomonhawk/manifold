@@ -69,7 +69,7 @@ export function TableUpdateForm({
     onSuccess: async (data) => {
       toast.success("Table updated");
 
-      // ensure form touched/dirty state is accurate
+      // ensure form touched/dirty state is accurate after a successful save.
       form.reset({
         id: data.id,
         definition: data.definition,
@@ -105,8 +105,8 @@ export function TableUpdateForm({
     });
   }, [form, table.id, table.definition]);
 
-  const handleSubmit: SubmitHandler<FormData> = (data) => {
-    updateTableMutation.mutate(data);
+  const handleSubmit: SubmitHandler<FormData> = async (data) => {
+    await updateTableMutation.mutateAsync(data);
   };
 
   const handleParseError = useCallback(
