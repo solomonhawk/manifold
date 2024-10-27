@@ -18,6 +18,7 @@ import { type SubmitHandler } from "react-hook-form";
 import { Editor } from "~features/editor";
 import { DeleteButton } from "~features/table/components/table-update-form/delete-button";
 import { FavoriteButton } from "~features/table/components/table-update-form/favorite-button";
+import { toastError } from "~utils/toast";
 import { trpc } from "~utils/trpc";
 
 import { Header } from "./header";
@@ -66,10 +67,7 @@ export function TableUpdateForm({
 
   const updateTableMutation = trpc.table.update.useMutation({
     onSuccess: async (data) => {
-      toast.success("Table updated", {
-        duration: 3000,
-        dismissible: true,
-      });
+      toast.success("Table updated");
 
       // ensure form touched/dirty state is accurate
       form.reset({
@@ -77,23 +75,22 @@ export function TableUpdateForm({
         definition: data.definition,
       });
 
+      // update query cache with the updated data
       trpcUtils.table.list.setData(undefined, (list) => {
         return list?.map((t) => (t.id === data.id ? data : t)) ?? [data];
       });
 
-      // invalidate list to ensure order is accurate (based on `updatedAt`)
+      // invalidate table list query to ensure order is accurate (based on `updatedAt`)
       trpcUtils.table.list.invalidate(undefined, { type: "inactive" });
 
-      // invalidate the get query, but don't bother refetching until the next time it becomes active
+      // invalidate get query, but don't bother refetching until the next time it becomes active
       trpcUtils.table.get.invalidate(table.id, { refetchType: "inactive" });
     },
     onError: (e) => {
-      toast.error("Table failed to save", {
+      console.error(e);
+
+      toastError("Table failed to save", {
         description: e.message,
-        dismissible: true,
-        closeButton: true,
-        important: true,
-        duration: Infinity,
       });
     },
   });
@@ -108,13 +105,8 @@ export function TableUpdateForm({
     });
   }, [form, table.id, table.definition]);
 
-  const handleSubmit: SubmitHandler<FormData> = async (data) => {
-    try {
-      await updateTableMutation.mutateAsync(data);
-    } catch (e) {
-      // @TODO: handle server errors
-      console.error(e);
-    }
+  const handleSubmit: SubmitHandler<FormData> = (data) => {
+    updateTableMutation.mutate(data);
   };
 
   const handleParseError = useCallback(

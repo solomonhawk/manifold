@@ -10,11 +10,11 @@ import {
   FormSubmitButton,
 } from "@manifold/ui/components/ui/form";
 import { Input } from "@manifold/ui/components/ui/input";
-import { toast } from "@manifold/ui/components/ui/toaster";
 import { useZodForm } from "@manifold/ui/hooks/use-zod-form";
 import { tableCreateInput, type z } from "@manifold/validators";
 import { type SubmitHandler } from "react-hook-form";
 
+import { toastError, toastSuccess } from "~utils/toast";
 import { trpc } from "~utils/trpc";
 
 type FormData = z.infer<typeof tableCreateInput>;
@@ -22,7 +22,7 @@ type FormData = z.infer<typeof tableCreateInput>;
 export function TableCreateForm({
   onCreate,
 }: {
-  onCreate: (table: TableModel) => void;
+  onCreate?: (table: TableModel) => void;
 }) {
   const form = useZodForm({
     schema: tableCreateInput,
@@ -33,30 +33,21 @@ export function TableCreateForm({
   });
 
   const createTableMutation = trpc.table.create.useMutation({
-    onSuccess: () => {
-      toast.success("Table created", {
-        duration: 3000,
-        dismissible: true,
-      });
+    onSuccess: async (data) => {
+      toastSuccess("Table created");
+      await onCreate?.(data);
     },
     onError: (e) => {
-      toast.error("Failed to create table", {
+      console.error(e);
+
+      toastError("Failed to create table", {
         description: e.message,
-        dismissible: true,
-        closeButton: true,
-        important: true,
-        duration: Infinity,
       });
     },
   });
 
-  const handleSubmit: SubmitHandler<FormData> = async (data) => {
-    try {
-      const table = await createTableMutation.mutateAsync(data);
-      onCreate(table);
-    } catch (e) {
-      console.error(e);
-    }
+  const handleSubmit: SubmitHandler<FormData> = (data) => {
+    createTableMutation.mutate(data);
   };
 
   return (

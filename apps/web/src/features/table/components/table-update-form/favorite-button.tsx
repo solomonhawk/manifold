@@ -1,9 +1,9 @@
 import { LoadingIndicator } from "@manifold/ui/components/loading-indicator";
 import { Button } from "@manifold/ui/components/ui/button";
-import { toast } from "@manifold/ui/components/ui/toaster";
 import { type MouseEvent, useDeferredValue } from "react";
 import { GoHeart, GoHeartFill } from "react-icons/go";
 
+import { toastError, toastSuccess } from "~utils/toast";
 import { trpc } from "~utils/trpc";
 
 export function FavoriteButton({
@@ -16,10 +16,7 @@ export function FavoriteButton({
   const trpcUtils = trpc.useUtils();
   const mutation = trpc.table.update.useMutation({
     onSuccess: async (data) => {
-      toast.success(data.favorited ? "Added favorite" : "Removed favorite", {
-        duration: 3000,
-        dismissible: true,
-      });
+      toastSuccess(data.favorited ? "Added favorite" : "Removed favorite");
 
       trpcUtils.table.get.setData(tableId, data);
 
@@ -30,26 +27,19 @@ export function FavoriteButton({
       trpcUtils.table.get.invalidate(tableId, { refetchType: "inactive" });
     },
     onError: (e) => {
-      toast.error("Failed to update favorite status", {
+      console.error(e);
+
+      toastError("Failed to update favorite status", {
         description: e.message,
-        dismissible: true,
-        closeButton: true,
-        important: true,
-        duration: Infinity,
       });
     },
   });
 
   const isPending = useDeferredValue(mutation.isLoading);
 
-  async function handleClick(e: MouseEvent) {
+  function handleClick(e: MouseEvent) {
     e.preventDefault();
-
-    try {
-      await mutation.mutateAsync({ id: tableId, favorited: !isFavorited });
-    } catch (e) {
-      console.error(e);
-    }
+    mutation.mutate({ id: tableId, favorited: !isFavorited });
   }
 
   /**

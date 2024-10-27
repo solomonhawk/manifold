@@ -1,4 +1,4 @@
-import { toast, Toaster as Sonner } from "sonner";
+import { type ExternalToast, toast, Toaster as Sonner } from "sonner";
 
 import { cn } from "#lib/utils.ts";
 
@@ -31,4 +31,5 @@ const Toaster = ({ className, ...props }: ToasterProps) => {
   );
 };
 
+export type { ExternalToast };
 export { toast, Toaster };
