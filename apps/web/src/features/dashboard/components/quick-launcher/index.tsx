@@ -1,9 +1,9 @@
 import { Button } from "@manifold/ui/components/ui/button";
 import { Card, CardContent } from "@manifold/ui/components/ui/card";
+import { transitionAlpha } from "@manifold/ui/lib/animation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
-import { transitionAlpha } from "~utils/animation";
 import { trpc } from "~utils/trpc";
 
 export function QuickLauncher() {

@@ -12,18 +12,19 @@ import {
 import { toast } from "@manifold/ui/components/ui/toaster";
 import { useZodForm } from "@manifold/ui/hooks/use-zod-form";
 import { tableUpdateInput, z } from "@manifold/validators";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { type SubmitHandler } from "react-hook-form";
 
 import { Editor } from "~features/editor";
-import { DeleteButton } from "~features/table/components/table-update-form/delete-button";
-import { FavoriteButton } from "~features/table/components/table-update-form/favorite-button";
 import { toastError } from "~utils/toast";
 import { trpc } from "~utils/trpc";
 
-import { Header } from "./header";
+import { TABLE_UPDATE_HEADER_PORTAL_ID } from "./header";
 
 type FormData = z.infer<typeof tableUpdateInput>;
+
+const TABLE_UPDATE_FORM_ID = "table-update-form";
 
 export function TableUpdateForm({
   table,
@@ -120,30 +121,38 @@ export function TableUpdateForm({
     form.clearErrors("definition");
   }, [form]);
 
+  const portalRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (!portalRef.current) {
+      portalRef.current = document.getElementById(
+        TABLE_UPDATE_HEADER_PORTAL_ID,
+      );
+    }
+  });
+
   return (
     <Form {...form}>
       <FlexCol asChild>
-        <form onSubmit={form.handleSubmit(handleSubmit)}>
+        <form
+          onSubmit={form.handleSubmit(handleSubmit)}
+          id={TABLE_UPDATE_FORM_ID}
+        >
           <FlexCol asChild>
             <fieldset
               disabled={form.formState.isSubmitting || isDisabled}
               className="space-y-12 sm:space-y-16"
             >
-              <Header
-                id={table.id}
-                title={table.title}
-                updatedAt={table.updatedAt}
-              >
-                <div className="flex items-center gap-8">
-                  <FormSubmitStatus className="text-muted-foreground mr-8 text-sm" />
-                  <FormSubmitButton>Save Changes</FormSubmitButton>
-                  <FavoriteButton
-                    tableId={table.id}
-                    isFavorite={table.favorited ?? false}
-                  />
-                  <DeleteButton title={table.title} tableId={table.id} />
-                </div>
-              </Header>
+              {portalRef.current &&
+                createPortal(
+                  <>
+                    <FormSubmitStatus className="text-muted-foreground mr-8 text-sm" />
+                    <FormSubmitButton form={TABLE_UPDATE_FORM_ID}>
+                      Save Changes
+                    </FormSubmitButton>
+                  </>,
+                  portalRef.current,
+                )}
 
               <FormField
                 control={form.control}

@@ -3,6 +3,7 @@ import { FlexCol } from "@manifold/ui/components/ui/flex";
 import { useLocation, useParams } from "react-router-dom";
 
 import { TableUpdateForm } from "~features/table/components/table-update-form";
+import { Header } from "~features/table/components/table-update-form/header";
 import { RoutingError } from "~utils/errors";
 import { trpc } from "~utils/trpc";
 
@@ -31,7 +32,8 @@ export function TableEdit() {
   const table = tableQuery.data;
 
   return (
-    <FlexCol className="p-12 sm:p-16">
+    <FlexCol className="space-y-16 p-12 sm:p-16">
+      <Header table={table} />
       <TableUpdateForm
         table={table}
         isDisabled={tableQuery.isPlaceholderData}

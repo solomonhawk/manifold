@@ -5,12 +5,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@manifold/ui/components/ui/card";
+import { transitionBeta } from "@manifold/ui/lib/animation";
 import { cn } from "@manifold/ui/lib/utils";
 import { formatRelative } from "date-fns";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
-import { transitionBeta } from "~utils/animation";
 import { trpc } from "~utils/trpc";
 
 const NOW = new Date();

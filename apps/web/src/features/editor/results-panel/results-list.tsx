@@ -7,6 +7,7 @@ import { Typewriter } from "@manifold/ui/components/typewriter";
 import { Badge } from "@manifold/ui/components/ui/badge";
 import { Button } from "@manifold/ui/components/ui/button";
 import { Card, CardContent } from "@manifold/ui/components/ui/card";
+import { transitionAlpha } from "@manifold/ui/lib/animation";
 import { cn } from "@manifold/ui/lib/utils";
 import { CircleBackslashIcon, CubeIcon } from "@radix-ui/react-icons";
 import { motion } from "framer-motion";
@@ -15,7 +16,6 @@ import { memo, type RefObject, useCallback, useState } from "react";
 import { GoCheck, GoPaste, GoX } from "react-icons/go";
 
 import { rollHistory, type RollResult } from "~features/editor/state";
-import { transitionAlpha } from "~utils/animation";
 
 export function RollResults({
   listRef,

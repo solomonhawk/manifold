@@ -1,11 +1,10 @@
 import { AnimatedList } from "@manifold/ui/components/animated-list";
 import { Button } from "@manifold/ui/components/ui/button";
 import { Checkbox } from "@manifold/ui/components/ui/checkbox";
+import { transitionAlpha } from "@manifold/ui/lib/animation";
 import { motion } from "framer-motion";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { memo, type RefObject, useCallback } from "react";
-
-import { transitionAlpha } from "~utils/animation";
 
 import {
   currentTableHash,

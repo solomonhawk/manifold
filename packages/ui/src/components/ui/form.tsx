@@ -9,8 +9,8 @@ import {
   FormProvider,
   useFormContext,
 } from "react-hook-form";
-import { RiLoader3Line } from "react-icons/ri";
 
+import { LoadingIndicator } from "#components/loading-indicator.js";
 import { Button } from "#components/ui/button.tsx";
 import { Label } from "#components/ui/label.tsx";
 import { cn } from "#lib/utils.ts";
@@ -190,13 +190,21 @@ FormSubmitStatus.displayName = "FormSubmitStatus";
 const FormSubmitButton = React.forwardRef<
   HTMLButtonElement,
   React.HTMLAttributes<HTMLButtonElement> & {
-    isPending?: boolean;
-    disabled?: boolean;
+    form?: string;
     savingText?: string;
+    disabled?: boolean;
+    isPending?: boolean;
   }
 >(
   (
-    { children, savingText, disabled = false, isPending = false, ...props },
+    {
+      children,
+      form,
+      savingText,
+      disabled = false,
+      isPending = false,
+      ...props
+    },
     ref,
   ) => {
     const { formState } = useFormContext();
@@ -208,11 +216,17 @@ const FormSubmitButton = React.forwardRef<
     const defaultChildren = children || "Save";
 
     return (
-      <Button ref={ref} {...props} disabled={isDisabled} type="submit">
+      <Button
+        ref={ref}
+        form={form}
+        {...props}
+        disabled={isDisabled}
+        type="submit"
+      >
         {showPendingState ? (
           <span className="flex items-center gap-6">
+            <LoadingIndicator size="sm" className="-ml-4" />
             {savingText || defaultChildren}
-            <RiLoader3Line className="-mr-4 size-16 animate-spin" />
           </span>
         ) : (
           <>{defaultChildren}</>
