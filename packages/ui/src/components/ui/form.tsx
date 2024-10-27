@@ -13,6 +13,7 @@ import {
 import { LoadingIndicator } from "#components/loading-indicator.js";
 import { Button } from "#components/ui/button.tsx";
 import { Label } from "#components/ui/label.tsx";
+import { useStateGuard } from "#hooks/use-state-guard.js";
 import { cn } from "#lib/utils.ts";
 
 const Form = FormProvider;
@@ -209,8 +210,12 @@ const FormSubmitButton = React.forwardRef<
   ) => {
     const { formState } = useFormContext();
 
+    const guardedIsSubmitting = useStateGuard(formState.isSubmitting, {
+      min: 250,
+    });
+
     const isDirty = formState.isDirty;
-    const showPendingState = isPending || formState.isSubmitting;
+    const showPendingState = isPending || guardedIsSubmitting;
     const isDisabled = disabled || showPendingState || !isDirty;
 
     const defaultChildren = children || "Save";

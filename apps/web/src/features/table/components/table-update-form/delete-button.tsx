@@ -11,7 +11,8 @@ import {
   AlertDialogTrigger,
 } from "@manifold/ui/components/ui/alert-dialog";
 import { Button } from "@manifold/ui/components/ui/button";
-import { type MouseEvent, useDeferredValue, useState } from "react";
+import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
+import { type MouseEvent, useEffect, useState } from "react";
 import { GoTrash } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
 
@@ -35,8 +36,6 @@ export function DeleteButton({
 
       trpcUtils.table.list.invalidate();
       trpcUtils.table.favorites.invalidate();
-
-      await navigate("/dashboard");
     },
     onError: (e) => {
       console.error(e);
@@ -47,9 +46,23 @@ export function DeleteButton({
     },
   });
 
-  const isPending = useDeferredValue(mutation.isLoading);
+  const isPending = useStateGuard(mutation.isLoading, { min: 250 });
 
-  function handleClick(e: MouseEvent) {
+  /**
+   * @NOTE: We do the navigate in an effect instead of the mutation `onSuccess`
+   * so we can defer it until after the guard timeout has elapsed to avoid a
+   * flash of the loading indicator.
+   *
+   * @TODO: This causes the dialog close animation not to play properly, which
+   * we should probably fix.
+   */
+  useEffect(() => {
+    if (!isPending && mutation.isSuccess) {
+      navigate("/dashboard");
+    }
+  }, [mutation, navigate, isPending]);
+
+  function handleConfirmDelete(e: MouseEvent) {
     e.preventDefault();
     mutation.mutate(tableId);
   }
@@ -59,7 +72,10 @@ export function DeleteButton({
    * right now because it's nested inside the update form.
    */
   return (
-    <AlertDialog open={isConfirmingDelete} onOpenChange={setIsConfirmingDelete}>
+    <AlertDialog
+      open={isConfirmingDelete || isPending}
+      onOpenChange={setIsConfirmingDelete}
+    >
       <AlertDialogTrigger asChild>
         <Button
           size="icon"
@@ -73,15 +89,21 @@ export function DeleteButton({
 
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+          <AlertDialogTitle>Delete “{title}”?</AlertDialogTitle>
           <AlertDialogDescription>
-            Deleted tables can be recovered at any time.
+            Fear not, deleted tables can be recovered at any time.
           </AlertDialogDescription>
         </AlertDialogHeader>
 
         <AlertDialogFooter>
           <AlertDialogCancel>Nevermind</AlertDialogCancel>
-          <AlertDialogAction variant="destructive" onClick={handleClick}>
+          <AlertDialogAction
+            variant="destructive"
+            onClick={handleConfirmDelete}
+            className="flex items-center gap-6"
+            disabled={isPending}
+          >
+            {isPending && <LoadingIndicator size="sm" className="-ml-4" />}{" "}
             Delete Table
           </AlertDialogAction>
         </AlertDialogFooter>

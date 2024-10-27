@@ -1,6 +1,7 @@
 import { LoadingIndicator } from "@manifold/ui/components/loading-indicator";
 import { Button } from "@manifold/ui/components/ui/button";
-import { type MouseEvent, useDeferredValue } from "react";
+import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
+import { type MouseEvent } from "react";
 import { GoHeart, GoHeartFill } from "react-icons/go";
 
 import { toastError, toastSuccess } from "~utils/toast";
@@ -35,7 +36,7 @@ export function FavoriteButton({
     },
   });
 
-  const isPending = useDeferredValue(mutation.isLoading);
+  const isPending = useStateGuard(mutation.isLoading, { min: 250 });
 
   function handleClick(e: MouseEvent) {
     e.preventDefault();
