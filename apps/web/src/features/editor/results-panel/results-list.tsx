@@ -154,7 +154,7 @@ const ListItem = memo(function ({
                     onClick={() => onCopy(text)}
                     disabled={copied}
                   >
-                    {copied ? <GoCheck /> : <GoPaste />}
+                    {copied ? <GoCheck /> : <GoPaste size={12} />}
                   </Button>
                 );
               }}
@@ -166,7 +166,7 @@ const ListItem = memo(function ({
               size="icon-sm"
               onClick={() => onRemove?.(timestamp)}
             >
-              <GoX />
+              <GoX size={16} />
             </Button>
           </div>
         </div>

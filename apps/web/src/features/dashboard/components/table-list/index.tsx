@@ -139,7 +139,7 @@ export function TableList({
                       </div>
 
                       <div className="z-10 -translate-y-12 scale-95 opacity-0 transition-all group-hover:translate-y-0 group-hover:scale-100 group-hover:opacity-100">
-                        <span className="text-balance text-center text-sm text-gray-500">
+                        <span className="text-balance text-center text-xs leading-tight text-gray-500">
                           {capitalize(
                             formatRelative(new Date(table.updatedAt), NOW),
                           )}
