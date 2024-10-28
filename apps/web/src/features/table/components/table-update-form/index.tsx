@@ -12,7 +12,7 @@ import {
 import { toast } from "@manifold/ui/components/ui/toaster";
 import { useZodForm } from "@manifold/ui/hooks/use-zod-form";
 import { tableUpdateInput, z } from "@manifold/validators";
-import { useCallback, useEffect, useRef } from "react";
+import { type KeyboardEvent, useCallback, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { type SubmitHandler } from "react-hook-form";
 
@@ -106,9 +106,12 @@ export function TableUpdateForm({
     });
   }, [form, table.id, table.definition]);
 
-  const handleSubmit: SubmitHandler<FormData> = async (data) => {
-    await updateTableMutation.mutateAsync(data);
-  };
+  const handleSubmit: SubmitHandler<FormData> = useCallback(
+    async (data) => {
+      await updateTableMutation.mutateAsync(data);
+    },
+    [updateTableMutation],
+  );
 
   const handleParseError = useCallback(
     (error: string) => {
@@ -120,6 +123,35 @@ export function TableUpdateForm({
   const handleParseSuccess = useCallback(() => {
     form.clearErrors("definition");
   }, [form]);
+
+  /**
+   * Handle submitting the form with `Cmd + Enter`. Requires that the user's
+   * focus is within the <form /> element.
+   *
+   * It might be nice to attach this to the `document`, but we would need to
+   * be careful to avoid stealing key presses that originate from other
+   * focusable/"enter"-able elements.
+   */
+  const handleKeyDown = useCallback(
+    async (e: KeyboardEvent) => {
+      if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+        if (!form.formState.isDirty || !form.formState.isValid) {
+          return;
+        }
+
+        e.preventDefault();
+
+        const focusedElement = document.activeElement as HTMLElement;
+
+        await form.handleSubmit(handleSubmit)();
+
+        requestAnimationFrame(() => {
+          focusedElement.focus();
+        });
+      }
+    },
+    [form, handleSubmit],
+  );
 
   const portalRef = useRef<HTMLElement | null>(null);
 
@@ -135,8 +167,9 @@ export function TableUpdateForm({
     <Form {...form}>
       <FlexCol asChild>
         <form
-          onSubmit={form.handleSubmit(handleSubmit)}
           id={TABLE_UPDATE_FORM_ID}
+          onSubmit={form.handleSubmit(handleSubmit)}
+          onKeyDown={handleKeyDown}
         >
           <FlexCol asChild>
             <fieldset
