@@ -164,7 +164,13 @@ export function InputPanel({
 
   const handleCreateNewSubtable = useCallback(() => {
     // just append a new basic table to the end
-    const modifiedValue = `${value.trim()}\n\n---\ntitle: Table\nid: table\n---\n1: outcome`;
+    const currentValue = value.trim();
+    const newTable = "---\ntitle: Table\nid: table\n---\n1: outcome";
+    const modifiedValue = currentValue.length
+      ? `${currentValue}\n\n${newTable}`
+      : newTable;
+
+    // @XXX: magic numbers that depend on the `newTable` above
     const selectionStart = modifiedValue.length - 30;
     const selectionEnd = modifiedValue.length - 25;
 
@@ -233,7 +239,7 @@ export function InputPanel({
 
       <Textarea
         autoSize
-        className="font-mono resize-none bg-background/60"
+        className="bg-background/60 resize-none font-mono"
         ref={(node) => {
           // @NOTE: kind of annoying, RHF wants to use a ref callback, but we also want to use a ref object
           refCallback(node);
@@ -260,7 +266,7 @@ function InlineEditorCommandPalette({
   onCreateNewSubtable: () => void;
 }) {
   return (
-    <Command className="border drop-shadow-lg shadow-lg">
+    <Command className="border shadow-lg drop-shadow-lg">
       <CommandInput autoFocus />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
