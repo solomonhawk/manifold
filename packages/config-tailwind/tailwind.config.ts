@@ -9,8 +9,12 @@ const config = {
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: {
+        DEFAULT: rem(12),
+        sm: rem(16),
+      },
       screens: {
+        xl: "1200px",
         "2xl": "1400px",
       },
     },

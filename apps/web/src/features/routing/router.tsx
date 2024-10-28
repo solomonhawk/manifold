@@ -13,39 +13,6 @@ import type { Handle } from "~features/routing/types";
 import type { TableEditLoaderData } from "~features/table/pages/edit";
 import type { TrpcUtils } from "~utils/trpc";
 
-export function guestLoaderBuilder(auth: ReturnType<typeof useSession>) {
-  return async () => {
-    if (auth.status === "authenticated") {
-      return redirect("/dashboard");
-    }
-
-    return null;
-  };
-}
-
-export function protectedLoaderBuilder(auth: ReturnType<typeof useSession>) {
-  return async ({ request }: LoaderFunctionArgs) => {
-    if (auth.status === "unauthenticated") {
-      const params = new URLSearchParams();
-      params.set("from", new URL(request.url).pathname);
-      return redirect(`/?${params.toString()}`);
-    }
-
-    return null;
-  };
-}
-
-export const routerBuilder = (routes: RouteObject[]) => {
-  return createBrowserRouter(routes, {
-    future: {
-      v7_skipActionErrorRevalidation: true,
-      v7_relativeSplatPath: true,
-      v7_fetcherPersist: true,
-      v7_normalizeFormMethod: true,
-    },
-  });
-};
-
 export function buildAppRoutes({
   trpcUtils,
   guestLoader,
@@ -138,6 +105,10 @@ export function buildAppRoutes({
           ],
         },
         {
+          path: "tech-stack",
+          lazy: () => import("~features/made-with/pages/root/page"),
+        },
+        {
           path: "*",
           lazy: () => import("~features/routing/pages/root/not-found"),
         },
@@ -145,3 +116,36 @@ export function buildAppRoutes({
     },
   ];
 }
+
+export function guestLoaderBuilder(auth: ReturnType<typeof useSession>) {
+  return async () => {
+    if (auth.status === "authenticated") {
+      return redirect("/dashboard");
+    }
+
+    return null;
+  };
+}
+
+export function protectedLoaderBuilder(auth: ReturnType<typeof useSession>) {
+  return async ({ request }: LoaderFunctionArgs) => {
+    if (auth.status === "unauthenticated") {
+      const params = new URLSearchParams();
+      params.set("from", new URL(request.url).pathname);
+      return redirect(`/?${params.toString()}`);
+    }
+
+    return null;
+  };
+}
+
+export const routerBuilder = (routes: RouteObject[]) => {
+  return createBrowserRouter(routes, {
+    future: {
+      v7_skipActionErrorRevalidation: true,
+      v7_relativeSplatPath: true,
+      v7_fetcherPersist: true,
+      v7_normalizeFormMethod: true,
+    },
+  });
+};

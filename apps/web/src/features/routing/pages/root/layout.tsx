@@ -27,7 +27,7 @@ export function RootLayout() {
 
       <div className="bg-architect flex h-full flex-col">
         <GlobalHeader.Root>
-          <div className="flex items-center gap-12">
+          <GlobalHeader.Center>
             <Link
               to={auth.status === "authenticated" ? "/dashboard" : "/"}
               className="group flex items-center gap-4"
@@ -56,25 +56,34 @@ export function RootLayout() {
                 </PrefetchableLink>
               </Button>
             )}
-          </div>
+          </GlobalHeader.Center>
 
-          {match(auth)
-            .with({ status: "loading" }, () => (
-              <Skeleton className="size-avatar-sm sm:size-avatar rounded-full" />
-            ))
-            .with({ status: "unauthenticated" }, () => (
-              <GlobalHeader.Unauthed onSignIn={() => signIn("google")} />
-            ))
-            .with({ status: "authenticated" }, ({ data: session }) => (
-              <GlobalHeader.Authed
-                name={session.user.name}
-                image={session.user.image}
-                onSignOut={() => {
-                  signOut({ redirect: false });
-                }}
-              />
-            ))
-            .exhaustive()}
+          <GlobalHeader.Center>
+            <PrefetchableLink
+              to="/tech-stack"
+              className="text-muted-foreground hover:text-accent-foreground focus:text-accent-foreground text-xs hover:underline focus:underline"
+            >
+              Tech
+            </PrefetchableLink>
+
+            {match(auth)
+              .with({ status: "loading" }, () => (
+                <Skeleton className="size-avatar-sm sm:size-avatar rounded-full" />
+              ))
+              .with({ status: "unauthenticated" }, () => (
+                <GlobalHeader.Unauthed onSignIn={() => signIn("google")} />
+              ))
+              .with({ status: "authenticated" }, ({ data: session }) => (
+                <GlobalHeader.Authed
+                  name={session.user.name}
+                  image={session.user.image}
+                  onSignOut={() => {
+                    signOut({ redirect: false });
+                  }}
+                />
+              ))
+              .exhaustive()}
+          </GlobalHeader.Center>
         </GlobalHeader.Root>
 
         <Outlet />

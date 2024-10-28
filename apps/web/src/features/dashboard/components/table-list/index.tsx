@@ -12,6 +12,7 @@ import {
   SelectTrigger,
 } from "@manifold/ui/components/ui/select";
 import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
+import { transitionGamma } from "@manifold/ui/lib/animation";
 import { cn } from "@manifold/ui/lib/utils";
 import {
   type TableListOrderBy,
@@ -119,6 +120,7 @@ export function TableList({
                 key={table.id}
                 initial={{ opacity: 0, scale: 0.95 }}
                 exit={{ opacity: 0, scale: 0.95 }}
+                transition={transitionGamma}
               >
                 <div className="aspect-square w-full">
                   <Button

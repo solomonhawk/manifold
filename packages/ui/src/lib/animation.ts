@@ -13,3 +13,10 @@ export const transitionBeta = {
   stiffness: 500,
   mass: 0.8,
 } satisfies Transition;
+
+export const transitionGamma = {
+  type: "spring",
+  damping: 30,
+  stiffness: 700,
+  mass: 0.1,
+} satisfies Transition;

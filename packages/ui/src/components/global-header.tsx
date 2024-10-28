@@ -2,7 +2,7 @@ import { GiPlatform, GiSecretDoor } from "react-icons/gi";
 
 import { Avatar, AvatarFallback, AvatarImage } from "#components/ui/avatar.tsx";
 import { Button } from "#components/ui/button.tsx";
-import { initials } from "#lib/utils.ts";
+import { cn, initials } from "#lib/utils.ts";
 
 type Props = {
   children?: React.ReactNode;
@@ -65,9 +65,24 @@ function Unauthed({ onSignIn }: { onSignIn: () => void }) {
   );
 }
 
+function Center({
+  className,
+  children,
+}: {
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className={cn("flex items-center gap-12", className)}>
+      {children}
+    </section>
+  );
+}
+
 export const GlobalHeader = {
   Root,
   LogoMark,
   Authed,
   Unauthed,
+  Center,
 };
