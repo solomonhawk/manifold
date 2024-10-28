@@ -10,7 +10,7 @@ type Props = {
 
 function Root({ children }: Props) {
   return (
-    <header className="flex justify-between items-center p-8 bg-primary-foreground">
+    <header className="bg-primary-foreground flex items-center justify-between p-8">
       {children}
     </header>
   );
@@ -19,8 +19,8 @@ function Root({ children }: Props) {
 function LogoMark() {
   return (
     <div className="flex items-center gap-10 p-4 group-hover:text-green-300">
-      <GiPlatform className="text-green-300 size-16 sm:size-20" />
-      <h1 className="font-bold text-sm sm:text-base transition-colors">
+      <GiPlatform className="size-16 text-green-300 sm:size-20" />
+      <h1 className="text-sm font-bold transition-colors sm:text-base">
         Manifold
       </h1>
     </div>
@@ -46,7 +46,7 @@ function Authed({
         className="flex items-center gap-8"
       >
         <span>Safe travels…</span>
-        <GiSecretDoor className="text-green-300 size-18 sm:size-20" />
+        <GiSecretDoor className="size-18 text-green-300 sm:size-20" />
       </Button>
 
       <Avatar>

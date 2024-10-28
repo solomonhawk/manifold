@@ -12,7 +12,7 @@ export function TableNew() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col grow items-center justify-center p-12 sm:p-16">
+    <div className="flex grow flex-col items-center justify-center p-12 sm:p-16">
       <Card className="mx-auto max-w-md">
         <CardHeader>
           <CardTitle>New Table</CardTitle>

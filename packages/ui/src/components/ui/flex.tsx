@@ -12,7 +12,7 @@ const FlexCol = React.forwardRef<HTMLDivElement, FlexColProps>(
     const Comp = asChild ? Slot : "div";
     return (
       <Comp
-        className={cn("flex flex-col grow min-h-0", className)}
+        className={cn("flex min-h-0 grow flex-col", className)}
         ref={ref}
         {...props}
       />
