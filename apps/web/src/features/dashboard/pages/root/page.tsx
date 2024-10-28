@@ -11,7 +11,7 @@ export function DashboardRoot() {
   return (
     <FlexCol className="space-y-12 p-12 sm:space-y-16 sm:p-16">
       <DashboardHeader />
-      <TableList orderBy={orderBy} />
+      <TableList routeOrderBy={orderBy} />
     </FlexCol>
   );
 }

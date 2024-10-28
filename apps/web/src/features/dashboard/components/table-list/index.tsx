@@ -15,6 +15,7 @@ import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
 import { cn } from "@manifold/ui/lib/utils";
 import {
   type TableListOrderBy,
+  tableListOrderBy,
   tableListOrderByMapping,
 } from "@manifold/validators";
 import { formatRelative } from "date-fns";
@@ -28,8 +29,14 @@ import { trpc } from "~utils/trpc";
 
 const NOW = new Date();
 
-export function TableList({ orderBy }: { orderBy: TableListOrderBy }) {
-  const [_searchParams, setSearchParams] = useSearchParams();
+export function TableList({
+  routeOrderBy,
+}: {
+  routeOrderBy: TableListOrderBy;
+}) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const orderByFromUrl = tableListOrderBy.safeParse(searchParams.get("sort"));
+  const orderBy = orderByFromUrl.success ? orderByFromUrl.data : routeOrderBy;
 
   const listQuery = trpc.table.list.useQuery(
     { orderBy },
@@ -79,12 +86,12 @@ export function TableList({ orderBy }: { orderBy: TableListOrderBy }) {
               {tableListOrderByMapping[orderBy]}
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="newest">Newest</SelectItem>
-              <SelectItem value="oldest">Oldest</SelectItem>
               <SelectItem value="recently_edited">Recently Edited</SelectItem>
               <SelectItem value="recently_not_edited">
                 Recently Not Edited
               </SelectItem>
+              <SelectItem value="newest">Newest</SelectItem>
+              <SelectItem value="oldest">Oldest</SelectItem>
             </SelectContent>
           </Select>
         </div>
