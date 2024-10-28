@@ -24,8 +24,8 @@ export function Section({ title, config }: Props) {
     <motion.div variants={variants}>
       <Card className="-mx-12 border-none sm:-mx-20">
         <CardHeader className="-mt-4 !pb-0">
-          <CardTitle>
-            <h3 className="text-lg font-semibold sm:text-xl">{title}</h3>
+          <CardTitle className="text-lg font-semibold sm:text-xl">
+            {title}
           </CardTitle>
         </CardHeader>
 
