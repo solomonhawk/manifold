@@ -12,19 +12,13 @@ import { authedProcedure, t } from "#trpc.ts";
 
 export const tableRouter = t.router({
   list: authedProcedure.input(tableListInput).query(({ input, ctx }) => {
-    const orderBy = (() => {
-      switch (input?.orderBy) {
-        case "recently_edited":
-          return desc(schema.table.updatedAt);
-        case "recently_not_edited":
-          return asc(schema.table.updatedAt);
-        case "oldest":
-          return asc(schema.table.createdAt);
-        case "newest":
-        default:
-          return desc(schema.table.createdAt);
-      }
-    })();
+    // @XXX: Is this really better than an IIFE with a `switch` statement? 🤔
+    const orderBy = {
+      recently_edited: desc(schema.table.updatedAt),
+      recently_not_edited: asc(schema.table.updatedAt),
+      oldest: asc(schema.table.createdAt),
+      newest: desc(schema.table.createdAt),
+    }[input?.orderBy ?? "newest"];
 
     return db.query.table
       .findMany({
