@@ -11,14 +11,13 @@ import {
 import { FlexCol } from "@manifold/ui/components/ui/flex";
 import { useState } from "react";
 import { GiHobbitDoor } from "react-icons/gi";
-import { useLocation } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 function Landing() {
-  const location = useLocation();
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [searchParams] = useSearchParams();
 
-  const params = new URLSearchParams(location.search);
-  const callbackUrl = params.get("from") || "/";
+  const callbackUrl = searchParams.get("from") || "/";
 
   return (
     <FlexCol className="items-center justify-center">

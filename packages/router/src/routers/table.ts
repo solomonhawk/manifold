@@ -1,8 +1,9 @@
-import { and, db, desc, eq, isNull, schema } from "@manifold/db";
+import { and, asc, db, desc, eq, isNull, schema } from "@manifold/db";
 import {
   tableCreateInput,
   tableDeleteInput,
   tableGetInput,
+  tableListInput,
   tableUpdateInput,
 } from "@manifold/validators";
 import { TRPCError } from "@trpc/server";
@@ -10,14 +11,28 @@ import { TRPCError } from "@trpc/server";
 import { authedProcedure, t } from "#trpc.ts";
 
 export const tableRouter = t.router({
-  list: authedProcedure.query(({ ctx }) => {
+  list: authedProcedure.input(tableListInput).query(({ input, ctx }) => {
+    const orderBy = (() => {
+      switch (input?.orderBy) {
+        case "recently_edited":
+          return desc(schema.table.updatedAt);
+        case "recently_not_edited":
+          return asc(schema.table.updatedAt);
+        case "oldest":
+          return asc(schema.table.createdAt);
+        case "newest":
+        default:
+          return desc(schema.table.createdAt);
+      }
+    })();
+
     return db.query.table
       .findMany({
         where: and(
           eq(schema.table.userId, ctx.user.id),
           isNull(schema.table.deletedAt),
         ),
-        orderBy: desc(schema.table.updatedAt),
+        orderBy,
       })
       .execute();
   }),

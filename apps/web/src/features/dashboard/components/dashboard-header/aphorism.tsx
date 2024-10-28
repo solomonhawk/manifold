@@ -1,4 +1,5 @@
 import { getRandomElement } from "@manifold/lib/utils/array";
+import { useState } from "react";
 
 const SOURCES = {
   dashboard: [
@@ -15,5 +16,7 @@ export function Aphorism({
   source: keyof typeof SOURCES;
   className?: string;
 }) {
-  return <span className={className}>{getRandomElement(SOURCES[source])}</span>;
+  const [aphorism] = useState(() => getRandomElement(SOURCES[source]));
+
+  return <span className={className}>{aphorism}</span>;
 }
