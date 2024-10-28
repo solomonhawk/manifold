@@ -10,6 +10,9 @@
     ".": "./src/index.ts",
     "./*": "./src/*.ts"
   },
+  "scripts": {
+    "lint": "eslint \"**/*.{ts,tsx}\""
+  },
   "devDependencies": {
     "@manifold/eslint-config": "*",
     "@manifold/typescript-config": "*"

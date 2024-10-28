@@ -8,6 +8,7 @@ import { z } from "zod";
 export const getEnv = (c?: Context) =>
   createEnv({
     server: {
+      NODE_ENV: z.enum(["development", "production"]).default("development"),
       PORT: z.coerce.number().default(3000),
       DATABASE_URL: z.string(),
       AUTH_SECRET: z.string(),
