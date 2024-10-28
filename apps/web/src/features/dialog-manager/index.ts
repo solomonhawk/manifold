@@ -20,13 +20,6 @@ type Props<C extends React.FC<any>> = Omit<
 > &
   Partial<NiceModalHocProps>;
 
-// export function showModal<
-//   Id extends string,
-//   C extends IdToComponent<Id> = IdToComponent<Id>,
-// >(id: Id, props: Props<C>) {
-//   return NiceModal.show(id, props);
-// }
-
 export const DialogManager = {
   ...NiceModal,
 

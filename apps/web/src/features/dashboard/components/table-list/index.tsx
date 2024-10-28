@@ -6,10 +6,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@manifold/ui/components/ui/card";
-import { transitionBeta } from "@manifold/ui/lib/animation";
 import { cn } from "@manifold/ui/lib/utils";
 import { formatRelative } from "date-fns";
-import { motion } from "framer-motion";
 
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
 import { trpc } from "~utils/trpc";
@@ -72,26 +70,17 @@ export function TableList() {
                     state={{ table }}
                   >
                     <div className="z-20 translate-y-14 transition-transform group-hover:translate-y-0">
-                      <motion.h2
-                        layout="position"
-                        layoutId={`table-title-${table.id}`}
-                        className="whitespace-normal text-center text-lg !leading-tight sm:text-xl"
-                        transition={transitionBeta}
-                      >
+                      <h2 className="whitespace-normal text-center text-lg !leading-tight sm:text-xl">
                         {table.title}
-                      </motion.h2>
+                      </h2>
                     </div>
 
                     <div className="z-10 -translate-y-12 scale-95 opacity-0 transition-all group-hover:translate-y-0 group-hover:scale-100 group-hover:opacity-100">
-                      <motion.span
-                        layoutId={`table-updated-at-${table.id}`}
-                        className="text-balance text-center text-sm text-gray-500"
-                        transition={transitionBeta}
-                      >
+                      <span className="text-balance text-center text-sm text-gray-500">
                         {capitalize(
                           formatRelative(new Date(table.updatedAt), NOW),
                         )}
-                      </motion.span>
+                      </span>
                     </div>
                   </PrefetchableLink>
                 </Button>

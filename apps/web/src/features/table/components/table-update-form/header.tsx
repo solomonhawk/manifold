@@ -1,9 +1,7 @@
 import type { TableModel } from "@manifold/db/schema/table";
 import { capitalize } from "@manifold/lib/utils/string";
 import { Button } from "@manifold/ui/components/ui/button";
-import { transitionBeta } from "@manifold/ui/lib/animation";
 import { formatRelative } from "date-fns";
-import { motion } from "framer-motion";
 import { GoArrowLeft } from "react-icons/go";
 
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
@@ -25,22 +23,11 @@ export function Header({ table }: { table: TableModel }) {
         </Button>
 
         <div className="flex flex-col justify-center">
-          <motion.h2
-            layout="position"
-            layoutId={`table-title-${table.id}`}
-            className="text-lg font-bold leading-tight"
-            transition={transitionBeta}
-          >
-            {table.title}
-          </motion.h2>
+          <h2 className="text-lg font-bold leading-tight">{table.title}</h2>
 
-          <motion.span
-            layoutId={`table-updated-at-${table.id}`}
-            className="text-muted-foreground/80 text-xs"
-            transition={transitionBeta}
-          >
+          <span className="text-muted-foreground/80 text-xs">
             {capitalize(formatRelative(new Date(table.updatedAt), NOW))}
-          </motion.span>
+          </span>
         </div>
       </div>
 
