@@ -24,6 +24,7 @@ import {
   type ChangeEvent,
   type KeyboardEvent,
   type MutableRefObject,
+  type RefObject,
   useCallback,
   useEffect,
   useRef,
@@ -32,8 +33,12 @@ import {
 import type { RefCallBack } from "react-hook-form";
 import { Caret } from "textarea-caret-ts";
 
+import { log } from "~utils/logger";
+
 import { currentTableHash, currentTableMetadata, rollHistory } from "./state";
 import { workerInstance } from "./worker";
+
+type Selection = { start: number; end: number };
 
 type Props = {
   inputRef: MutableRefObject<HTMLTextAreaElement>;
@@ -57,54 +62,14 @@ export function InputPanel({
   onParseSuccess,
 }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const selectionRef = useRef<{ start: number; end: number } | null>(null);
+  const selectionRef = useRef<Selection | null>(null);
+  const menuPositionRef = useRef<Caret.Position | null>(null);
   const setTableHash = useSetAtom(currentTableHash);
   const setRollResults = useSetAtom(rollHistory);
   const setTableMetadata = useSetAtom(currentTableMetadata);
-  const [menuPosition, setMenuPosition] = useState<Caret.Position | null>(null);
 
   const [isInlineEditorCommandPaletteOpen, setInlineEditorCommandPaletteOpen] =
     useState(false);
-
-  const { refs, floatingStyles, context } = useFloating({
-    placement: "right-start",
-    open: isInlineEditorCommandPaletteOpen,
-    onOpenChange: (nextIsOpen) => {
-      setInlineEditorCommandPaletteOpen(nextIsOpen);
-
-      const { start, end } = selectionRef.current ?? { start: 0, end: 0 };
-
-      inputRef.current?.focus();
-      inputRef.current?.setSelectionRange(start, end, "forward");
-    },
-    middleware: [
-      offset({
-        crossAxis: -12,
-        mainAxis: 8,
-      }),
-      shift({
-        mainAxis: true,
-        crossAxis: false,
-        altBoundary: true,
-        padding: 8,
-      }),
-    ],
-  });
-
-  const clientPoint = useClientPoint(context, {
-    enabled: !!menuPosition,
-    x: menuPosition?.left,
-    y: menuPosition?.top,
-  });
-
-  const dismiss = useDismiss(context, {
-    escapeKey: true,
-  });
-
-  const { getReferenceProps, getFloatingProps } = useInteractions([
-    clientPoint,
-    dismiss,
-  ]);
 
   const parseAndValidate = useCallback(
     async function parseAndValidate(value: string) {
@@ -121,7 +86,7 @@ export function InputPanel({
 
         onParseSuccess();
       } catch (e: unknown) {
-        console.error(e);
+        log.error(e);
 
         onParseError(String(e));
       }
@@ -136,17 +101,16 @@ export function InputPanel({
         end: selectionEnd,
       };
 
-      setMenuPosition(Caret.getAbsolutePosition(inputRef.current));
       parseAndValidate(currentValue.trim());
       onChange(currentValue);
     },
-    [inputRef, onChange, parseAndValidate],
+    [onChange, parseAndValidate],
   );
 
   const handleKeyDown = useCallback((e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "/" && (e.metaKey || e.ctrlKey)) {
+      menuPositionRef.current = Caret.getAbsolutePosition(e.currentTarget);
       setInlineEditorCommandPaletteOpen(true);
-      setMenuPosition(Caret.getAbsolutePosition(e.currentTarget));
       e.preventDefault();
     }
   }, []);
@@ -161,6 +125,13 @@ export function InputPanel({
     },
     [updateValueSelectionAndTable],
   );
+
+  const handleKeyUp = useCallback((e: KeyboardEvent<HTMLTextAreaElement>) => {
+    selectionRef.current = {
+      start: e.currentTarget.selectionStart,
+      end: e.currentTarget.selectionEnd,
+    };
+  }, []);
 
   const handleCreateNewSubtable = useCallback(() => {
     // just append a new basic table to the end
@@ -213,29 +184,16 @@ export function InputPanel({
         "overflow-hidden": isInlineEditorCommandPaletteOpen,
       })}
     >
-      <div
-        className="absolute"
-        ref={refs.setReference}
-        {...getReferenceProps()}
-        style={{ top: menuPosition?.top, left: menuPosition?.left }}
+      <CommandPopup
+        isOpen={isInlineEditorCommandPaletteOpen}
+        inputRef={inputRef}
+        selectionRef={selectionRef}
+        onCreateNewSubtable={handleCreateNewSubtable}
+        menuPositionRef={menuPositionRef}
+        onOpenChange={(nextIsOpen) =>
+          setInlineEditorCommandPaletteOpen(nextIsOpen)
+        }
       />
-
-      {/* @TODO: add context menu at cursor position when `/` is typed or keyboard combination is pressed */}
-      {isInlineEditorCommandPaletteOpen && (
-        <FloatingPortal>
-          <FloatingFocusManager context={context}>
-            <div
-              ref={refs.setFloating}
-              style={floatingStyles}
-              {...getFloatingProps()}
-            >
-              <InlineEditorCommandPalette
-                onCreateNewSubtable={handleCreateNewSubtable}
-              />
-            </div>
-          </FloatingFocusManager>
-        </FloatingPortal>
-      )}
 
       <Textarea
         autoSize
@@ -252,11 +210,97 @@ export function InputPanel({
         onChange={handleChange}
         onBlur={onBlur}
         onKeyDown={handleKeyDown}
+        onKeyUp={handleKeyUp}
         autoComplete="off"
         autoCorrect="off"
         spellCheck={false}
       />
     </FlexCol>
+  );
+}
+
+function CommandPopup({
+  isOpen,
+  inputRef,
+  selectionRef,
+  menuPositionRef,
+  onOpenChange,
+  onCreateNewSubtable,
+}: {
+  isOpen: boolean;
+  inputRef: RefObject<HTMLTextAreaElement>;
+  selectionRef: RefObject<Selection | null>;
+  menuPositionRef: RefObject<Caret.Position | null>;
+  onOpenChange: (nextIsOpen: boolean) => void;
+  onCreateNewSubtable: () => void;
+}) {
+  const { refs, floatingStyles, context } = useFloating({
+    placement: "right-start",
+    open: isOpen,
+    onOpenChange: (nextIsOpen) => {
+      onOpenChange(nextIsOpen);
+
+      const { start, end } = selectionRef.current ?? { start: 0, end: 0 };
+
+      inputRef.current?.focus();
+      inputRef.current?.setSelectionRange(start, end, "forward");
+    },
+    middleware: [
+      offset({
+        crossAxis: -12,
+        mainAxis: 8,
+      }),
+      shift({
+        mainAxis: true,
+        crossAxis: false,
+        altBoundary: true,
+        padding: 8,
+      }),
+    ],
+  });
+
+  const clientPoint = useClientPoint(context, {
+    x: menuPositionRef.current?.left,
+    y: menuPositionRef.current?.top,
+  });
+
+  const dismiss = useDismiss(context, {
+    escapeKey: true,
+  });
+
+  const { getReferenceProps, getFloatingProps } = useInteractions([
+    clientPoint,
+    dismiss,
+  ]);
+
+  return (
+    <>
+      <div
+        className="absolute"
+        ref={refs.setReference}
+        {...getReferenceProps()}
+        style={{
+          top: menuPositionRef.current?.top,
+          left: menuPositionRef.current?.left,
+        }}
+      />
+
+      {isOpen && (
+        <FloatingPortal>
+          <FloatingFocusManager context={context}>
+            <div
+              ref={refs.setFloating}
+              style={floatingStyles}
+              {...getFloatingProps()}
+            >
+              <InlineEditorCommandPalette
+                onCreateNewSubtable={onCreateNewSubtable}
+              />
+            </div>
+          </FloatingFocusManager>
+        </FloatingPortal>
+      )}
+    </>
   );
 }
 
