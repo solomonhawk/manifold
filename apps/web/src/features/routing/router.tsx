@@ -19,8 +19,8 @@ export function buildAppRoutes({
   protectedLoader,
 }: {
   trpcUtils: TrpcUtils;
-  guestLoader?: LoaderFunction;
-  protectedLoader?: LoaderFunction;
+  guestLoader: LoaderFunction;
+  protectedLoader: LoaderFunction;
 }) {
   return [
     {
@@ -114,7 +114,7 @@ export function buildAppRoutes({
         },
       ],
     },
-  ];
+  ] satisfies RouteObject[];
 }
 
 export function guestLoaderBuilder(auth: ReturnType<typeof useSession>) {
