@@ -15,7 +15,10 @@ import { useAtom } from "jotai";
 import { memo, type RefObject, useCallback, useState } from "react";
 import { GoCheck, GoPaste, GoX } from "react-icons/go";
 
-import { rollHistory, type RollResult } from "~features/editor/state";
+import {
+  rollHistory,
+  type RollResult,
+} from "~features/editor/components/editor/state";
 
 export function RollResults({
   listRef,
