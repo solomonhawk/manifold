@@ -15,6 +15,7 @@ import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
 import { type MouseEvent, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { log } from "~utils/logger";
 import { toastError, toastSuccess } from "~utils/toast";
 import { trpc } from "~utils/trpc";
 
@@ -41,7 +42,7 @@ export const TableDeleteDialog = ({ tableId, title }: Props) => {
       toastSuccess(`${title} deleted`);
     },
     onError: (e) => {
-      console.error(e);
+      log.error(e);
 
       toastError("Failed to delete table", {
         description: e.message,

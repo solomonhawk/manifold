@@ -25,6 +25,7 @@ import { useSearchParams } from "react-router-dom";
 
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
 import { TABLE_LIST_ORDER_BY_STORAGE_KEY } from "~features/table/constants";
+import { log } from "~utils/logger";
 import { storage } from "~utils/storage";
 import { trpc } from "~utils/trpc";
 
@@ -67,7 +68,7 @@ export function TableList({
 
   // @TODO: error state
   if (listQuery.isError) {
-    console.error(listQuery.error);
+    log.error(listQuery.error);
     return null;
   }
 

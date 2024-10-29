@@ -14,6 +14,7 @@ import { useZodForm } from "@manifold/ui/hooks/use-zod-form";
 import { tableCreateInput, type z } from "@manifold/validators";
 import { type SubmitHandler } from "react-hook-form";
 
+import { log } from "~utils/logger";
 import { toastError, toastSuccess } from "~utils/toast";
 import { trpc } from "~utils/trpc";
 
@@ -43,7 +44,7 @@ export function TableCreateForm({
       await onCreate?.(data);
     },
     onError: (e) => {
-      console.error(e);
+      log.error(e);
 
       toastError("Failed to create table", {
         description: e.message,

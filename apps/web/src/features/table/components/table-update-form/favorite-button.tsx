@@ -4,6 +4,7 @@ import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
 import { type MouseEvent } from "react";
 import { GoHeart, GoHeartFill } from "react-icons/go";
 
+import { log } from "~utils/logger";
 import { toastError, toastSuccess } from "~utils/toast";
 import { trpc } from "~utils/trpc";
 
@@ -28,7 +29,7 @@ export function FavoriteButton({
       trpcUtils.table.get.invalidate(tableId, { refetchType: "inactive" });
     },
     onError: (e) => {
-      console.error(e);
+      log.error(e);
 
       toastError("Failed to update favorite status", {
         description: e.message,

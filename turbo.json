@@ -8,7 +8,7 @@
       "cache": false,
       "persistent": true,
       "inputs": [".env"],
-      "env": ["DATABASE_URL"]
+      "env": ["DEV", "PROD", "DATABASE_URL"]
     },
     "build": {
       "dependsOn": ["^build"],

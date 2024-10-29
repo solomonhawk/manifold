@@ -4,6 +4,7 @@ import { transitionAlpha } from "@manifold/ui/lib/animation";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
+import { log } from "~utils/logger";
 import { trpc } from "~utils/trpc";
 
 export function QuickLauncher() {
@@ -11,7 +12,7 @@ export function QuickLauncher() {
 
   // @TODO: error state
   if (favoritesQuery.isError) {
-    console.error(favoritesQuery.error);
+    log.error(favoritesQuery.error);
     return null;
   }
 

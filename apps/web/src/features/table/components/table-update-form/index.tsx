@@ -9,7 +9,6 @@ import {
   FormSubmitButton,
   FormSubmitStatus,
 } from "@manifold/ui/components/ui/form";
-import { toast } from "@manifold/ui/components/ui/toaster";
 import { useZodForm } from "@manifold/ui/hooks/use-zod-form";
 import { tableUpdateInput, z } from "@manifold/validators";
 import { type KeyboardEvent, useCallback, useEffect, useRef } from "react";
@@ -17,7 +16,8 @@ import { createPortal } from "react-dom";
 import { type SubmitHandler } from "react-hook-form";
 
 import { Editor } from "~features/editor";
-import { toastError } from "~utils/toast";
+import { log } from "~utils/logger";
+import { toastError, toastSuccess } from "~utils/toast";
 import { trpc } from "~utils/trpc";
 
 import { TABLE_UPDATE_HEADER_PORTAL_ID } from "./header";
@@ -68,7 +68,7 @@ export function TableUpdateForm({
 
   const updateTableMutation = trpc.table.update.useMutation({
     onSuccess: async (data) => {
-      toast.success("Table updated");
+      toastSuccess("Table updated");
 
       // ensure form touched/dirty state is accurate after a successful save.
       form.reset({
@@ -88,7 +88,7 @@ export function TableUpdateForm({
       trpcUtils.table.get.invalidate(table.id, { refetchType: "inactive" });
     },
     onError: (e) => {
-      console.error(e);
+      log.error(e);
 
       toastError("Table failed to save", {
         description: e.message,
