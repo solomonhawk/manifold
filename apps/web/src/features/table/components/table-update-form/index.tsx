@@ -82,7 +82,7 @@ export function TableUpdateForm({
       });
 
       // invalidate table list query to ensure order is accurate (based on `updatedAt`)
-      trpcUtils.table.list.invalidate(undefined, { type: "inactive" });
+      trpcUtils.table.list.invalidate();
 
       // invalidate get query, but don't bother refetching until the next time it becomes active
       trpcUtils.table.get.invalidate(table.id, { refetchType: "inactive" });
@@ -134,12 +134,17 @@ export function TableUpdateForm({
    */
   const handleKeyDown = useCallback(
     async (e: KeyboardEvent) => {
-      if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+      if ((e.key === "s" || e.key === "Enter") && (e.metaKey || e.ctrlKey)) {
+        // Make sure the form state is up-to-date - ensures `isValid` is true
+        // when there are no fields with errors.
+        await form.trigger(undefined, { shouldFocus: false });
+
         if (!form.formState.isDirty || !form.formState.isValid) {
           return;
         }
 
         e.preventDefault();
+        e.stopPropagation();
 
         const focusedElement = document.activeElement as HTMLElement;
 
