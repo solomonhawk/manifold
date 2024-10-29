@@ -3,8 +3,19 @@ import { useCallback, useEffect, useRef } from "react";
 import { Link, type LinkProps, matchRoutes } from "react-router-dom";
 
 import { routesAtom } from "~features/routing/state";
+import { log } from "~utils/logger";
 
-export type PrefetchBehavior = "visible" | "intent";
+type PrefetchableLinkProps = LinkProps &
+  (
+    | {
+        mode?: "visible";
+        wait?: never;
+      }
+    | {
+        mode?: "intent";
+        wait?: number;
+      }
+  );
 
 /**
  * @NOTE: Does not support following loader redirects and prefetching those
@@ -14,11 +25,15 @@ export function PrefetchableLink({
   children,
   to,
   mode = "intent",
+  wait = 250,
   ...props
-}: LinkProps & {
-  mode?: PrefetchBehavior;
-}) {
+}: PrefetchableLinkProps) {
+  if (import.meta.env.DEV && wait < 0) {
+    log.warn("PrefecthableLink: `wait` must be a positive number");
+  }
+
   const ref = useRef<HTMLAnchorElement | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const routes = useAtomValue(routesAtom);
 
   /**
@@ -32,31 +47,64 @@ export function PrefetchableLink({
       return;
     }
 
+    const promises = [];
+
     for (const match of nextMatches) {
-      const lazy = match.route.lazy;
+      /**
+       * If the route has a `lazy` definition, call it to load the lazy route
+       * definition. That definition may include a loader, but may not.
+       *
+       * If it doesn't, just use the matched route's existing loader, if present.
+       */
+      const lazyLoadRoute =
+        match.route.lazy ??
+        (() => Promise.resolve({ loader: match.route.loader }));
 
-      if (lazy) {
-        // @TODO: do we need to ignore certain exports here instead of spreading everything?
-        match.route = { ...match.route, ...(await lazy()) };
-      }
+      promises.push(
+        lazyLoadRoute()
+          .then((module) => {
+            const loader = module.loader ?? match.route.loader;
 
-      const loader = match.route.loader;
+            if (typeof loader !== "function") {
+              return;
+            }
 
-      if (typeof loader === "function") {
-        // @PERF: would be nice to do these in parallel
-        await loader({
-          request: new Request(new URL(path, window.location.origin)),
-          params: match.params,
-        });
-      }
+            return loader({
+              request: new Request(new URL(path, window.location.origin)),
+              params: match.params,
+            });
+          })
+          .catch((e) => log.error(e)),
+      );
     }
+
+    return Promise.all(promises);
   }, [routes, to]);
 
   const handleIntent = useCallback(() => {
     if (mode === "intent") {
-      runLoaders();
+      if (wait > 0) {
+        const timeoutId = setTimeout(runLoaders, wait);
+        timeoutRef.current = timeoutId;
+      } else {
+        runLoaders();
+      }
+
+      return () => {
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+      };
     }
-  }, [mode, runLoaders]);
+
+    return;
+  }, [mode, runLoaders, wait]);
+
+  const handleUnintent = useCallback(() => {
+    if (mode === "intent" && timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+  }, [mode]);
 
   useEffect(() => {
     if (mode !== "visible") {
@@ -90,7 +138,9 @@ export function PrefetchableLink({
       to={to}
       {...props}
       onMouseEnter={handleIntent}
+      onMouseLeave={handleUnintent}
       onFocus={handleIntent}
+      onBlur={handleUnintent}
     >
       {children}
     </Link>
