@@ -3,6 +3,8 @@ import { httpBatchLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import superjson from "superjson";
 
+import { env } from "~env";
+
 /**
  * This type annotation feels unnecessary, but `tsc` chokes without it.
  *
@@ -16,7 +18,7 @@ export const trpcClient = trpc.createClient({
   transformer: superjson,
   links: [
     httpBatchLink({
-      url: "http://localhost:5173/api/trpc",
+      url: new URL("/api/trpc", env.PUBLIC_API_BASE_URL).toString(),
     }),
   ],
 });

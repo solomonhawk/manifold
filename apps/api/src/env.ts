@@ -1,9 +1,8 @@
 import "dotenv/config";
 
-import { createEnv } from "@t3-oss/env-core";
+import { createEnv, z } from "@manifold/env";
 import type { Context } from "hono";
 import { env } from "hono/adapter";
-import { z } from "zod";
 
 export const getEnv = (c?: Context) =>
   createEnv({
