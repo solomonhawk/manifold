@@ -25,7 +25,6 @@ function AnimatedList({
   className,
   transition = transitionAlpha,
   listRef,
-  onScroll,
   onLayoutAnimationStart,
   onLayoutAnimationComplete,
   children,
@@ -35,9 +34,9 @@ function AnimatedList({
   return (
     <motion.ul
       layout
+      layoutScroll
       ref={listRef}
       className={className}
-      onScroll={onScroll}
       transition={transition}
       onLayoutAnimationStart={onLayoutAnimationStart}
       onLayoutAnimationComplete={onLayoutAnimationComplete}
@@ -57,9 +56,9 @@ const AnimatedListItem = forwardRef<
     <motion.li
       ref={ref}
       layout
-      initial={{ opacity: 0, y: -100 }}
-      animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
-      exit={{ opacity: 0 }}
+      initial={{ opacity: 0, y: -100, z: 0 }}
+      animate={{ opacity: 1, x: 0, y: 0, scale: 1, z: 0 }}
+      exit={{ opacity: 0, z: 0 }}
       {...props}
     >
       {children}

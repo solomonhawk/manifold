@@ -56,7 +56,7 @@ export function RollResults({
     <>
       <AnimatedList
         className={cn("flex min-h-0 flex-col gap-8 overflow-auto px-16", {
-          "fade-bottom-90 pb-[5%]": listOverflowing,
+          "fade-list-overflowing": listOverflowing,
         })}
         transition={transitionAlpha}
         listRef={listRef}
@@ -97,10 +97,12 @@ export function RollResults({
       <motion.div
         layout
         transition={transitionAlpha}
-        className="flex justify-end p-16"
+        className={cn("fade-list-mask relative flex justify-end", {
+          "fade-list-mask-visible": listOverflowing,
+        })}
       >
         <div
-          className={cn("duration-500", {
+          className={cn("p-16 duration-500", {
             "!opacity-0": rollResults.length === 0,
           })}
         >
