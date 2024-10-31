@@ -1,6 +1,5 @@
 import { createEnv, z } from "@manifold/env";
 
-console.log(import.meta.env);
 export const env = createEnv({
   server: {
     API_PROXY_URL: z.string(),

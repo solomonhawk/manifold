@@ -5,10 +5,47 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Manifold</title>
+    <meta id="meta-description" name="description" content="Manifold" />
+    <link rel="dns-prefetch" href="https://api.fontshare.com/" />
+
     <link
+      rel="preload"
       href="https://api.fontshare.com/v2/css?f[]=general-sans@400,401,600,700&display=swap"
-      rel="stylesheet"
+      as="style"
+      onload="this.rel='stylesheet'"
     />
+    <noscript class="async-css">
+      <link
+        rel="stylesheet"
+        href="https://api.fontshare.com/v2/css?f[]=general-sans@400,401,600,700&display=swap"
+      />
+    </noscript>
+
+    <script>
+      function supportsToken(token) {
+        return function (relList) {
+          if (relList.supports && token) {
+            return relList.supports(token);
+          }
+          return false;
+        };
+      }
+
+      (function () {
+        var supportsPreload = supportsToken("preload");
+        var rl = document.createElement("link").relList;
+        if (!supportsPreload(rl)) {
+          var styles = document.getElementsByTagName("noscript");
+          for (var i = 0; i < styles.length; i++) {
+            if (styles[i].getAttribute("class") === "async-css") {
+              var div = document.createElement("div");
+              div.innerHTML = styles[i].innerHTML;
+              document.body.appendChild(div);
+            }
+          }
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
