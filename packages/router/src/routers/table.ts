@@ -67,10 +67,9 @@ export const tableRouter = t.router({
   update: authedProcedure
     .input(tableUpdateInput)
     .mutation(async ({ input, ctx }) => {
-      // @TODO: differentiate between not found and not allowed?
       const [table] = await db
         .update(schema.table)
-        .set({ ...input, updatedAt: new Date() })
+        .set(input)
         .where(
           and(
             eq(schema.table.userId, ctx.user.id),
@@ -103,6 +102,7 @@ export const tableRouter = t.router({
           eq(schema.table.favorited, true),
           isNull(schema.table.deletedAt),
         ),
+        orderBy: desc(schema.table.updatedAt),
       })
       .execute();
   }),
