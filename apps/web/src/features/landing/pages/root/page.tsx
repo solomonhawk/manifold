@@ -25,8 +25,8 @@ function Landing() {
         <CardHeader>
           <GiHobbitDoor className="mx-auto size-32 sm:size-48 md:size-64" />
 
-          <CardTitle>
-            <span className="text-2xl">Hail, and well met!</span>
+          <CardTitle asChild>
+            <h2 className="text-2xl">Hail, and well met!</h2>
           </CardTitle>
 
           <CardDescription>

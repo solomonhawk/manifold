@@ -64,12 +64,14 @@ export const AvailableTables = memo(function AvailableTables({
 
         <Checkbox
           id="exported"
+          aria-labelledby="exported-label"
           checked={showExportedOnly}
           onCheckedChange={(checked) =>
             setShowExportedOnly(checked === "indeterminate" ? false : checked)
           }
         />
         <label
+          id="exported-label"
           htmlFor="exported"
           className="pl-8 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
         >

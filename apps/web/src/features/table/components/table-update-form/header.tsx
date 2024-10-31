@@ -25,6 +25,7 @@ export function Header({ table }: { table: TableModel }) {
       >
         <Button asChild size="icon" variant="ghost">
           <PrefetchableLink to="/dashboard">
+            <span className="sr-only">Go back to dashboard</span>
             <GoArrowLeft />
           </PrefetchableLink>
         </Button>

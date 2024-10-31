@@ -38,6 +38,7 @@ export function DeleteButton({
         })
       }
     >
+      <span className="sr-only">Delete table</span>
       {isPending ? <LoadingIndicator size="sm" /> : <GoTrash />}
     </Button>
   );

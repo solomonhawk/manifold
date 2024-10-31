@@ -55,6 +55,10 @@ export function FavoriteButton({
       variant="outline"
       disabled={isPending}
     >
+      <span className="sr-only">
+        {isFavorite ? "Remove from favorites" : "Add to favorites"}
+      </span>
+
       {isPending ? (
         <LoadingIndicator size="sm" />
       ) : isFavorite ? (

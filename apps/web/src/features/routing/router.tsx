@@ -34,6 +34,8 @@ export function buildAppRoutes({
           lazy: () => import("~features/landing/pages/root/page"),
           handle: {
             title: () => "Manifold | Welcome",
+            description: () =>
+              "A tool for curating your collection of random tables.",
           } satisfies Handle,
         },
         {
@@ -42,6 +44,7 @@ export function buildAppRoutes({
           lazy: () => import("~features/auth/pages/login/page"),
           handle: {
             title: () => "Manifold | Login",
+            description: () => "Sign in to access your Manifolds.",
           } satisfies Handle,
         },
         {
@@ -62,6 +65,7 @@ export function buildAppRoutes({
               },
               handle: {
                 title: () => "Manifold | Dashboard",
+                description: () => "Where it all begins.",
               } satisfies Handle,
             },
           ],
@@ -75,6 +79,7 @@ export function buildAppRoutes({
               lazy: () => import("~features/table/pages/new/page"),
               handle: {
                 title: () => "Manifold | New Table",
+                description: () => "Create a new random table.",
               } satisfies Handle,
             },
             {
@@ -94,6 +99,7 @@ export function buildAppRoutes({
                   },
                   handle: {
                     title: ({ data }) => `Manifold | Edit ${data.title}`,
+                    description: ({ data }) => `Edit ${data.title} table.`,
                   } satisfies Handle<TableEditLoaderData>,
                 },
                 {
@@ -107,10 +113,19 @@ export function buildAppRoutes({
         {
           path: "tech-stack",
           lazy: () => import("~features/made-with/pages/root/page"),
+          handle: {
+            title: () => "Manifold | Tech Stack",
+            description: () =>
+              "The tools and technologies that power Manifold.",
+          } satisfies Handle,
         },
         {
           path: "*",
           lazy: () => import("~features/routing/pages/root/not-found"),
+          handle: {
+            title: () => "Manifold | Not Found",
+            description: () => "You have found an empty room.",
+          } satisfies Handle,
         },
       ],
     },

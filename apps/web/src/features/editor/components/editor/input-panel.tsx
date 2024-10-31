@@ -195,7 +195,13 @@ export function InputPanel({
         }
       />
 
+      <label htmlFor="table-editor-area" className="sr-only">
+        Edit the table below. Use <kbd>Ctrl</kbd> + <kbd>/</kbd> to open the
+        command palette.
+      </label>
+
       <Textarea
+        id="table-editor-area"
         autoSize
         className="bg-background/60 resize-none font-mono"
         ref={(node) => {
