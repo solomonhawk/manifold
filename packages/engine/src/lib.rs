@@ -4,7 +4,7 @@ use wasm_bindgen::prelude::*;
 use web_sys::js_sys::JsString;
 
 mod nom_parser;
-mod table_collection;
+pub mod table_collection;
 mod utils;
 
 extern crate wee_alloc;
