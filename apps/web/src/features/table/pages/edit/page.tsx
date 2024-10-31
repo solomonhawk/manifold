@@ -1,23 +1,15 @@
 import { FullScreenLoader } from "@manifold/ui/components/full-screen-loader";
 import { FlexCol } from "@manifold/ui/components/ui/flex";
-import { useLocation, useParams } from "react-router-dom";
+import { z } from "@manifold/validators";
 
+import { useRouteParams } from "~features/routing/hooks/use-route-params";
+import { useTable } from "~features/table/api/get";
 import { TableUpdateForm } from "~features/table/components/table-update-form";
 import { Header } from "~features/table/components/table-update-form/header";
-import { RoutingError } from "~utils/errors";
-import { trpc } from "~utils/trpc";
 
 export function TableEdit() {
-  const { id } = useParams();
-  const location = useLocation();
-
-  if (!id) {
-    throw new RoutingError("No ID provided");
-  }
-
-  const tableQuery = trpc.table.get.useQuery(id, {
-    placeholderData: location.state?.table,
-  });
+  const { id } = useRouteParams({ id: z.string() });
+  const tableQuery = useTable({ id });
 
   // @TODO: replace with skeleton?
   if (tableQuery.isLoading) {

@@ -4,11 +4,11 @@ import { transitionAlpha } from "@manifold/ui/lib/animation";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
+import { useListTableFavorites } from "~features/table/api/favorite";
 import { log } from "~utils/logger";
-import { trpc } from "~utils/trpc";
 
 export function QuickLauncher() {
-  const favoritesQuery = trpc.table.favorites.useQuery();
+  const favoritesQuery = useListTableFavorites();
 
   // @TODO: error state
   if (favoritesQuery.isError) {

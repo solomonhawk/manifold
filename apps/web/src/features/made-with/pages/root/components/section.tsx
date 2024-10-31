@@ -80,6 +80,7 @@ export function SectionGroupItem({ label, url }: ItemProps) {
       <a
         href={url}
         className="text-muted-foreground hover:text-accent-foreground inline-block py-2 underline transition-colors md:py-4"
+        target="_blank"
       >
         {label}
       </a>

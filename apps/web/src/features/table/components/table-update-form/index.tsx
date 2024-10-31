@@ -16,9 +16,7 @@ import { createPortal } from "react-dom";
 import { type SubmitHandler } from "react-hook-form";
 
 import { Editor } from "~features/editor";
-import { log } from "~utils/logger";
-import { toastError, toastSuccess } from "~utils/toast";
-import { trpc } from "~utils/trpc";
+import { useUpdateTable } from "~features/table/api/update";
 
 import { TABLE_UPDATE_HEADER_PORTAL_ID } from "./header";
 
@@ -33,8 +31,6 @@ export function TableUpdateForm({
   table: TableModel;
   isDisabled?: boolean;
 }) {
-  const trpcUtils = trpc.useUtils();
-
   const form = useZodForm({
     mode: "onChange",
     reValidateMode: "onChange",
@@ -66,32 +62,13 @@ export function TableUpdateForm({
     }),
   });
 
-  const updateTableMutation = trpc.table.update.useMutation({
-    onSuccess: async (data) => {
-      toastSuccess("Table updated");
-
+  const updateTableMutation = useUpdateTable({
+    tableId: table.id,
+    onSuccess: (data) => {
       // ensure form touched/dirty state is accurate after a successful save.
       form.reset({
         id: data.id,
         definition: data.definition,
-      });
-
-      // update query cache with the updated data
-      trpcUtils.table.list.setData(undefined, (list) => {
-        return list?.map((t) => (t.id === data.id ? data : t)) ?? [data];
-      });
-
-      // invalidate table list query to ensure order is accurate (based on `updatedAt`)
-      trpcUtils.table.list.invalidate();
-
-      // invalidate get query, but don't bother refetching until the next time it becomes active
-      trpcUtils.table.get.invalidate(table.id, { refetchType: "inactive" });
-    },
-    onError: (e) => {
-      log.error(e);
-
-      toastError("Table failed to save", {
-        description: e.message,
       });
     },
   });

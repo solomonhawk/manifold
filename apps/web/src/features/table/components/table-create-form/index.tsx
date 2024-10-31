@@ -14,9 +14,7 @@ import { useZodForm } from "@manifold/ui/hooks/use-zod-form";
 import { tableCreateInput, type z } from "@manifold/validators";
 import { type SubmitHandler } from "react-hook-form";
 
-import { log } from "~utils/logger";
-import { toastError, toastSuccess } from "~utils/toast";
-import { trpc } from "~utils/trpc";
+import { useCreateTable } from "~features/table/api/create";
 
 type FormData = z.infer<typeof tableCreateInput>;
 
@@ -25,8 +23,6 @@ export function TableCreateForm({
 }: {
   onCreate?: (table: TableModel) => void;
 }) {
-  const trpcUtils = trpc.useUtils();
-
   const form = useZodForm({
     schema: tableCreateInput,
     defaultValues: {
@@ -35,22 +31,7 @@ export function TableCreateForm({
     },
   });
 
-  const createTableMutation = trpc.table.create.useMutation({
-    onSuccess: async (data) => {
-      toastSuccess("Table created");
-
-      trpcUtils.table.list.invalidate();
-
-      await onCreate?.(data);
-    },
-    onError: (e) => {
-      log.error(e);
-
-      toastError("Failed to create table", {
-        description: e.message,
-      });
-    },
-  });
+  const createTableMutation = useCreateTable({ onSuccess: onCreate });
 
   const handleSubmit: SubmitHandler<FormData> = async (data) => {
     await createTableMutation.mutateAsync(data);

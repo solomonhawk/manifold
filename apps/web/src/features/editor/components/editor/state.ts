@@ -1,6 +1,7 @@
 import { atom } from "jotai";
 
 export type RollResult = {
+  id: number;
   tableName: string;
   tableId: string;
   timestamp: number;

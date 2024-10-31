@@ -1,12 +1,10 @@
 import { LoadingIndicator } from "@manifold/ui/components/loading-indicator";
 import { Button } from "@manifold/ui/components/ui/button";
 import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
-import { type MouseEvent } from "react";
+import { type MouseEvent, useEffect, useRef } from "react";
 import { GoHeart, GoHeartFill } from "react-icons/go";
 
-import { log } from "~utils/logger";
-import { toastError, toastSuccess } from "~utils/toast";
-import { trpc } from "~utils/trpc";
+import { useFavoriteTable } from "~features/table/api/favorite";
 
 export function FavoriteButton({
   tableId,
@@ -15,34 +13,24 @@ export function FavoriteButton({
   tableId: string;
   isFavorite: boolean;
 }) {
-  const trpcUtils = trpc.useUtils();
-  const mutation = trpc.table.update.useMutation({
-    onSuccess: async (data) => {
-      toastSuccess(data.favorited ? "Added favorite" : "Removed favorite");
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const favoriteTableMutation = useFavoriteTable({ tableId });
 
-      trpcUtils.table.get.setData(tableId, data);
-
-      // @TODO: this causes the dashboard loader to prefetch the table data again
-      // which means we no longer see the animation of the item entering/leaving
-      trpcUtils.table.favorites.invalidate();
-
-      trpcUtils.table.get.invalidate(tableId, { refetchType: "inactive" });
-    },
-    onError: (e) => {
-      log.error(e);
-
-      toastError("Failed to update favorite status", {
-        description: e.message,
-      });
-    },
+  const isPending = useStateGuard(favoriteTableMutation.isLoading, {
+    min: 250,
   });
-
-  const isPending = useStateGuard(mutation.isLoading, { min: 250 });
 
   function handleClick(e: MouseEvent) {
     e.preventDefault();
-    mutation.mutate({ id: tableId, favorited: !isFavorite });
+    favoriteTableMutation.mutate({ id: tableId, favorited: !isFavorite });
   }
+
+  useEffect(() => {
+    if (!isPending && favoriteTableMutation.isSuccess) {
+      favoriteTableMutation.reset();
+      buttonRef.current?.focus();
+    }
+  }, [favoriteTableMutation, isPending]);
 
   /**
    * @TODO: change this to <form onSubmit={..} /> and use a submit button. Can't
@@ -50,6 +38,7 @@ export function FavoriteButton({
    */
   return (
     <Button
+      ref={buttonRef}
       size="icon"
       onClick={handleClick}
       variant="outline"

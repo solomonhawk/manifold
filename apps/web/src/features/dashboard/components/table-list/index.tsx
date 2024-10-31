@@ -24,10 +24,10 @@ import { useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
+import { useListTables } from "~features/table/api/list";
 import { TABLE_LIST_ORDER_BY_STORAGE_KEY } from "~features/table/constants";
 import { log } from "~utils/logger";
 import { storage } from "~utils/storage";
-import { trpc } from "~utils/trpc";
 
 const NOW = new Date();
 
@@ -40,13 +40,7 @@ export function TableList({
   const orderByFromUrl = tableListOrderBy.safeParse(searchParams.get("sort"));
   const orderBy = orderByFromUrl.success ? orderByFromUrl.data : routeOrderBy;
 
-  const listQuery = trpc.table.list.useQuery(
-    { orderBy },
-    {
-      keepPreviousData: true,
-    },
-  );
-
+  const listQuery = useListTables({ orderBy });
   const isPending = useStateGuard(listQuery.isRefetching, { min: 200 });
 
   const handleOrderChange = useCallback(

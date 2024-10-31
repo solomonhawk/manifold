@@ -13,11 +13,8 @@ import {
 import { useReturnFocus } from "@manifold/ui/hooks/use-return-focus";
 import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
 import { type MouseEvent, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 
-import { log } from "~utils/logger";
-import { toastError, toastSuccess } from "~utils/toast";
-import { trpc } from "~utils/trpc";
+import { useDeleteTable } from "~features/table/api/delete";
 
 type Props = {
   tableId: string;
@@ -26,30 +23,8 @@ type Props = {
 
 export const TableDeleteDialog = ({ tableId, title }: Props) => {
   const modal = useModal();
-  const navigate = useNavigate();
-  const trpcUtils = trpc.useUtils();
   const returnFocus = useReturnFocus(modal.visible);
-
-  const mutation = trpc.table.delete.useMutation({
-    onSuccess: async () => {
-      await Promise.all([
-        trpcUtils.table.list.refetch(),
-        trpcUtils.table.favorites.refetch(),
-      ]);
-
-      await navigate("/dashboard");
-
-      toastSuccess(`${title} deleted`);
-    },
-    onError: (e) => {
-      log.error(e);
-
-      toastError("Failed to delete table", {
-        description: e.message,
-      });
-    },
-  });
-
+  const mutation = useDeleteTable({ title });
   const isPending = useStateGuard(mutation.isLoading, { min: 250 });
 
   async function handleConfirmDelete(e: MouseEvent) {

@@ -15,6 +15,8 @@ import {
 } from "../state";
 import { workerInstance } from "../worker";
 
+let id = 0;
+
 export const AvailableTables = memo(function AvailableTables({
   inputRef,
   onRoll,
@@ -44,6 +46,7 @@ export const AvailableTables = memo(function AvailableTables({
       setRollResults((results) =>
         [
           {
+            id: id++,
             tableName: table.title,
             tableId: table.id,
             timestamp: Date.now(),

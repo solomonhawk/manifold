@@ -83,7 +83,7 @@ export function RollResults({
         ) : null}
 
         {rollResults.map((result) => (
-          <AnimatedListItem key={result.timestamp} transition={transitionAlpha}>
+          <AnimatedListItem key={result.id} transition={transitionAlpha}>
             <ListItem
               text={result.text}
               tableName={result.tableName}
@@ -148,7 +148,7 @@ const ListItem = memo(function ({
             </span>
           </span>
 
-          <div className="@md:m-0 -mb-6 -mr-6 flex items-center gap-8 opacity-0 transition-opacity group-hover:opacity-100">
+          <div className="@md:m-0 -mb-6 -mr-6 flex items-center gap-8 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
             <ClipboardCopy>
               {({ copied, onCopy }) => {
                 return (
@@ -156,8 +156,7 @@ const ListItem = memo(function ({
                     type="button"
                     variant="ghost"
                     size="icon-sm"
-                    onClick={() => onCopy(text)}
-                    disabled={copied}
+                    onClick={copied ? undefined : () => onCopy(text)}
                   >
                     {copied ? <GoCheck /> : <GoPaste size={12} />}
                   </Button>
