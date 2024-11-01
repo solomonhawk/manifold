@@ -248,7 +248,7 @@ fn literal(input: Span) -> IResult<Span, Span, ErrorTree<Span>> {
 }
 
 fn ident(input: Span) -> IResult<Span, Span, ErrorTree<Span>> {
-    take_while1(|c: char| c.is_alphanumeric() || c == '_')
+    take_while1(|c: char| c.is_alphanumeric() || c == '_' || c == '-')
         .context("Invalid identifier, only alphanumeric characters and `_` are allowed")
         .parse(input)
 }

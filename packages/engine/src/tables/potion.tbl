@@ -3,7 +3,7 @@ title: Potion
 id: potion
 export: true
 ---
-1: {{potion_descriptor|indefinite|capitalize}} {{color}} {{potion_substance}} {{containment}} {{container_descriptor|indefinite}} {{container_shape}} {{container_material}} {{container_type}}. It smells like {{smell}} and {{potion_attribute}}. {{potion_effect}}
+1: {{potion-descriptor|indefinite|capitalize}} {{color}} {{potion-substance}} {{containment}} {{container-descriptor|indefinite}} {{container-shape}} {{container-material}} {{container-type}}. It smells like {{smell}} and {{potion-attribute}}. {{potion-effect}}
 
 ---
 title: Containment
@@ -22,7 +22,7 @@ id: containment
 
 ---
 title: Potion Descriptor
-id: potion_descriptor
+id: potion-descriptor
 ---
 1: fresh
 1: ripe
@@ -103,7 +103,7 @@ id: color
 
 ---
 title: Potion Substance
-id: potion_substance
+id: potion-substance
 ---
 5: liquid
 2: gelatin
@@ -116,7 +116,7 @@ id: potion_substance
 
 ---
 title: Container Descriptor
-id: container_descriptor
+id: container-descriptor
 ---
 1: twisted
 1: jagged
@@ -135,7 +135,7 @@ id: container_descriptor
 
 ---
 title: Container Material
-id: container_material
+id: container-material
 ---
 5: glass
 2: crystal
@@ -148,7 +148,7 @@ id: container_material
 
 ---
 title: Container Shape
-id: container_shape
+id: container-shape
 ---
 1: round
 1: spherical
@@ -166,7 +166,7 @@ id: container_shape
 
 ---
 title: Container Type
-id: container_type
+id: container-type
 ---
 1: vial
 1: bottle
@@ -222,11 +222,11 @@ id: smell
 1: vanilla
 1: sandalwood
 1: lemon
-1: {{root_material}}root
+1: {{root-material}}root
 
 ---
 title: Root Material
-id: root_material
+id: root-material
 ---
 1: pine
 1: oak
@@ -239,7 +239,7 @@ id: root_material
 
 ---
 title: Attribute
-id: potion_attribute
+id: potion-attribute
 ---
 1: glows with a dim {{color}} light
 1: it shimmers and swirls curiously
@@ -288,18 +288,18 @@ id: emotion
 
 ---
 title: Potion Effect
-id: potion_effect
+id: potion-effect
 ---
-1: Regular with a slight side effect. {{effect}}. {{side_effect}}.
+1: Regular with a slight side effect. {{effect}}. {{side-effect}}.
 1: Regular with no side effect. {{effect}}.
-1: Regular with a strong side effect, {{effect}}. {{side_effect}}. {{side_effect}}.
-1: Minor with a strong side effect. {{effect}}. {{side_effect}}. {{side_effect}}.
-1: Minor with a slight side effect. {{effect}}. {{side_effect}}.
-1: Major with a strong side effect. {{effect}}. {{side_effect}}. {{side_effect}}.
-1: Major with a small side effect. {{effect}}. {{side_effect}}.
-1: A poison - almost no positive affect all side effect. {{side_effect}}, {{side_effect}}
-1: Temporary but strong and wears off quickly. {{effect}}. {{side_effect}}.
-0.1: Seemingly permanent. {{effect}}. {{side_effect}}.
+1: Regular with a strong side effect, {{effect}}. {{side-effect}}. {{side-effect}}.
+1: Minor with a strong side effect. {{effect}}. {{side-effect}}. {{side-effect}}.
+1: Minor with a slight side effect. {{effect}}. {{side-effect}}.
+1: Major with a strong side effect. {{effect}}. {{side-effect}}. {{side-effect}}.
+1: Major with a small side effect. {{effect}}. {{side-effect}}.
+1: A poison - almost no positive affect all side effect. {{side-effect}}, {{side-effect}}
+1: Temporary but strong and wears off quickly. {{effect}}. {{side-effect}}.
+0.1: Seemingly permanent. {{effect}}. {{side-effect}}.
 
 ---
 title: Effect
@@ -408,7 +408,7 @@ id: effect
 
 ---
 title: Side Effect
-id: side_effect
+id: side-effect
 ---
 1: Nothing bad at all
 1: Puts the user to sleep
@@ -456,7 +456,7 @@ id: side_effect
 1: Loss of a random item
 1: Curses
 1: Damage
-1: Weakness to a {{magical_damage_type}}
+1: Weakness to a {{magical-damage-type}}
 1: Weakness to physical damage
 1: Feelings of Guilt
 1: Feelings of Anxiety
@@ -513,7 +513,7 @@ id: side_effect
 
 ---
 title: Magical Damage Types
-id: magical_damage_type
+id: magical-damage-type
 ---
 1: acid
 1: bludgeoning

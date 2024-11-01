@@ -1,6 +1,6 @@
 ---
 title: Mono Races
-id: mono_race
+id: mono-race
 ---
 1: Human
 1: Elf
@@ -12,8 +12,8 @@ id: mono_race
 title: Races
 id: race
 ---
-1: {{mono_race}}
-1: Half-{{mono_race}}
+1: {{mono-race}}
+1: Half-{{mono-race}}
 
 ---
 title: Classes
@@ -48,7 +48,7 @@ id: alignment
 
 ---
 title: First Names
-id: first_name
+id: first-name
 ---
 1: Frodo
 1: Bilbo
@@ -63,7 +63,7 @@ id: first_name
 
 ---
 title: Last Names
-id: last_name
+id: last-name
 ---
 1: Baggins
 1: the Grey
@@ -80,9 +80,9 @@ id: last_name
 title: Birthplace
 id: birthplace
 ---
-10: a large {{geographic_feature}} city
-5: a small {{economic_pursuit}} village outside {{city}}
-5: a small {{geographic_feature}} city
+10: a large {{geographic-feature}} city
+5: a small {{economic-pursuit}} village outside {{city}}
+5: a small {{geographic-feature}} city
 1: the wilds outside {{city}}
 
 ---
@@ -102,7 +102,7 @@ id: city
 
 ---
 title: Geographic Features
-id: geographic_feature
+id: geographic-feature
 ---
 1: coastal
 1: mountain
@@ -115,7 +115,7 @@ id: geographic_feature
 
 ---
 title: Economic Pursuits
-id: economic_pursuit
+id: economic-pursuit
 ---
 1: farming
 1: fishing
@@ -181,7 +181,7 @@ id: profession
 
 ---
 title: Skill Levels
-id: skill_level
+id: skill-level
 ---
 5: novice
 7: apprentice
@@ -195,5 +195,5 @@ title: NPC
 id: npc
 export: true
 ---
-1: {{first_name}} {{last_name}} is {{alignment|indefinite}} {{race}} {{class}} originally from {{birthplace}}, known as {{reputation|indefinite}} {{skill_level}} {{profession}}.
-3: {{first_name}} {{last_name}} is a commoner from {{birthplace}}, known as {{skill_level|indefinite}} {{profession}}.
+1: {{first-name}} {{last-name}} is {{alignment|indefinite}} {{race}} {{class}} originally from {{birthplace}}, known as {{reputation|indefinite}} {{skill-level}} {{profession}}.
+3: {{first-name}} {{last-name}} is a commoner from {{birthplace}}, known as {{skill-level|indefinite}} {{profession}}.
