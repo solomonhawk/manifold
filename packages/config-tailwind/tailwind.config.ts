@@ -26,6 +26,7 @@ const config = {
       avatar: rem(24),
       ...remPair(1),
       ...remPair(2),
+      ...remPair(3),
       ...remPair(4),
       ...remPair(6),
       ...remPair(8),

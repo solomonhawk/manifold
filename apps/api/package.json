@@ -6,8 +6,8 @@
   },
   "scripts": {
     "dev": "tsx watch --inspect src/index.ts",
-    "lint": "eslint \"**/*.{ts,tsx}\"",
-    "lint:fix": "eslint --fix \"**/*.{ts,tsx}\""
+    "lint": "eslint \"**/*.{ts,tsx}\" --max-warnings 0",
+    "lint:fix": "eslint --fix \"**/*.{ts,tsx}\" --max-warnings 0"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.2",

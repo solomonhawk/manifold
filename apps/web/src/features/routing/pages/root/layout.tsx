@@ -41,7 +41,7 @@ export function RootLayout() {
 
             <Separator
               orientation="vertical"
-              className="bg-foreground/10 h-auto self-stretch"
+              className="h-auto self-stretch bg-foreground/10"
             />
 
             {auth.status === "authenticated" && (
@@ -61,14 +61,14 @@ export function RootLayout() {
           <GlobalHeader.Center>
             <PrefetchableLink
               to="/tech-stack"
-              className="text-muted-foreground hover:text-accent-foreground focus:text-accent-foreground text-xs hover:underline focus:underline"
+              className="text-xs text-muted-foreground hover:text-accent-foreground hover:underline focus:text-accent-foreground focus:underline"
             >
               Tech
             </PrefetchableLink>
 
             {match(auth)
               .with({ status: "loading" }, () => (
-                <Skeleton className="size-avatar-sm sm:size-avatar rounded-full" />
+                <Skeleton className="size-avatar-sm rounded-full sm:size-avatar" />
               ))
               .with({ status: "unauthenticated" }, () => (
                 <GlobalHeader.Unauthed onSignIn={() => signIn("google")} />

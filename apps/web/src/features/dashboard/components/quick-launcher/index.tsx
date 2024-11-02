@@ -47,7 +47,7 @@ function QuickLaunchTile({ table }: { table: { id: string; title: string } }) {
   return (
     <Card>
       <CardContent className="flex h-full items-center !p-0">
-        <Button asChild className="h-full w-full p-16" variant="link">
+        <Button asChild className="size-full p-16" variant="link">
           <PrefetchableLink to={`/table/${table.id}/edit`}>
             <h3>{table.title}</h3>
           </PrefetchableLink>

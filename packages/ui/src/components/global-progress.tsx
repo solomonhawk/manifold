@@ -30,7 +30,7 @@ function Container({
   return (
     <div
       className={cn(
-        isFinished ? "opacity-0" : "opacity-1",
+        isFinished ? "opacity-0" : "opacity-100",
         "pointer-events-none transition-opacity",
       )}
       style={{
@@ -52,7 +52,7 @@ function Bar({
   return (
     <div
       className={cn(
-        "bg-ring fixed left-0 top-0 z-50 h-2 w-full transition-all",
+        "fixed left-0 top-0 z-50 h-2 w-full bg-ring transition-all",
       )}
       style={{
         marginLeft: `${(-1 + progress) * 100}%`,
@@ -60,7 +60,7 @@ function Bar({
       }}
     >
       <div
-        className="absolute right-0 block h-full w-full opacity-100"
+        className="absolute right-0 block size-full opacity-100"
         style={{
           boxShadow: "0 0 10px var(--ring), 0 0 5px var(--ring)",
           transform: "rotate(3deg) translate(0px, -4px)",

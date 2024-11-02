@@ -6,5 +6,4 @@ export default {
   useTabs: false,
   semi: true,
   singleQuote: false,
-  plugins: ["prettier-plugin-tailwindcss"],
 };

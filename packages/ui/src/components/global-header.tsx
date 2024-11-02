@@ -10,7 +10,7 @@ type Props = {
 
 function Root({ children }: Props) {
   return (
-    <header className="bg-primary-foreground flex items-center justify-between p-8">
+    <header className="flex items-center justify-between bg-primary-foreground p-8">
       {children}
     </header>
   );

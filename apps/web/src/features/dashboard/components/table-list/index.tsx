@@ -100,7 +100,7 @@ export function TableList({
               className="col-span-full flex items-center gap-16 text-center text-gray-500"
               initial={{ opacity: 0 }}
             >
-              You haven't created any tables yet.
+              You haven’t created any tables yet.
               <Button asChild>
                 <PrefetchableLink to="/table/new">
                   Create a table
@@ -119,7 +119,7 @@ export function TableList({
               >
                 <div className="aspect-square w-full">
                   <Button
-                    className="group flex h-full w-full flex-col items-center justify-center gap-6 p-16"
+                    className="group flex size-full flex-col items-center justify-center gap-6 p-16"
                     variant="outline"
                     asChild
                   >

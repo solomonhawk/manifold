@@ -33,7 +33,7 @@ export function Header({ table }: { table: TableModel }) {
         <div className="flex flex-col justify-center">
           <h2 className="text-lg font-bold leading-tight">{table.title}</h2>
 
-          <span className="text-muted-foreground/80 text-xs">
+          <span className="text-xs text-muted-foreground/80">
             {capitalize(formatRelative(new Date(table.updatedAt), NOW))}
           </span>
         </div>

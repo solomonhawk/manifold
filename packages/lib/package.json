@@ -11,7 +11,8 @@
     "./*": "./src/*.ts"
   },
   "scripts": {
-    "lint": "eslint \"**/*.{ts,tsx}\""
+    "lint": "eslint \"**/*.{ts,tsx}\" --max-warnings 0",
+    "lint:fix": "eslint --fix \"**/*.{ts,tsx}\" --max-warnings 0"
   },
   "devDependencies": {
     "@manifold/eslint-config": "*",

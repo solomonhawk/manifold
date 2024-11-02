@@ -203,7 +203,7 @@ export function InputPanel({
       <Textarea
         id="table-editor-area"
         autoSize
-        className="bg-background/60 resize-none font-mono"
+        className="resize-none bg-background/60 font-mono"
         ref={(node) => {
           // @NOTE: kind of annoying, RHF wants to use a ref callback, but we also want to use a ref object
           refCallback(node);
@@ -317,6 +317,7 @@ function InlineEditorCommandPalette({
 }) {
   return (
     <Command className="border shadow-lg drop-shadow-lg">
+      {/* eslint-disable-next-line jsx-a11y/no-autofocus */}
       <CommandInput autoFocus />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>

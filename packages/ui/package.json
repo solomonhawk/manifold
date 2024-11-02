@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "lint": "eslint \"**/*.{ts,tsx}\"",
-    "lint:fix": "eslint --fix \"**/*.{ts,tsx}\""
+    "lint": "eslint \"**/*.{ts,tsx}\" --max-warnings 0",
+    "lint:fix": "eslint --fix \"**/*.{ts,tsx}\" --max-warnings 0"
   },
   "imports": {
     "#*": "./src/*"

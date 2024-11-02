@@ -49,6 +49,7 @@ export function TableCreateForm({
                 <FormLabel>Title</FormLabel>
 
                 <FormControl>
+                  {/* eslint-disable-next-line jsx-a11y/no-autofocus */}
                   <Input placeholder="Dragons" {...field} autoFocus />
                 </FormControl>
 

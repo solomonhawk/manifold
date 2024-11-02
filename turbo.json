@@ -20,7 +20,15 @@
       "persistent": true,
       "dependsOn": ["build"]
     },
-    "lint": {},
+    "workaround": {
+      "dependsOn": ["^workaround"]
+    },
+    "lint": {
+      "dependsOn": ["workaround"]
+    },
+    "lint:fix": {
+      "dependsOn": ["workaround"]
+    },
     "test": {
       "cache": false
     },

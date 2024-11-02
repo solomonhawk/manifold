@@ -11,7 +11,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-import { createTable } from "#schema/_table.ts";
+import { createTable } from "#schema/helpers/create-table.ts";
 
 export const users = pgTable("user", {
   id: uuid("id").defaultRandom().primaryKey(),

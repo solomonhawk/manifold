@@ -79,8 +79,9 @@ export function SectionGroupItem({ label, url }: ItemProps) {
     >
       <a
         href={url}
-        className="text-muted-foreground hover:text-accent-foreground inline-block py-2 underline transition-colors md:py-4"
+        className="inline-block py-2 text-muted-foreground underline transition-colors hover:text-accent-foreground md:py-4"
         target="_blank"
+        rel="noreferrer"
       >
         {label}
       </a>

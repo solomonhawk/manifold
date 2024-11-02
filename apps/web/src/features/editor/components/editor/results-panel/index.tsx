@@ -15,7 +15,7 @@ export function ResultsPanel({
   onRoll: () => void;
 }) {
   return (
-    <FlexCol className="@container bg-background/60">
+    <FlexCol className="bg-background/60 @container">
       <LayoutGroup>
         <AvailableTables inputRef={inputRef} onRoll={onRoll} />
         <RollResults listRef={listRef} />

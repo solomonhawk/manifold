@@ -73,7 +73,7 @@ export function RollResults({
           >
             <Card>
               <CardContent className="!p-16">
-                <div className="text-muted-foreground flex items-center justify-center gap-8">
+                <div className="flex items-center justify-center gap-8 text-muted-foreground">
                   <CubeIcon className="size-24" />
                   Your roll results will show up here.
                 </div>
@@ -132,12 +132,12 @@ const ListItem = memo(function ({
 }) {
   return (
     <Card className="group">
-      <CardContent className="@md:flex-row flex flex-col items-stretch gap-8 !p-16">
+      <CardContent className="flex flex-col items-stretch gap-8 !p-16 @md:flex-row">
         <span className="grow">
           <Typewriter transition={transitionAlpha}>{text}</Typewriter>
         </span>
 
-        <div className="@md:flex-col @md:w-auto flex w-full grow flex-row items-end justify-between gap-8">
+        <div className="flex w-full grow flex-row items-end justify-between gap-8 @md:w-auto @md:flex-col">
           <span className="flex items-center gap-8">
             <Badge variant="secondary" className="whitespace-nowrap">
               {tableName}
@@ -148,7 +148,7 @@ const ListItem = memo(function ({
             </span>
           </span>
 
-          <div className="@md:m-0 -mb-6 -mr-6 flex items-center gap-8 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
+          <div className="-mb-6 -mr-6 flex items-center gap-8 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100 @md:m-0">
             <ClipboardCopy>
               {({ copied, onCopy }) => {
                 return (
@@ -178,3 +178,5 @@ const ListItem = memo(function ({
     </Card>
   );
 });
+
+ListItem.displayName = "ListItem";

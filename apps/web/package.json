@@ -7,8 +7,8 @@
     "dev": "vite --clearScreen false --force --open",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "lint": "eslint \"src/**/*.{ts,tsx}\"",
-    "lint:fix": "eslint --fix \"src/**/*.{ts,tsx}\"",
+    "lint": "eslint \"src/**/*.{ts,tsx}\" --max-warnings 0",
+    "lint:fix": "eslint --fix \"src/**/*.{ts,tsx}\" --max-warnings 0",
     "test": "vitest run",
     "test:watch": "vitest",
     "bundle:vis": "vite-bundle-visualizer --port 5000"
@@ -52,7 +52,6 @@
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.2",
     "autoprefixer": "^10.4.20",
-    "eslint": "^8.57.0",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.13",
     "tsx": "4.19.2",

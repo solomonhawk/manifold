@@ -9,7 +9,7 @@ const ResizablePanelGroup = ({
 }: React.ComponentProps<typeof ResizablePrimitive.PanelGroup>) => (
   <ResizablePrimitive.PanelGroup
     className={cn(
-      "flex h-full w-full data-[panel-group-direction=vertical]:flex-col",
+      "flex size-full data-[panel-group-direction=vertical]:flex-col",
       className,
     )}
     {...props}
@@ -27,14 +27,14 @@ const ResizableHandle = ({
 }) => (
   <ResizablePrimitive.PanelResizeHandle
     className={cn(
-      "bg-border focus-visible:ring-ring data-[resize-handle-state=hover]:after:bg-accent-foreground/50 data-[resize-handle-state=drag]:bg-accent-foreground relative flex w-px items-center justify-center after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-offset-1 data-[panel-group-direction=vertical]:h-px data-[panel-group-direction=vertical]:w-full data-[panel-group-direction=vertical]:after:left-0 data-[panel-group-direction=vertical]:after:h-1 data-[panel-group-direction=vertical]:after:w-full data-[panel-group-direction=vertical]:after:-translate-y-1/2 data-[panel-group-direction=vertical]:after:translate-x-0 [&[data-panel-group-direction=vertical]>div]:rotate-90",
+      "relative flex w-px items-center justify-center bg-border after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 data-[panel-group-direction=vertical]:h-px data-[panel-group-direction=vertical]:w-full data-[resize-handle-state=drag]:bg-accent-foreground data-[panel-group-direction=vertical]:after:left-0 data-[panel-group-direction=vertical]:after:h-1 data-[panel-group-direction=vertical]:after:w-full data-[panel-group-direction=vertical]:after:-translate-y-1/2 data-[panel-group-direction=vertical]:after:translate-x-0 data-[resize-handle-state=hover]:after:bg-accent-foreground/50 [&[data-panel-group-direction=vertical]>div]:rotate-90",
       className,
     )}
     {...props}
   >
     {withHandle && (
-      <div className="bg-border z-10 flex h-16 w-12 items-center justify-center rounded-sm border">
-        <DragHandleDots2Icon className="h-10 w-10" />
+      <div className="z-10 flex h-16 w-12 items-center justify-center rounded-sm border bg-border">
+        <DragHandleDots2Icon className="size-10" />
       </div>
     )}
   </ResizablePrimitive.PanelResizeHandle>

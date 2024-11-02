@@ -151,9 +151,8 @@ export function TableUpdateForm({
         <form
           id={TABLE_UPDATE_FORM_ID}
           onSubmit={form.handleSubmit(handleSubmit)}
-          onKeyDown={handleKeyDown}
         >
-          <FlexCol asChild>
+          <FlexCol asChild role="presentation" onKeyDown={handleKeyDown}>
             <fieldset
               disabled={form.formState.isSubmitting || isDisabled}
               className="space-y-12 sm:space-y-16"
@@ -161,7 +160,7 @@ export function TableUpdateForm({
               {portalRef.current &&
                 createPortal(
                   <>
-                    <FormSubmitStatus className="text-muted-foreground/80 mr-8 text-xs" />
+                    <FormSubmitStatus className="mr-8 text-xs text-muted-foreground/80" />
                     <FormSubmitButton form={TABLE_UPDATE_FORM_ID}>
                       Save Changes
                     </FormSubmitButton>

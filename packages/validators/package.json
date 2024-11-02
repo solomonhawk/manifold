@@ -7,8 +7,8 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "lint": "eslint \"**/*.ts\"",
-    "lint:fix": "eslint --fix \"**/*.ts\""
+    "lint": "eslint \"**/*.ts\" --max-warnings 0",
+    "lint:fix": "eslint --fix \"**/*.ts\" --max-warnings 0"
   },
   "devDependencies": {
     "@manifold/eslint-config": "*",
