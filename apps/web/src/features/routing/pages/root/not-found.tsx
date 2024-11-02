@@ -13,11 +13,11 @@ import { Link } from "react-router-dom";
 export function NotFound() {
   return (
     <div className="flex grow flex-col items-center justify-center">
-      <Card className="min-w-256 max-w-sm text-center">
+      <Card className="text-center">
         <CardHeader>
-          <GiSuspicious className="mx-auto mb-8 size-40 text-green-300" />
+          <GiSuspicious className="mx-auto mb-8 size-64 text-green-300" />
 
-          <CardTitle>An empty room…</CardTitle>
+          <CardTitle className="text-xl">An empty room…</CardTitle>
           <CardDescription>…how suspicious!</CardDescription>
         </CardHeader>
 
