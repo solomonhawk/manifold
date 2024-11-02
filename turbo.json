@@ -15,10 +15,6 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**", "web/dist/**"]
     },
-    "web#build": {
-      "dependsOn": ["@manifold/engine#build"],
-      "env": ["API_PROXY_URL", "PUBLIC_API_BASE_URL"]
-    },
     "preview": {
       "cache": false,
       "persistent": true,
@@ -35,9 +31,6 @@
     },
     "test": {
       "cache": false
-    },
-    "web#test": {
-      "env": ["API_PROXY_URL", "PUBLIC_API_BASE_URL"]
     },
     "test:watch": {
       "cache": false,

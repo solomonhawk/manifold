@@ -1,0 +1,12 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["@manifold/engine#build"],
+      "env": ["API_PROXY_URL", "PUBLIC_API_BASE_URL"]
+    },
+    "test": {
+      "env": ["API_PROXY_URL", "PUBLIC_API_BASE_URL"]
+    }
+  }
+}
