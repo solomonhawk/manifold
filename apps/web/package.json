@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite --clearScreen false --force --open",
-    "build": "tsc && vite build",
+    "prebuild": "tsc",
+    "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --max-warnings 0",
     "lint:fix": "eslint --fix \"src/**/*.{ts,tsx}\" --max-warnings 0",

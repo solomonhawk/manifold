@@ -1,19 +1,23 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
-  "globalEnv": ["PORT", "DATABASE_URL"],
+  "globalEnv": ["DATABASE_URL"],
   "globalDependencies": [".env"],
   "tasks": {
     "dev": {
       "cache": false,
       "persistent": true,
       "inputs": [".env"],
-      "env": ["DEV", "PROD", "DATABASE_URL"]
+      "env": ["DEV", "PORT", "DATABASE_URL"]
     },
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**", "web/dist/**"]
+    },
+    "web#build": {
+      "dependsOn": ["@manifold/engine#build"],
+      "env": ["API_PROXY_URL", "PUBLIC_API_BASE_URL"]
     },
     "preview": {
       "cache": false,
@@ -31,6 +35,9 @@
     },
     "test": {
       "cache": false
+    },
+    "web#test": {
+      "env": ["API_PROXY_URL", "PUBLIC_API_BASE_URL"]
     },
     "test:watch": {
       "cache": false,
