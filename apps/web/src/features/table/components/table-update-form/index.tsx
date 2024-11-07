@@ -19,6 +19,7 @@ import { Editor } from "~features/editor";
 import { useUpdateTable } from "~features/table/api/update";
 
 import { TABLE_UPDATE_HEADER_PORTAL_ID } from "../header";
+import { DownloadButton } from "./download-button";
 
 type FormData = z.infer<typeof tableUpdateInput>;
 
@@ -164,6 +165,7 @@ export function TableUpdateForm({
                     <FormSubmitButton form={TABLE_UPDATE_FORM_ID}>
                       Save Changes
                     </FormSubmitButton>
+                    <DownloadButton tableId={table.id} />
                   </>,
                   portalRef.current,
                 )}

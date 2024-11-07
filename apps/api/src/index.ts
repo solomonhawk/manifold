@@ -6,6 +6,7 @@ import { logger } from "hono/logger";
 
 import { getEnv } from "#env.ts";
 import { setAuthUser } from "#handlers/auth.ts";
+import { downloadTable } from "#handlers/download-table.ts";
 import { errorHandler } from "#handlers/error.ts";
 import { trpc } from "#handlers/trpc.ts";
 import type { Env } from "#types.ts";
@@ -56,6 +57,15 @@ app.use("/api/*", setAuthUser());
  * TRPC endpoints, the bulk of the application logic
  */
 app.use("/api/trpc/*", trpc());
+
+/**
+ * Regular endpoint to download a table definition (.tbl file)
+ *
+ * This is awkward to support within the tRPC router for a few reasons but
+ * mainly because the `superjson` transformer makes the response ill-suited
+ * for a file download. It cannot easily be conditionally applied.
+ */
+app.use("/api/table/:id/download", downloadTable);
 
 /**
  * Format errors consistently and respond with JSON
