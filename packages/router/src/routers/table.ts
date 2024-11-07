@@ -1,4 +1,4 @@
-import { and, asc, db, desc, eq, inArray, isNull, schema } from "@manifold/db";
+import { and, asc, db, desc, eq, isNull, schema } from "@manifold/db";
 import { slugify } from "@manifold/lib/utils/string";
 import {
   tableCreateInput,

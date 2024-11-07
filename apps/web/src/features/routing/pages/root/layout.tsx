@@ -1,4 +1,4 @@
-import { signIn, signOut, useSession } from "@manifold/auth/client";
+import { signIn, signOut } from "@manifold/auth/client";
 import { GlobalHeader } from "@manifold/ui/components/global-header";
 import { Badge } from "@manifold/ui/components/ui/badge";
 import { Button } from "@manifold/ui/components/ui/button";

@@ -28,7 +28,7 @@ export function useUpdateTable({
 
       // update query cache (list + get)
       trpcUtils.table.get.setData(tableId, data);
-      trpcUtils.table.list.setData(undefined, (list) => {
+      trpcUtils.table.list.setData({}, (list) => {
         return list?.map((t) => (t.id === data.id ? data : t)) ?? [data];
       });
 
