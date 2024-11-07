@@ -1,5 +1,11 @@
 import { LoadingIndicator } from "@manifold/ui/components/loading-indicator";
 import { Button } from "@manifold/ui/components/ui/button";
+import {
+  Tooltip,
+  TooltipArrow,
+  TooltipContent,
+  TooltipTrigger,
+} from "@manifold/ui/components/ui/tooltip";
 import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
 import { GoTrash } from "react-icons/go";
 
@@ -19,22 +25,33 @@ export function DeleteButton({
   /**
    * @TODO: change this to <form onSubmit={..} /> and use a submit button. Can't
    * right now because it's nested inside the update form.
+   *
+   * @TODO: only allow delete if not public or 0 tables depend on it
    */
   return (
-    <Button
-      type="button"
-      size="icon"
-      variant="destructive-outline"
-      disabled={isPending}
-      onClick={() =>
-        DialogManager.show(DIALOGS.DELETE_TABLE.ID, {
-          tableId,
-          title,
-        })
-      }
-    >
-      <span className="sr-only">Delete table</span>
-      {isPending ? <LoadingIndicator size="sm" /> : <GoTrash />}
-    </Button>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          type="button"
+          size="icon"
+          variant="destructive-outline"
+          disabled={isPending}
+          onClick={() =>
+            DialogManager.show(DIALOGS.DELETE_TABLE.ID, {
+              tableId,
+              title,
+            })
+          }
+        >
+          <span className="sr-only">Delete table</span>
+          {isPending ? <LoadingIndicator size="sm" /> : <GoTrash />}
+        </Button>
+      </TooltipTrigger>
+
+      <TooltipContent>
+        Delete Table
+        <TooltipArrow />
+      </TooltipContent>
+    </Tooltip>
   );
 }

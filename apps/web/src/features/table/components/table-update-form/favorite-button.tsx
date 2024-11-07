@@ -1,5 +1,11 @@
 import { LoadingIndicator } from "@manifold/ui/components/loading-indicator";
 import { Button } from "@manifold/ui/components/ui/button";
+import {
+  Tooltip,
+  TooltipArrow,
+  TooltipContent,
+  TooltipTrigger,
+} from "@manifold/ui/components/ui/tooltip";
 import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
 import { type MouseEvent, useEffect, useRef } from "react";
 import { GoHeart, GoHeartFill } from "react-icons/go";
@@ -37,24 +43,33 @@ export function FavoriteButton({
    * right now because it's nested inside the update form.
    */
   return (
-    <Button
-      ref={buttonRef}
-      size="icon"
-      onClick={handleClick}
-      variant="outline"
-      disabled={isPending}
-    >
-      <span className="sr-only">
-        {isFavorite ? "Remove from favorites" : "Add to favorites"}
-      </span>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          ref={buttonRef}
+          size="icon"
+          onClick={handleClick}
+          variant="outline"
+          disabled={isPending}
+        >
+          <span className="sr-only">
+            {isFavorite ? "Remove from favorites" : "Add to favorites"}
+          </span>
 
-      {isPending ? (
-        <LoadingIndicator size="sm" />
-      ) : isFavorite ? (
-        <GoHeartFill />
-      ) : (
-        <GoHeart />
-      )}
-    </Button>
+          {isPending ? (
+            <LoadingIndicator size="sm" />
+          ) : isFavorite ? (
+            <GoHeartFill />
+          ) : (
+            <GoHeart />
+          )}
+        </Button>
+      </TooltipTrigger>
+
+      <TooltipContent>
+        {isFavorite ? "Remove from favorites" : "Add to favorites"}
+        <TooltipArrow />
+      </TooltipContent>
+    </Tooltip>
   );
 }

@@ -117,6 +117,9 @@ const config = {
         "accordion-down": "accordion-down 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
         "accordion-up": "accordion-up 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
       },
+      dropShadow: {
+        "tooltip-arrow": "0px 1px 0px hsl(var(--border))",
+      },
     },
   },
   plugins: [tailwindcssAnimatePlugin, containerQueriesPlugin],

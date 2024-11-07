@@ -1,4 +1,5 @@
 import { SessionProvider } from "@manifold/auth/client";
+import { TooltipProvider } from "@manifold/ui/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
@@ -22,7 +23,10 @@ export function App() {
     <SessionProvider>
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
         <QueryClientProvider client={queryClient}>
-          <Router />
+          <TooltipProvider delayDuration={300}>
+            <Router />
+          </TooltipProvider>
+
           <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
         </QueryClientProvider>
       </trpc.Provider>
