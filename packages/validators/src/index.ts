@@ -1,3 +1,4 @@
+import type { TableInsert, UserProfileInsert } from "@manifold/db";
 import { slugify } from "@manifold/lib/utils/string";
 import { z, type ZodType } from "zod";
 
@@ -61,5 +62,10 @@ export const tableUpdateInput = z.object({
 }) satisfies ZodType<Partial<TableInsert>>;
 
 export const tableDeleteInput = z.string();
+
+export const userProfileCreateInput = z.object({
+  description: z.string().optional(),
+  username: z.string().min(1, { message: "Username can’t be blank" }),
+}) satisfies ZodType<Omit<UserProfileInsert, "userId">>;
 
 export * from "zod";

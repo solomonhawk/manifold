@@ -9,13 +9,14 @@ import { cn } from "@manifold/ui/lib/utils";
 import { Link, Outlet } from "react-router-dom";
 import { match } from "ts-pattern";
 
+import { useAuth } from "~features/auth/context/use-auth";
 import { DialogManager } from "~features/dialog-manager";
 import { Launcher } from "~features/routing/components/launcher";
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
 import { RouteMeta } from "~features/routing/components/route-meta";
 
 export function RootLayout() {
-  const auth = useSession();
+  const { session } = useAuth();
 
   return (
     <DialogManager.Provider>
@@ -25,7 +26,7 @@ export function RootLayout() {
         <GlobalHeader.Root>
           <GlobalHeader.Center>
             <Link
-              to={auth.status === "authenticated" ? "/dashboard" : "/"}
+              to={session.status === "authenticated" ? "/dashboard" : "/"}
               className="group flex items-center gap-4"
             >
               <GlobalHeader.LogoMark />
@@ -40,7 +41,7 @@ export function RootLayout() {
               className="h-auto self-stretch bg-foreground/10"
             />
 
-            {auth.status === "authenticated" && (
+            {session.status === "authenticated" && (
               <Button
                 asChild
                 size="sm"
@@ -62,7 +63,7 @@ export function RootLayout() {
               Tech
             </PrefetchableLink>
 
-            {match(auth)
+            {match(session)
               .with({ status: "loading" }, () => (
                 <Skeleton className="size-avatar-sm rounded-full sm:size-avatar" />
               ))

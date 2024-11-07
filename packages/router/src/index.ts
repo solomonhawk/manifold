@@ -1,10 +1,12 @@
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
 import { tableRouter } from "#routers/table.ts";
+import { userRouter } from "#routers/user.ts";
 import { t } from "#trpc.ts";
 
 export const appRouter = t.router({
   table: tableRouter,
+  user: userRouter,
 });
 
 export type AppRouter = typeof appRouter;

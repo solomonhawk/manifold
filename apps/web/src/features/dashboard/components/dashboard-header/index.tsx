@@ -1,4 +1,3 @@
-import { useSession } from "@manifold/auth/client";
 import {
   Card,
   CardContent,
@@ -8,26 +7,22 @@ import {
 } from "@manifold/ui/components/ui/card";
 import { cn } from "@manifold/ui/lib/utils";
 
+import { useRequiredAuth } from "~features/auth/context/use-auth";
+
 import { QuickLauncher } from "../quick-launcher";
 import { Aphorism } from "./aphorism";
 
-function getGreeting(isAuthenticated: boolean, name?: string) {
-  if (isAuthenticated && name) {
-    return `Hello, ${name.split(" ")[0]} ✌️`;
-  }
-
-  return "Hello, stranger! 👋";
+function getGreeting(name: string) {
+  return `Hello, ${name.split(" ")[0]} ✌️`;
 }
 
 export function DashboardHeader({ className }: { className?: string }) {
-  const auth = useSession();
+  const { session } = useRequiredAuth();
 
   return (
     <Card className={cn("flex flex-col sm:flex-row sm:gap-16", className)}>
       <CardHeader>
-        <CardTitle>
-          {getGreeting(auth.status === "authenticated", auth.data?.user?.name)}
-        </CardTitle>
+        <CardTitle>{getGreeting(session.data.user.name)}</CardTitle>
 
         <CardDescription>
           <Aphorism source="dashboard" />

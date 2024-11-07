@@ -43,6 +43,13 @@
       "when": 1730774186008,
       "tag": "0009_workable_tattoo",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1730868987532,
+      "tag": "0010_daily_lilandra",
+      "breakpoints": true
     }
   ]
 }

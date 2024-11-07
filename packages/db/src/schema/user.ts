@@ -13,6 +13,28 @@ export const users = createTable("user", {
   image: text("image"),
 });
 
-export const usersRelations = relations(users, ({ many }) => ({
+export const userProfiles = createTable(
+  "user_profile",
+  {
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    description: text("description"),
+    username: text("username").unique(),
+    ...timestamps,
+  },
+  (userProfile) => [
+    primaryKey({
+      columns: [userProfile.userId, userProfile.username],
+    }),
+    index("user_profiles_user_id_idx").on(userProfile.userId),
+  ],
+);
+
+export const usersRelations = relations(users, ({ one, many }) => ({
   accounts: many(accounts),
+  profile: one(userProfiles, {
+    fields: [users.id],
+    references: [userProfiles.userId],
+  }),
 }));
