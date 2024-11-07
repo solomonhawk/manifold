@@ -7,12 +7,19 @@
     "#*": "./src/*"
   },
   "exports": {
-    ".": "./src/index.ts",
-    "./*": "./src/*.ts"
+    "./utils/array": {
+      "types": "./src/utils/array.ts",
+      "default": "./src/utils/array.ts"
+    },
+    "./utils/string": {
+      "types": "./src/utils/string.ts",
+      "default": "./src/utils/string.ts"
+    }
   },
   "scripts": {
-    "lint": "eslint \"**/*.{ts,tsx}\" --max-warnings 0",
-    "lint:fix": "eslint --fix \"**/*.{ts,tsx}\" --max-warnings 0"
+    "lint": "eslint \"**/*.{ts,tsx}\"",
+    "lint:fix": "eslint --fix \"**/*.{ts,tsx}\" --max-warnings 0",
+    "lint:strict": "eslint \"**/*.{ts,tsx}\" --max-warnings 0"
   },
   "devDependencies": {
     "@manifold/eslint-config": "*",

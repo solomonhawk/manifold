@@ -10,12 +10,17 @@
     "gen": "turbo gen",
     "lint": "turbo lint",
     "lint:fix": "turbo lint:fix",
+    "lint:strict": "turbo lint:strict",
     "lint-staged": "lint-staged",
+    "check-types": "turbo check-types",
     "test": "turbo test",
     "test:watch": "turbo test:watch",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "format:ci": "prettier --check \"**/*.{ts,tsx,md}\"",
-    "prepare": "husky"
+    "prepare": "husky",
+    "db:migrate": "npm run migrate -w @manifold/db",
+    "db:gen": "npm run generate -w @manifold/db",
+    "db:seed": "npm run seed -w @manifold/db"
   },
   "devDependencies": {
     "@stdlib/assert-is-pascalcase": "^0.2.2",
@@ -24,6 +29,7 @@
     "eslint": "^8.57.0",
     "husky": "^9.1.6",
     "lint-staged": "^15.2.10",
+    "patch-package": "^8.0.0",
     "prettier": "^3.2.5",
     "turbo": "^2.1.3"
   },

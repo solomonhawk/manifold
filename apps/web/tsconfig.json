@@ -5,7 +5,6 @@
     // Sometimes this is needed for UI auto-imports to work but not always???
     "../../packages/ui/**/*.tsx"
   ],
-  "exclude": ["node_modules"],
   "compilerOptions": {
     /**
      * If declarations are enabled the ComlinkWorker instance errors with ts(4023)

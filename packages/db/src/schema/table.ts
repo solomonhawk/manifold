@@ -15,13 +15,10 @@ export const table = pgTable(
     favorited: boolean("favorited").default(false),
     ...timestamps,
   },
-  (table) => ({
-    tableUserFavoritedIdx: index("tables_user_id_favorited_idx").on(
+  (table) => [
+    index("tables_user_id_favorited_idx").on(
       table.userId,
       table.favorited.desc(),
     ),
-  }),
+  ],
 );
-
-export type TableModel = typeof table.$inferSelect;
-export type TableInsert = typeof table.$inferInsert;

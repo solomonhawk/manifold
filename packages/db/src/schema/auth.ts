@@ -4,7 +4,6 @@ import {
   boolean,
   index,
   integer,
-  pgTable,
   primaryKey,
   text,
   timestamp,
@@ -12,18 +11,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { createTable } from "#schema/helpers/create-table.ts";
-
-export const users = pgTable("user", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  name: text("name"),
-  email: text("email").unique(),
-  emailVerified: timestamp("email_verified", { mode: "date" }),
-  image: text("image"),
-});
-
-export const usersRelations = relations(users, ({ many }) => ({
-  accounts: many(accounts),
-}));
+import { users } from "#schema/user.ts";
 
 export const accounts = createTable(
   "account",
@@ -43,12 +31,12 @@ export const accounts = createTable(
     id_token: text("id_token"),
     session_state: text("session_state"),
   },
-  (account) => ({
-    compoundKey: primaryKey({
+  (account) => [
+    primaryKey({
       columns: [account.provider, account.providerAccountId],
     }),
-    userIdIdx: index("accounts_user_id_idx").on(account.userId),
-  }),
+    index("accounts_user_id_idx").on(account.userId),
+  ],
 );
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
@@ -64,9 +52,7 @@ export const sessions = createTable(
       .references(() => users.id, { onDelete: "cascade" }),
     expires: timestamp("expires", { mode: "date" }).notNull(),
   },
-  (session) => ({
-    userIdIdx: index("sessions_user_id_idx").on(session.userId),
-  }),
+  (session) => [index("sessions_user_id_idx").on(session.userId)],
 );
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -80,11 +66,11 @@ export const verificationTokens = createTable(
     token: text("token").notNull(),
     expires: timestamp("expires", { mode: "date" }).notNull(),
   },
-  (verificationToken) => ({
-    compositePk: primaryKey({
+  (verificationToken) => [
+    primaryKey({
       columns: [verificationToken.identifier, verificationToken.token],
     }),
-  }),
+  ],
 );
 
 export const authenticators = createTable(
@@ -101,9 +87,9 @@ export const authenticators = createTable(
     credentialBackedUp: boolean("credential_backed_up").notNull(),
     transports: text("transports"),
   },
-  (authenticator) => ({
-    compositePK: primaryKey({
+  (authenticator) => [
+    primaryKey({
       columns: [authenticator.userId, authenticator.credentialID],
     }),
-  }),
+  ],
 );

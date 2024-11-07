@@ -2,9 +2,11 @@
   "name": "@manifold/ui",
   "version": "0.0.0",
   "license": "MIT",
+  "type": "module",
   "scripts": {
-    "lint": "eslint \"**/*.{ts,tsx}\" --max-warnings 0",
-    "lint:fix": "eslint --fix \"**/*.{ts,tsx}\" --max-warnings 0"
+    "lint": "eslint \"**/*.{ts,tsx}\"",
+    "lint:fix": "eslint --fix \"**/*.{ts,tsx}\" --max-warnings 0",
+    "lint:strict": "eslint \"**/*.{ts,tsx}\" --max-warnings 0"
   },
   "imports": {
     "#*": "./src/*"

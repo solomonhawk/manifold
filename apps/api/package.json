@@ -6,14 +6,17 @@
   },
   "scripts": {
     "dev": "tsx watch --inspect src/index.ts",
-    "lint": "eslint \"**/*.{ts,tsx}\" --max-warnings 0",
-    "lint:fix": "eslint --fix \"**/*.{ts,tsx}\" --max-warnings 0"
+    "check-types": "tsc --noEmit",
+    "start": "tsx src/index.ts",
+    "lint": "eslint \"**/*.{ts,tsx}\"",
+    "lint:fix": "eslint --fix \"**/*.{ts,tsx}\" --max-warnings 0",
+    "lint:strict": "eslint \"**/*.{ts,tsx}\" --max-warnings 0"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.2",
     "@hono/trpc-server": "^0.3.2",
     "@manifold/auth": "*",
-    "@manifold/env": "^0.0.0",
+    "@manifold/env": "*",
     "@manifold/router": "*",
     "dotenv": "^16.4.5",
     "hono": "^4.6.5"

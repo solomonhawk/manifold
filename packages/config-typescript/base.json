@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Default",
+  "display": "Base",
   "compilerOptions": {
     "composite": false,
     "declaration": true,
@@ -10,6 +10,8 @@
     "inlineSources": false,
     "isolatedModules": true,
     "module": "ESNext",
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
     "moduleResolution": "Bundler",
     "noUnusedLocals": false,
     "noUnusedParameters": false,

@@ -1,0 +1,13 @@
+diff --git a/node_modules/drizzle-kit/bin.cjs b/node_modules/drizzle-kit/bin.cjs
+index a97c4f3..be5a69b 100755
+--- a/node_modules/drizzle-kit/bin.cjs
++++ b/node_modules/drizzle-kit/bin.cjs
+@@ -29882,7 +29882,7 @@ var init_snapshotsDiffer = __esm({
+           if (policiesInPreviousState.length > 0 && policiesInCurrentState.length === 0 && !table4.isRLSEnabled) {
+             jsonDisableRLSStatements.push({ type: "disable_rls", tableName: table4.name, schema: table4.schema });
+           }
+-          if (table4.isRLSEnabled !== tableInPreviousState.isRLSEnabled) {
++          if (table4.isRLSEnabled !== tableInPreviousState?.isRLSEnabled) {
+             if (table4.isRLSEnabled) {
+               jsonEnableRLSStatements.push({ type: "enable_rls", tableName: table4.name, schema: table4.schema });
+             } else if (!table4.isRLSEnabled && policiesInCurrentState.length === 0) {

@@ -29,6 +29,12 @@
     "lint:fix": {
       "dependsOn": ["workaround"]
     },
+    "lint:strict": {
+      "dependsOn": ["workaround"]
+    },
+    "check-types": {
+      "dependsOn": ["workaround"]
+    },
     "test": {
       "cache": false
     },
