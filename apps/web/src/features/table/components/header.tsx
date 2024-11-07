@@ -56,14 +56,23 @@ export function Header({ table }: { table: RouterOutput["table"]["get"] }) {
         />
 
         {table.deletedAt ? (
-          <RestoreButton title={table.title} tableId={table.id} />
+          <RestoreButton
+            slug={table.slug}
+            title={table.title}
+            tableId={table.id}
+          />
         ) : (
           <>
             <FavoriteButton
+              slug={table.slug}
               tableId={table.id}
               isFavorite={table.favorited ?? false}
             />
-            <DeleteButton title={table.title} tableId={table.id} />
+            <DeleteButton
+              slug={table.slug}
+              title={table.title}
+              tableId={table.id}
+            />
           </>
         )}
       </div>

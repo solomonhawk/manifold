@@ -10,16 +10,20 @@ import { useCommandPalette } from "@manifold/ui/hooks/use-command-palette";
 import { GoFile, GoFileSymlinkFile } from "react-icons/go";
 import { Link, useNavigate } from "react-router-dom";
 
+import { useAuth } from "~features/auth/hooks/use-auth";
 import { useListTables } from "~features/table/api/list";
 
 export function Launcher() {
+  const session = useAuth();
   const [isCommandPaletteOpen, closeCommandPalette] = useCommandPalette();
   const navigate = useNavigate();
 
   // @TODO: maybe only fetch like 10 tables? re-fetch when search input changes
   const tablesQuery = useListTables({
     orderBy: "recently_edited",
-    options: { enabled: isCommandPaletteOpen },
+    options: {
+      enabled: isCommandPaletteOpen && session.status === "authenticated",
+    },
   });
 
   function handleCreateTable() {
@@ -47,6 +51,8 @@ export function Launcher() {
     });
   }
 
+  const username = session.data?.userProfile?.username;
+
   return (
     <CommandPalette isOpen={isCommandPaletteOpen} onClose={closeCommandPalette}>
       <CommandGroup heading="Quick Actions">
@@ -59,34 +65,37 @@ export function Launcher() {
 
       <CommandSeparator />
 
-      <CommandGroup heading="Your Tables">
-        {tablesQuery.isLoading && (
-          <div className="space-y-8">
-            <Skeleton className="h-44" />
-            <Skeleton className="h-44" />
-            <Skeleton className="h-44" />
-          </div>
-        )}
+      {session.status === "authenticated" && (
+        <CommandGroup heading="Your Tables">
+          {tablesQuery.isLoading && (
+            <div className="space-y-8">
+              <Skeleton className="h-44" />
+              <Skeleton className="h-44" />
+              <Skeleton className="h-44" />
+            </div>
+          )}
 
-        {!tablesQuery.isLoading &&
-          tablesQuery.data?.map((table) => {
-            return (
-              <CommandItem
-                key={table.id}
-                asChild
-                onSelect={() => {
-                  navigate(`/table/${table.id}/edit`);
-                  closeCommandPalette();
-                }}
-              >
-                <Link to={`/table/${table.id}/edit`}>
-                  <GoFile />
-                  <span>{table.title}</span>
-                </Link>
-              </CommandItem>
-            );
-          })}
-      </CommandGroup>
+          {username &&
+            !tablesQuery.isLoading &&
+            tablesQuery.data?.map((table) => {
+              return (
+                <CommandItem
+                  key={table.id}
+                  asChild
+                  onSelect={() => {
+                    navigate(`/table/${username}/${table.slug}/edit`);
+                    closeCommandPalette();
+                  }}
+                >
+                  <Link to={`/table/${table.id}/edit`}>
+                    <GoFile />
+                    <span>{table.title}</span>
+                  </Link>
+                </CommandItem>
+              );
+            })}
+        </CommandGroup>
+      )}
     </CommandPalette>
   );
 }

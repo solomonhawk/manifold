@@ -7,9 +7,11 @@ import {
 import { FlexCol } from "@manifold/ui/components/ui/flex";
 import { useNavigate } from "react-router-dom";
 
+import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
 import { TableCreateForm } from "~features/table/components/table-create-form";
 
 export function TableNew() {
+  const userProfile = useRequiredUserProfile();
   const navigate = useNavigate();
 
   return (
@@ -22,7 +24,9 @@ export function TableNew() {
         <CardContent>
           <TableCreateForm
             onCreate={(table) =>
-              navigate(`/table/${table.id}/edit`, { state: { table } })
+              navigate(`/table/${userProfile.username}/${table.slug}/edit`, {
+                state: { table },
+              })
             }
           />
         </CardContent>

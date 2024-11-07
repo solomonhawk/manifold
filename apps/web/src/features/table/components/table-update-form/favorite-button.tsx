@@ -13,14 +13,16 @@ import { GoHeart, GoHeartFill } from "react-icons/go";
 import { useFavoriteTable } from "~features/table/api/favorite";
 
 export function FavoriteButton({
+  slug,
   tableId,
   isFavorite,
 }: {
+  slug: string;
   tableId: string;
   isFavorite: boolean;
 }) {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
-  const favoriteTableMutation = useFavoriteTable({ tableId });
+  const favoriteTableMutation = useFavoriteTable({ slug });
 
   const isPending = useStateGuard(favoriteTableMutation.isLoading, {
     min: 250,

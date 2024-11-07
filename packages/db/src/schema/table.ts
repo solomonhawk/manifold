@@ -12,7 +12,7 @@ export const table = createTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     title: text("title").notNull(),
-    slug: text("slug"),
+    slug: text("slug").notNull(),
     definition: text("definition").notNull(),
     description: text("description"),
     favorited: boolean("favorited").default(false),

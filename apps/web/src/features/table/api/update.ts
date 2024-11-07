@@ -2,16 +2,18 @@ import type { RouterOutput } from "@manifold/router";
 import { toast } from "@manifold/ui/components/ui/toaster";
 import { useRef } from "react";
 
+import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
 import { toastError, toastSuccess } from "~utils/toast";
 import { trpc } from "~utils/trpc";
 
 export function useUpdateTable({
-  tableId,
+  slug,
   onSuccess,
 }: {
-  tableId: string;
+  slug: string;
   onSuccess: (data: RouterOutput["table"]["update"]) => void | Promise<void>;
 }) {
+  const userProfile = useRequiredUserProfile();
   const trpcUtils = trpc.useUtils();
   const toastErrorId = useRef<string | number | undefined>(undefined);
 
@@ -26,7 +28,13 @@ export function useUpdateTable({
       await onSuccess?.(data);
 
       // update query cache (list + get)
-      trpcUtils.table.get.setData({ id: tableId }, data);
+      trpcUtils.table.get.setData(
+        {
+          username: userProfile.username,
+          slug,
+        },
+        data,
+      );
       trpcUtils.table.list.setData({}, (list) => {
         return list?.map((t) => (t.id === data.id ? data : t)) ?? [data];
       });
@@ -37,7 +45,10 @@ export function useUpdateTable({
 
       // invalidate get query, but don't bother refetching until the next time it becomes active
       trpcUtils.table.get.invalidate(
-        { id: tableId },
+        {
+          username: userProfile.username,
+          slug,
+        },
         { refetchType: "inactive" },
       );
     },

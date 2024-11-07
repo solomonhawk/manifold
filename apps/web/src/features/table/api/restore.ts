@@ -3,17 +3,19 @@ import { useIsMutating } from "@tanstack/react-query";
 import { getQueryKey } from "@trpc/react-query";
 import { useRef } from "react";
 
+import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
 import { log } from "~utils/logger";
 import { toastError, toastSuccess } from "~utils/toast";
 import { trpc } from "~utils/trpc";
 
 export function useRestoreTable({
+  slug,
   title,
-  tableId,
 }: {
+  slug: string;
   title: string;
-  tableId: string;
 }) {
+  const userProfile = useRequiredUserProfile();
   const trpcUtils = trpc.useUtils();
   const toastErrorId = useRef<string | number | undefined>(undefined);
 
@@ -28,7 +30,10 @@ export function useRestoreTable({
       trpcUtils.table.favorites.invalidate();
 
       // invalidate get query immediately
-      await trpcUtils.table.get.invalidate({ id: tableId });
+      await trpcUtils.table.get.invalidate({
+        username: userProfile.username,
+        slug,
+      });
 
       toastSuccess(`${title} restored`);
     },

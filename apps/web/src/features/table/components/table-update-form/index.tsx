@@ -65,7 +65,7 @@ export function TableUpdateForm({
   });
 
   const updateTableMutation = useUpdateTable({
-    tableId: table.id,
+    slug: table.slug,
     onSuccess: (data) => {
       // ensure form touched/dirty state is accurate after a successful save.
       form.reset({

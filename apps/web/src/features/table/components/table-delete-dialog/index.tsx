@@ -19,14 +19,15 @@ import { useDeleteTable } from "~features/table/api/delete";
 type Props = {
   title: string;
   tableId: string;
+  slug: string;
 };
 
-export const TableDeleteDialog = ({ title, tableId }: Props) => {
+export const TableDeleteDialog = ({ title, tableId, slug }: Props) => {
   const modal = useModal();
   const returnFocus = useReturnFocus(modal.visible);
   const mutation = useDeleteTable({
     title,
-    tableId,
+    slug,
     onSuccess: () => {
       mutation.reset();
       modal.hide();

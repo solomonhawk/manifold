@@ -4,7 +4,7 @@ import { Badge } from "@manifold/ui/components/ui/badge";
 import { Button } from "@manifold/ui/components/ui/button";
 import { Separator } from "@manifold/ui/components/ui/separator";
 import { Skeleton } from "@manifold/ui/components/ui/skeleton";
-import { Link, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { match } from "ts-pattern";
 
 import { useAuth } from "~features/auth/hooks/use-auth";
@@ -23,7 +23,7 @@ export function RootLayout() {
       <div className="bg-architect flex h-full flex-col">
         <GlobalHeader.Root>
           <GlobalHeader.Center>
-            <Link
+            <PrefetchableLink
               to={session.status === "authenticated" ? "/dashboard" : "/"}
               className="group flex items-center gap-4"
             >
@@ -32,7 +32,7 @@ export function RootLayout() {
               <Badge size="sm" variant="secondary">
                 Alpha
               </Badge>
-            </Link>
+            </PrefetchableLink>
 
             <Separator
               orientation="vertical"

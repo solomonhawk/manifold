@@ -44,7 +44,8 @@ export const tableCreateInput = z.object({
 export type TableCreateInput = z.infer<typeof tableCreateInput>;
 
 export const tableGetInput = z.object({
-  id: z.string(),
+  username: z.string(),
+  slug: z.string(),
 });
 
 export type TableGetInput = z.infer<typeof tableGetInput>;

@@ -3,11 +3,13 @@ import { Card, CardContent } from "@manifold/ui/components/ui/card";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
 import { AnimatePresence, motion } from "framer-motion";
 
+import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
 import { useListTableFavorites } from "~features/table/api/favorite";
 import { log } from "~utils/logger";
 
 export function QuickLauncher() {
+  const userProfile = useRequiredUserProfile();
   const favoritesQuery = useListTableFavorites();
 
   // @TODO: error state
@@ -34,7 +36,7 @@ export function QuickLauncher() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
             >
-              <QuickLaunchTile table={table} />
+              <QuickLaunchTile table={table} userProfile={userProfile} />
             </motion.li>
           );
         })}
@@ -43,12 +45,20 @@ export function QuickLauncher() {
   );
 }
 
-function QuickLaunchTile({ table }: { table: { id: string; title: string } }) {
+function QuickLaunchTile({
+  table,
+  userProfile,
+}: {
+  table: { slug: string; title: string };
+  userProfile: { username: string };
+}) {
   return (
     <Card>
       <CardContent className="flex h-full items-center !p-0">
         <Button asChild className="size-full p-16" variant="link">
-          <PrefetchableLink to={`/table/${table.id}/edit`}>
+          <PrefetchableLink
+            to={`/t/${userProfile.username}/${table.slug}/edit`}
+          >
             <h3>{table.title}</h3>
           </PrefetchableLink>
         </Button>

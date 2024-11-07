@@ -8,7 +8,15 @@ import {
   type TableRestoreInput,
   type TableUpdateInput,
 } from "@manifold/validators";
-import { and, asc, desc, eq, isNull, type SQL } from "drizzle-orm";
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  getTableColumns,
+  isNull,
+  type SQL,
+} from "drizzle-orm";
 
 import { db } from "#db.ts";
 import * as schema from "#schema/index.ts";
@@ -48,14 +56,26 @@ export async function createTable(userId: string, input: TableCreateInput) {
 }
 
 export async function findTable(userId: string, input: TableGetInput) {
-  return db.query.table
-    .findFirst({
-      where: and(
-        eq(schema.table.userId, userId),
-        eq(schema.table.id, input.id),
+  const [table] = await db
+    .select({ ...getTableColumns(schema.table) })
+    .from(schema.table)
+    .leftJoin(schema.users, eq(schema.users.id, schema.table.userId))
+    .leftJoin(
+      schema.userProfiles,
+      eq(schema.users.id, schema.userProfiles.userId),
+    )
+    .where(
+      and(
+        eq(schema.userProfiles.username, input.username),
+        eq(schema.table.slug, input.slug),
+        // @TODO: remove this for public tables so anyone can view them?
+        eq(schema.users.id, userId),
       ),
-    })
+    )
+    .limit(1)
     .execute();
+
+  return table;
 }
 
 export async function updateTable(userId: string, input: TableUpdateInput) {

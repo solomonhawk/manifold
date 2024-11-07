@@ -21,7 +21,7 @@ export function loaderBuilder(trpcUtils: TrpcUtils) {
       : tableListOrderBy.catch(() => "newest" as const).parse(savedOrderBy);
 
     await Promise.all([
-      trpcUtils.table.list.prefetch({ orderBy }),
+      trpcUtils.table.list.prefetch({ orderBy, includeDeleted: false }),
 
       /**
        * Only prefetch favorites if there's no existing data. By deferring this

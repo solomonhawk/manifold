@@ -7,13 +7,15 @@ import { GoIterations } from "react-icons/go";
 import { useRestoreTable } from "~features/table/api/restore";
 
 export function RestoreButton({
+  slug,
   title,
   tableId,
 }: {
+  slug: string;
   title: string;
   tableId: string;
 }) {
-  const undeleteTableMutation = useRestoreTable({ title, tableId });
+  const undeleteTableMutation = useRestoreTable({ title, slug });
 
   const isPending = useStateGuard(undeleteTableMutation.isLoading, {
     min: 250,

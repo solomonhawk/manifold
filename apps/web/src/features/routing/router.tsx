@@ -94,7 +94,7 @@ export function buildAppRoutes({
           ],
         },
         {
-          path: "table",
+          path: "t",
           loader: protectedLoader,
           errorElement: <RootError />,
           children: [
@@ -103,15 +103,7 @@ export function buildAppRoutes({
               element: <Navigate to="/dashboard" replace />,
             },
             {
-              path: "new",
-              lazy: () => import("~features/table/pages/new/page"),
-              handle: {
-                title: () => "Manifold | New Table",
-                description: () => "Create a new random table.",
-              } satisfies Handle,
-            },
-            {
-              path: ":id",
+              path: ":username/:slug",
               children: [
                 {
                   path: "edit",
@@ -135,6 +127,25 @@ export function buildAppRoutes({
                   loader: () => redirect("edit"),
                 },
               ],
+            },
+          ],
+        },
+        {
+          path: "table",
+          loader: protectedLoader,
+          errorElement: <RootError />,
+          children: [
+            {
+              index: true,
+              element: <Navigate to="/dashboard" replace />,
+            },
+            {
+              path: "new",
+              lazy: () => import("~features/table/pages/new/page"),
+              handle: {
+                title: () => "Manifold | New Table",
+                description: () => "Create a new random table.",
+              } satisfies Handle,
             },
           ],
         },
@@ -174,21 +185,24 @@ export function protectedLoaderBuilder(auth: ReturnType<typeof useSession>) {
   return async ({ request }: LoaderFunctionArgs) => {
     const params = new URLSearchParams();
     params.set("from", new URL(request.url).pathname);
-
+    console.log(auth);
     if (auth.status === "unauthenticated") {
       return redirect(`/?${params.toString()}`);
     }
 
-    const isOnboarded = userIsOnboarded(auth);
+    if (auth.status === "authenticated") {
+      const isOnboarded = userIsOnboarded(auth);
 
-    if (!isOnboarded && !request.url.includes("/onboarding/new-user")) {
-      return redirect(`/onboarding/new-user?${params.toString()}`);
+      if (!isOnboarded && !request.url.includes("/onboarding/new-user")) {
+        return redirect(`/onboarding/new-user?${params.toString()}`);
+      }
+
+      if (isOnboarded && request.url.includes("/onboarding")) {
+        return redirect("/dashboard");
+      }
     }
 
-    if (isOnboarded && request.url.includes("/onboarding")) {
-      return redirect("/dashboard");
-    }
-
+    // @TODO: should this wait for auth to be not loading?
     return null;
   };
 }

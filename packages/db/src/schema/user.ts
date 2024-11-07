@@ -20,7 +20,7 @@ export const userProfiles = createTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     description: text("description"),
-    username: text("username").unique(),
+    username: text("username").notNull().unique(),
     ...timestamps,
   },
   (userProfile) => [

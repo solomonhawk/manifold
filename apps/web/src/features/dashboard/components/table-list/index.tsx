@@ -24,6 +24,7 @@ import { formatRelative } from "date-fns";
 import { useCallback, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
+import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
 import { useListTables } from "~features/table/api/list";
 import { TABLE_LIST_ORDER_BY_STORAGE_KEY } from "~features/table/constants";
@@ -37,6 +38,7 @@ export function TableList({
 }: {
   routeOrderBy: TableListOrderBy;
 }) {
+  const userProfile = useRequiredUserProfile();
   const [includeDeleted, setIncludeDeleted] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const orderByFromUrl = tableListOrderBy.safeParse(searchParams.get("sort"));
@@ -61,6 +63,8 @@ export function TableList({
     },
     [setSearchParams],
   );
+
+  console.log(listQuery);
 
   // @TODO: error state
   if (listQuery.isError) {
@@ -143,7 +147,9 @@ export function TableList({
                   >
                     <PrefetchableLink
                       to={
-                        listQuery.isRefetching ? "#" : `/table/${table.id}/edit`
+                        listQuery.isRefetching
+                          ? "#"
+                          : `/t/${userProfile.username}/${table.slug}/edit`
                       }
                       state={{ table }}
                     >
