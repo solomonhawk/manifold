@@ -3,7 +3,7 @@ import { useSetAtom } from "jotai";
 import { useEffect, useMemo } from "react";
 import { RouterProvider } from "react-router-dom";
 
-import { useAuth } from "~features/auth/context/use-auth";
+import { useAuth } from "~features/auth/hooks/use-auth";
 import { NavigationProgress } from "~features/routing/components/navigation-progress";
 import {
   buildAppRoutes,
@@ -15,7 +15,7 @@ import { routesAtom } from "~features/routing/state";
 import { trpc } from "~utils/trpc";
 
 export function Router() {
-  const { session } = useAuth();
+  const session = useAuth();
   const trpcUtils = trpc.useUtils();
   const setRoutes = useSetAtom(routesAtom);
 

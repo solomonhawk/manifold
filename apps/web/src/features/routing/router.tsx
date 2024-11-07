@@ -50,6 +50,7 @@ export function buildAppRoutes({
         {
           path: "dashboard",
           loader: protectedLoader,
+          errorElement: <RootError />,
           children: [
             {
               index: true,
@@ -73,6 +74,7 @@ export function buildAppRoutes({
         {
           path: "table",
           loader: protectedLoader,
+          errorElement: <RootError />,
           children: [
             {
               path: "new",

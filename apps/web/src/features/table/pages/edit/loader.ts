@@ -9,7 +9,7 @@ export function loaderBuilder(trpcUtils: TrpcUtils) {
     const id = z.string().safeParse(params.id);
 
     if (id.success) {
-      return trpcUtils.table.get.fetch(id.data);
+      return await trpcUtils.table.get.fetch({ id: id.data });
     }
 
     throw new RoutingError("Invalid Table ID");

@@ -37,7 +37,7 @@ export const TableDeleteDialog = ({ title, tableId }: Props) => {
 
   function handleConfirmDelete(e: MouseEvent) {
     e.preventDefault();
-    mutation.mutate(tableId);
+    mutation.mutate({ id: tableId });
   }
 
   return (

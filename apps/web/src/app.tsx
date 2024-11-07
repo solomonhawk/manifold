@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
 
-import { AuthWrapper } from "~features/auth/context/wrapper";
 import { Router } from "~features/routing";
 import { trpc, trpcClient } from "~utils/trpc";
 
@@ -25,9 +24,7 @@ export function App() {
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
         <QueryClientProvider client={queryClient}>
           <TooltipProvider delayDuration={300}>
-            <AuthWrapper>
-              <Router />
-            </AuthWrapper>
+            <Router />
           </TooltipProvider>
 
           <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />

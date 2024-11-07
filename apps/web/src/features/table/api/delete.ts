@@ -32,7 +32,7 @@ export function useDeleteTable({
         trpcUtils.table.favorites.refetch(),
       ]);
 
-      trpcUtils.table.get.invalidate(tableId);
+      trpcUtils.table.get.invalidate({ id: tableId });
 
       await onSuccess?.();
     },

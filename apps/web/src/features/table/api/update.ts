@@ -27,7 +27,7 @@ export function useUpdateTable({
       await onSuccess?.(data);
 
       // update query cache (list + get)
-      trpcUtils.table.get.setData(tableId, data);
+      trpcUtils.table.get.setData({ id: tableId }, data);
       trpcUtils.table.list.setData({}, (list) => {
         return list?.map((t) => (t.id === data.id ? data : t)) ?? [data];
       });
@@ -37,7 +37,10 @@ export function useUpdateTable({
       trpcUtils.table.favorites.invalidate();
 
       // invalidate get query, but don't bother refetching until the next time it becomes active
-      trpcUtils.table.get.invalidate(tableId, { refetchType: "inactive" });
+      trpcUtils.table.get.invalidate(
+        { id: tableId },
+        { refetchType: "inactive" },
+      );
     },
     onError: (e) => {
       log.error(e);

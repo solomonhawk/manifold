@@ -21,7 +21,7 @@ export function RestoreButton({
 
   function handleClick(e: MouseEvent) {
     e.preventDefault();
-    undeleteTableMutation.mutate(tableId);
+    undeleteTableMutation.mutate({ id: tableId });
   }
 
   /**

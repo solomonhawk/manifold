@@ -17,7 +17,6 @@
     "eslint": "^8.57.0"
   },
   "dependencies": {
-    "@manifold/db": "*",
     "@manifold/lib": "*",
     "zod": "^3.23.8"
   }

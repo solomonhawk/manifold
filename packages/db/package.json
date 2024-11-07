@@ -37,6 +37,8 @@
   "dependencies": {
     "@auth/core": "^0.37.2",
     "@manifold/env": "*",
+    "@manifold/lib": "^0.0.0",
+    "@manifold/validators": "^0.0.0",
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.36.0",
     "pg": "^8.13.0"

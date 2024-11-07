@@ -5,7 +5,10 @@ import { trpc } from "~utils/trpc";
 export function useGetTable({ id }: { id: string }) {
   const location = useLocation();
 
-  return trpc.table.get.useQuery(id, {
-    placeholderData: location.state?.table,
-  });
+  return trpc.table.get.useQuery(
+    { id },
+    {
+      placeholderData: location.state?.table,
+    },
+  );
 }

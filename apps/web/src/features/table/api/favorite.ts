@@ -30,13 +30,16 @@ export function useFavoriteTable({
 
       await onSuccess?.(data);
 
-      trpcUtils.table.get.setData(tableId, data);
+      trpcUtils.table.get.setData({ id: tableId }, data);
 
       // @TODO: this causes the dashboard loader to prefetch the table data again
       // which means we no longer see the animation of the item entering/leaving
       trpcUtils.table.favorites.invalidate();
 
-      trpcUtils.table.get.invalidate(tableId, { refetchType: "inactive" });
+      trpcUtils.table.get.invalidate(
+        { id: tableId },
+        { refetchType: "inactive" },
+      );
     },
     onError: (e) => {
       log.error(e);

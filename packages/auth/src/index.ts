@@ -1,7 +1,9 @@
+import "@manifold/types/auth";
+
 import Google from "@auth/core/providers/google";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { initAuthConfig } from "@hono/auth-js";
-import { db, schema } from "@manifold/db";
+import { db, schema, userService } from "@manifold/db";
 import type { Context } from "hono";
 
 export * from "@hono/auth-js";
@@ -31,5 +33,16 @@ export const auth = (getConfig: (c: Context) => AuthInit) =>
         }),
       ],
       secret,
+      callbacks: {
+        session: async ({ session, user }) => {
+          const userProfile = await userService.getProfile(user.id);
+
+          if (userProfile) {
+            session.userProfile = userProfile;
+          }
+
+          return session;
+        },
+      },
     };
   });

@@ -17,6 +17,9 @@ import { GiDiceTwentyFacesOne } from "react-icons/gi";
 import { GoChevronRight } from "react-icons/go";
 import { Link, useRouteError } from "react-router-dom";
 
+import { NotFound } from "~features/routing/pages/root/not-found";
+import { isNotFoundError } from "~utils/errors";
+
 const FALLBACK_ERROR_MESSAGE =
   "The details remain elusive, but our quest to understand their true nature is just beginning…" as const;
 
@@ -26,6 +29,16 @@ export function RootError() {
   const errorText = isError(error)
     ? error.message || FALLBACK_ERROR_MESSAGE
     : FALLBACK_ERROR_MESSAGE;
+
+  if (isNotFoundError(error)) {
+    return (
+      <NotFound
+        title={error.message}
+        subtitle="Despite our best efforts, we couldn’t find the McGuffin this time around…"
+        actionText="Retreat and regroup"
+      />
+    );
+  }
 
   return (
     <div className="bg-architect flex grow flex-col items-center justify-center p-12 sm:p-16">

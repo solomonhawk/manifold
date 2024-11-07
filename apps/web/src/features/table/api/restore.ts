@@ -28,7 +28,7 @@ export function useRestoreTable({
       trpcUtils.table.favorites.invalidate();
 
       // invalidate get query immediately
-      await trpcUtils.table.get.invalidate(tableId);
+      await trpcUtils.table.get.invalidate({ id: tableId });
 
       toastSuccess(`${title} restored`);
     },

@@ -7,7 +7,7 @@ import {
 } from "@manifold/ui/components/ui/card";
 import { cn } from "@manifold/ui/lib/utils";
 
-import { useRequiredAuth } from "~features/auth/context/use-auth";
+import { useRequiredAuth } from "~features/auth/hooks/use-auth";
 
 import { QuickLauncher } from "../quick-launcher";
 import { Aphorism } from "./aphorism";
@@ -17,7 +17,7 @@ function getGreeting(name: string) {
 }
 
 export function DashboardHeader({ className }: { className?: string }) {
-  const { session } = useRequiredAuth();
+  const session = useRequiredAuth();
 
   return (
     <Card className={cn("flex flex-col sm:flex-row sm:gap-16", className)}>

@@ -9,14 +9,14 @@ import { cn } from "@manifold/ui/lib/utils";
 import { Link, Outlet } from "react-router-dom";
 import { match } from "ts-pattern";
 
-import { useAuth } from "~features/auth/context/use-auth";
+import { useAuth } from "~features/auth/hooks/use-auth";
 import { DialogManager } from "~features/dialog-manager";
 import { Launcher } from "~features/routing/components/launcher";
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
 import { RouteMeta } from "~features/routing/components/route-meta";
 
 export function RootLayout() {
-  const { session } = useAuth();
+  const session = useAuth();
 
   return (
     <DialogManager.Provider>

@@ -1,7 +1,22 @@
-export type QueryError = Error & { code?: string };
+import { TRPCError } from "@trpc/server";
+import { ZodError } from "zod";
 
-export const isQueryError = (error: unknown): error is QueryError => {
-  return (
-    error instanceof Error && "code" in error && typeof error.code === "string"
-  );
-};
+export function validationError({
+  path,
+  message,
+}: {
+  path: string[];
+  message: string;
+}) {
+  return new TRPCError({
+    code: "BAD_REQUEST",
+    message,
+    cause: new ZodError([
+      {
+        message,
+        path,
+        code: "custom",
+      },
+    ]),
+  });
+}
