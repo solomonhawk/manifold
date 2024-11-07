@@ -1,25 +1,20 @@
-import { GoFileSymlinkFile } from "react-icons/go";
-
 import {
   CommandDialog,
   CommandEmpty,
-  CommandGroup,
   CommandInput,
-  CommandItem,
   CommandList,
 } from "#components/ui/command.tsx";
 import { DialogDescription, DialogTitle } from "#components/ui/dialog.tsx";
 import { useReturnFocus } from "#hooks/use-return-focus.js";
 
-// @TODO: Make this more generic, pass in a list of command groups, etc.
 export function CommandPalette({
   isOpen,
   onClose,
-  onCreateTable,
+  children,
 }: {
   isOpen: boolean;
   onClose: () => void;
-  onCreateTable: () => void;
+  children?: React.ReactNode;
 }) {
   const returnFocus = useReturnFocus(isOpen);
 
@@ -41,12 +36,7 @@ export function CommandPalette({
       <CommandInput placeholder="Type a command or search..." />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
-        <CommandGroup heading="Suggestions">
-          <CommandItem onSelect={onCreateTable}>
-            <GoFileSymlinkFile />
-            <span>Create a new Table</span>
-          </CommandItem>
-        </CommandGroup>
+        {children}
       </CommandList>
     </CommandDialog>
   );
