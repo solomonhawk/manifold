@@ -1,4 +1,6 @@
-import type { TableModel } from "@manifold/db/schema/table";
+import type { RouterOutput } from "@manifold/router";
+import { toast } from "@manifold/ui/components/ui/toaster";
+import { useRef } from "react";
 
 import { log } from "~utils/logger";
 import { toastError, toastSuccess } from "~utils/toast";
@@ -9,12 +11,17 @@ export function useUpdateTable({
   onSuccess,
 }: {
   tableId: string;
-  onSuccess: (data: TableModel) => void | Promise<void>;
+  onSuccess: (data: RouterOutput["table"]["update"]) => void | Promise<void>;
 }) {
   const trpcUtils = trpc.useUtils();
+  const toastErrorId = useRef<string | number | undefined>(undefined);
 
   return trpc.table.update.useMutation({
     onSuccess: async (data) => {
+      if (toastErrorId.current) {
+        toast.dismiss(toastErrorId.current);
+      }
+
       toastSuccess("Table updated");
 
       await onSuccess?.(data);
@@ -35,7 +42,7 @@ export function useUpdateTable({
     onError: (e) => {
       log.error(e);
 
-      toastError("Table failed to save", {
+      toastErrorId.current = toastError("Table failed to save", {
         description: e.message,
       });
     },
