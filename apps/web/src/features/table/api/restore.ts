@@ -7,49 +7,45 @@ import { log } from "~utils/logger";
 import { toastError, toastSuccess } from "~utils/toast";
 import { trpc } from "~utils/trpc";
 
-export function useDeleteTable({
+export function useRestoreTable({
   title,
   tableId,
-  onSuccess,
 }: {
   title: string;
   tableId: string;
-  onSuccess?: () => void;
 }) {
   const trpcUtils = trpc.useUtils();
   const toastErrorId = useRef<string | number | undefined>(undefined);
 
-  return trpc.table.delete.useMutation({
+  return trpc.table.restore.useMutation({
     onSuccess: async () => {
       if (toastErrorId.current) {
         toast.dismiss(toastErrorId.current);
       }
 
-      toastSuccess(`${title} deleted`);
+      // lazily invalidate table list and favorites queries to ensure order is accurate (based on `updatedAt`)
+      trpcUtils.table.list.invalidate();
+      trpcUtils.table.favorites.invalidate();
 
-      await Promise.all([
-        trpcUtils.table.list.refetch(),
-        trpcUtils.table.favorites.refetch(),
-      ]);
+      // invalidate get query immediately
+      await trpcUtils.table.get.invalidate(tableId);
 
-      trpcUtils.table.get.invalidate(tableId);
-
-      await onSuccess?.();
+      toastSuccess(`${title} restored`);
     },
     onError: (e) => {
       log.error(e);
 
-      toastErrorId.current = toastError("Failed to delete table", {
+      toastErrorId.current = toastError("Failed to restore table", {
         description: e.message,
       });
     },
   });
 }
 
-export function useIsDeletingTable() {
+export function useIsRestoringTable() {
   return (
     useIsMutating({
-      mutationKey: getQueryKey(trpc.table.delete),
+      mutationKey: getQueryKey(trpc.table.restore),
     }) > 0
   );
 }

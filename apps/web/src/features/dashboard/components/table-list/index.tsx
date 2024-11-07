@@ -5,6 +5,7 @@ import {
 } from "@manifold/ui/components/animated-list";
 import { Button } from "@manifold/ui/components/ui/button";
 import { Card, CardContent, CardHeader } from "@manifold/ui/components/ui/card";
+import { Checkbox } from "@manifold/ui/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -20,7 +21,7 @@ import {
   tableListOrderByMapping,
 } from "@manifold/validators";
 import { formatRelative } from "date-fns";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
@@ -36,11 +37,12 @@ export function TableList({
 }: {
   routeOrderBy: TableListOrderBy;
 }) {
+  const [includeDeleted, setIncludeDeleted] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const orderByFromUrl = tableListOrderBy.safeParse(searchParams.get("sort"));
   const orderBy = orderByFromUrl.success ? orderByFromUrl.data : routeOrderBy;
 
-  const listQuery = useListTables({ orderBy });
+  const listQuery = useListTables({ orderBy, includeDeleted });
   const isPending = useStateGuard(listQuery.isRefetching, { min: 200 });
 
   const handleOrderChange = useCallback(
@@ -89,6 +91,24 @@ export function TableList({
             </SelectContent>
           </Select>
         </div>
+
+        <div className="flex items-center">
+          <Checkbox
+            id="deleted"
+            aria-labelledby="deleted-label"
+            checked={includeDeleted}
+            onCheckedChange={(checked) =>
+              setIncludeDeleted(checked === "indeterminate" ? false : checked)
+            }
+          />
+          <label
+            id="deleted-label"
+            htmlFor="deleted"
+            className="pl-8 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            Show Deleted
+          </label>
+        </div>
       </CardHeader>
 
       <CardContent className={cn({ "opacity-50": isPending })}>
@@ -134,10 +154,20 @@ export function TableList({
                       </div>
 
                       <div className="z-10 -translate-y-12 scale-95 opacity-0 transition-all group-hover:translate-y-0 group-hover:scale-100 group-hover:opacity-100">
-                        <span className="text-balance text-center text-xs leading-tight text-gray-500">
-                          {capitalize(
-                            formatRelative(new Date(table.updatedAt), NOW),
+                        <span
+                          className={cn(
+                            "text-balance text-center text-xs leading-tight",
+                            {
+                              "text-gray-500": table.deletedAt === null,
+                              "text-destructive": table.deletedAt !== null,
+                            },
                           )}
+                        >
+                          {table.deletedAt
+                            ? `Deleted ${formatRelative(new Date(table.deletedAt), NOW)}`
+                            : capitalize(
+                                formatRelative(new Date(table.updatedAt), NOW),
+                              )}
                         </span>
                       </div>
                     </PrefetchableLink>

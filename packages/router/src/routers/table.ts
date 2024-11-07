@@ -10,23 +10,23 @@ import { TRPCError } from "@trpc/server";
 
 import { authedProcedure, t } from "#trpc.ts";
 
+// @XXX: Is this really better than an IIFE with a `switch` statement? 🤔
+const tableOrderByMap = {
+  recently_edited: desc(schema.table.updatedAt),
+  recently_not_edited: asc(schema.table.updatedAt),
+  oldest: asc(schema.table.createdAt),
+  newest: desc(schema.table.createdAt),
+} as const;
+
 export const tableRouter = t.router({
   list: authedProcedure.input(tableListInput).query(({ input, ctx }) => {
-    // @XXX: Is this really better than an IIFE with a `switch` statement? 🤔
-    const orderBy = {
-      recently_edited: desc(schema.table.updatedAt),
-      recently_not_edited: asc(schema.table.updatedAt),
-      oldest: asc(schema.table.createdAt),
-      newest: desc(schema.table.createdAt),
-    }[input?.orderBy ?? "newest"];
-
     return db.query.table
       .findMany({
         where: and(
           eq(schema.table.userId, ctx.user.id),
-          isNull(schema.table.deletedAt),
+          input.includeDeleted ? undefined : isNull(schema.table.deletedAt),
         ),
-        orderBy,
+        orderBy: tableOrderByMap[input.orderBy ?? "newest"],
       })
       .execute();
   }),
@@ -49,7 +49,6 @@ export const tableRouter = t.router({
         where: and(
           eq(schema.table.userId, ctx.user.id),
           eq(schema.table.id, input),
-          isNull(schema.table.deletedAt),
         ),
       })
       .execute();
@@ -88,6 +87,19 @@ export const tableRouter = t.router({
       await db
         .update(schema.table)
         .set({ deletedAt: new Date() })
+        .where(
+          and(eq(schema.table.userId, ctx.user.id), eq(schema.table.id, input)),
+        )
+        .execute();
+    }),
+
+  restore: authedProcedure
+    .input(tableDeleteInput)
+    .mutation(async ({ input, ctx }) => {
+      // restore dependencies (edges)
+      await db
+        .update(schema.table)
+        .set({ deletedAt: null })
         .where(
           and(eq(schema.table.userId, ctx.user.id), eq(schema.table.id, input)),
         )

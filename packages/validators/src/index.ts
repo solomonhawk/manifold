@@ -23,11 +23,10 @@ export const tableListOrderBy = z
   ] as const satisfies TableListOrderBy[])
   .default("newest");
 
-export const tableListInput = z
-  .object({
-    orderBy: tableListOrderBy,
-  })
-  .optional();
+export const tableListInput = z.object({
+  orderBy: tableListOrderBy,
+  includeDeleted: z.boolean().default(false),
+});
 
 export const tableCreateInput = z.object({
   title: z.string().min(1, { message: "Title can’t be blank" }),

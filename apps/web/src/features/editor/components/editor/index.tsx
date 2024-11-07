@@ -13,6 +13,7 @@ import { ResultsPanel } from "./results-panel";
 type Props = {
   name: string;
   value: string | undefined;
+  isDisabled?: boolean;
   onChange: (value: string) => void;
   onBlur: () => void;
   refCallback: RefCallBack;
@@ -23,6 +24,7 @@ type Props = {
 export function Editor({
   name,
   value,
+  isDisabled,
   onChange,
   onBlur,
   refCallback,
@@ -53,6 +55,7 @@ export function Editor({
             refCallback={refCallback}
             onParseError={onParseError}
             onParseSuccess={onParseSuccess}
+            isDisabled={isDisabled}
           />
         </ResizablePanel>
 

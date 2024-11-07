@@ -45,6 +45,7 @@ type Props = {
   refCallback: RefCallBack;
   name: string;
   value: string;
+  isDisabled?: boolean;
   onChange: (value: string) => void;
   onBlur: () => void;
   onParseError: (error: string) => void;
@@ -56,6 +57,7 @@ export function InputPanel({
   refCallback,
   name,
   value,
+  isDisabled,
   onChange,
   onBlur,
   onParseError,
@@ -220,6 +222,7 @@ export function InputPanel({
         autoComplete="off"
         autoCorrect="off"
         spellCheck={false}
+        disabled={isDisabled}
       />
     </FlexCol>
   );

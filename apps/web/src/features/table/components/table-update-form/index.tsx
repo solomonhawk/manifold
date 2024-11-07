@@ -18,7 +18,7 @@ import { type SubmitHandler } from "react-hook-form";
 import { Editor } from "~features/editor";
 import { useUpdateTable } from "~features/table/api/update";
 
-import { TABLE_UPDATE_HEADER_PORTAL_ID } from "./header";
+import { TABLE_UPDATE_HEADER_PORTAL_ID } from "../header";
 
 type FormData = z.infer<typeof tableUpdateInput>;
 
@@ -180,6 +180,7 @@ export function TableUpdateForm({
                             onParseError={handleParseError}
                             onParseSuccess={handleParseSuccess}
                             refCallback={ref}
+                            isDisabled={table.deletedAt !== null}
                             {...props}
                           />
                         </FormControl>
