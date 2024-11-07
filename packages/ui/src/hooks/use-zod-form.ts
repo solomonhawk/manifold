@@ -9,9 +9,9 @@ type UseZodFormProps<S extends z.ZodSchema> = {
 export function useZodForm<S extends z.ZodSchema>({
   schema,
   ...formProps
-}: UseZodFormProps<S>) {
+}: Omit<UseZodFormProps<S>, "resolver">) {
   return useForm({
-    ...formProps,
     resolver: zodResolver(schema),
+    ...formProps,
   });
 }

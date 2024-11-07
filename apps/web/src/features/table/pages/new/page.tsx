@@ -13,7 +13,7 @@ export function TableNew() {
 
   return (
     <div className="flex grow flex-col items-center justify-center p-12 sm:p-16">
-      <Card className="mx-auto max-w-md">
+      <Card className="mx-auto w-full max-w-md">
         <CardHeader>
           <CardTitle>New Table</CardTitle>
         </CardHeader>

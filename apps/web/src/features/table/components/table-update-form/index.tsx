@@ -1,4 +1,4 @@
-import type { TableModel } from "@manifold/db/schema/table";
+import type { RouterOutput } from "@manifold/router";
 import { FlexCol } from "@manifold/ui/components/ui/flex";
 import {
   Form,
@@ -28,7 +28,7 @@ export function TableUpdateForm({
   table,
   isDisabled = false,
 }: {
-  table: TableModel;
+  table: RouterOutput["table"]["get"];
   isDisabled?: boolean;
 }) {
   const form = useZodForm({

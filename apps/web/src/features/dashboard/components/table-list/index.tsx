@@ -73,9 +73,7 @@ export function TableList({
 
   return (
     <Card>
-      <CardHeader className="items-center justify-between gap-12 sm:flex-row">
-        {/* @TODO: Maybe this is a dropdown - recent/created at/used */}
-        {/* <CardTitle className="whitespace-nowrap">Your Tables:</CardTitle> */}
+      <CardHeader className="items-center justify-between gap-12 sm:flex-row sm:space-y-0">
         <div>
           <Select value={orderBy} onValueChange={handleOrderChange}>
             <SelectTrigger className="min-w-176">

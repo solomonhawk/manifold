@@ -1,6 +1,7 @@
 import { z } from "@manifold/validators";
 import { type LoaderFunctionArgs } from "react-router-dom";
 
+import { RoutingError } from "~utils/errors";
 import type { TrpcUtils } from "~utils/trpc";
 
 export function loaderBuilder(trpcUtils: TrpcUtils) {
@@ -11,7 +12,7 @@ export function loaderBuilder(trpcUtils: TrpcUtils) {
       return trpcUtils.table.get.fetch(id.data);
     }
 
-    throw new Error("Invalid Table ID");
+    throw new RoutingError("Invalid Table ID");
   };
 }
 

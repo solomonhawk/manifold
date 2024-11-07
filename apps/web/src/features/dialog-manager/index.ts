@@ -10,7 +10,7 @@ import { TableDeleteDialog } from "~features/table/components/table-delete-dialo
  * @ref https://github.com/eBay/nice-modal-react/issues/134
  */
 type IdToComponent<Id extends string> = Id extends keyof typeof DIALOGS
-  ? (typeof DIALOGS)[Id]["component"]
+  ? (typeof DIALOGS)[Id]["COMPONENT"]
   : never;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -34,8 +34,8 @@ export const DialogManager = {
 export const DIALOGS = {
   DELETE_TABLE: {
     ID: "DELETE_TABLE",
-    component: NiceModal.create(TableDeleteDialog),
+    COMPONENT: NiceModal.create(TableDeleteDialog),
   },
 } as const;
 
-DialogManager.register(DIALOGS.DELETE_TABLE.ID, DIALOGS.DELETE_TABLE.component);
+DialogManager.register(DIALOGS.DELETE_TABLE.ID, DIALOGS.DELETE_TABLE.COMPONENT);
