@@ -3,7 +3,7 @@ import type { UserProfileModel } from "@manifold/db";
 
 declare module "@auth/core/types" {
   interface Session {
-    userProfile?: UserProfileModel;
+    userProfile: UserProfileModel | null;
     user: {
       id: string;
       name: string;

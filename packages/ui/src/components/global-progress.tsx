@@ -1,6 +1,6 @@
 import { useNProgress } from "@tanem/react-nprogress";
 
-import { cn } from "#lib/utils.js";
+import { cn } from "#lib/utils.ts";
 
 type Props = {
   isAnimating: boolean;

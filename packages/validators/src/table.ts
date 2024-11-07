@@ -1,5 +1,6 @@
-import { slugify } from "@manifold/lib/utils/string";
 import { z } from "zod";
+
+import { optionalSlug } from "./schemas";
 
 export type TableListOrderBy =
   | "newest"
@@ -32,23 +33,10 @@ export type TableListInput = z.infer<typeof tableListInput>;
 
 export const tableCreateInput = z.object({
   title: z.string().min(1, { message: "Title can’t be blank" }),
-  slug: z
-    .string()
-    .optional()
-    .transform((x) => (x === "" ? undefined : x))
-    .refine(
-      (slug) => {
-        if (slug === undefined) {
-          return true;
-        }
-
-        return slug === slugify(slug);
-      },
-      {
-        message:
-          "Identifier is invalid. Can only contain lowercase letters, numbers, and hyphens",
-      },
-    ),
+  slug: optionalSlug({
+    message:
+      "Identifier is invalid. Can only contain lowercase letters, numbers, and hyphens",
+  }),
   description: z.string().optional(),
   definition: z.string(),
 });

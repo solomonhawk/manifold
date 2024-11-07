@@ -35,11 +35,7 @@ export const auth = (getConfig: (c: Context) => AuthInit) =>
       secret,
       callbacks: {
         session: async ({ session, user }) => {
-          const userProfile = await userService.getProfile(user.id);
-
-          if (userProfile) {
-            session.userProfile = userProfile;
-          }
+          session.userProfile = await userService.getProfile(user.id);
 
           return session;
         },

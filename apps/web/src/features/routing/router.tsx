@@ -3,10 +3,12 @@ import {
   createBrowserRouter,
   type LoaderFunction,
   type LoaderFunctionArgs,
+  Navigate,
   redirect,
   type RouteObject,
 } from "react-router-dom";
 
+import { userIsOnboarded } from "~features/onboarding/helpers";
 import { RootError } from "~features/routing/pages/root/error";
 import { RootLayout } from "~features/routing/pages/root/layout";
 import type { Handle } from "~features/routing/types";
@@ -48,6 +50,26 @@ export function buildAppRoutes({
           } satisfies Handle,
         },
         {
+          path: "onboarding",
+          loader: protectedLoader,
+          errorElement: <RootError />,
+          children: [
+            {
+              index: true,
+              element: <Navigate to="/dashboard" replace />,
+            },
+            {
+              path: "new-user",
+              lazy: () =>
+                import("~features/onboarding/pages/create-profile/page"),
+              handle: {
+                title: () => "Manifold | Create Profile",
+                description: () => "Create your user profile to get started.",
+              } satisfies Handle,
+            },
+          ],
+        },
+        {
           path: "dashboard",
           loader: protectedLoader,
           errorElement: <RootError />,
@@ -76,6 +98,10 @@ export function buildAppRoutes({
           loader: protectedLoader,
           errorElement: <RootError />,
           children: [
+            {
+              index: true,
+              element: <Navigate to="/dashboard" replace />,
+            },
             {
               path: "new",
               lazy: () => import("~features/table/pages/new/page"),
@@ -146,10 +172,21 @@ export function guestLoaderBuilder(auth: ReturnType<typeof useSession>) {
 
 export function protectedLoaderBuilder(auth: ReturnType<typeof useSession>) {
   return async ({ request }: LoaderFunctionArgs) => {
+    const params = new URLSearchParams();
+    params.set("from", new URL(request.url).pathname);
+
     if (auth.status === "unauthenticated") {
-      const params = new URLSearchParams();
-      params.set("from", new URL(request.url).pathname);
       return redirect(`/?${params.toString()}`);
+    }
+
+    const isOnboarded = userIsOnboarded(auth);
+
+    if (!isOnboarded && !request.url.includes("/onboarding/new-user")) {
+      return redirect(`/onboarding/new-user?${params.toString()}`);
+    }
+
+    if (isOnboarded && request.url.includes("/onboarding")) {
+      return redirect("/dashboard");
     }
 
     return null;

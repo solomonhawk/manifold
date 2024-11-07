@@ -1,8 +1,10 @@
 import { z } from "zod";
 
+import { slug } from "./schemas";
+
 export const userProfileCreateInput = z.object({
   description: z.string().optional(),
-  username: z.string().min(1, { message: "Username can’t be blank" }),
+  username: slug({ message: "Username is invalid" }),
 });
 
 export type UserProfileCreateInput = z.infer<typeof userProfileCreateInput>;

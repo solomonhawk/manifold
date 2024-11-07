@@ -9,7 +9,7 @@ import {
 } from "@manifold/validators";
 import { TRPCError } from "@trpc/server";
 
-import { validationError } from "#error.js";
+import { validationError } from "#error.ts";
 import { authedProcedure, t } from "#trpc.ts";
 
 export const tableRouter = t.router({

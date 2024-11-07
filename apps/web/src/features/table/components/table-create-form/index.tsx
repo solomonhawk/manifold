@@ -101,13 +101,13 @@ export function TableCreateForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <fieldset disabled={form.formState.isSubmitting} className="space-y-8">
+        <fieldset disabled={form.formState.isSubmitting} className="space-y-12">
           <FormField
             control={form.control}
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Title</FormLabel>
+                <FormLabel isRequired>Title</FormLabel>
 
                 <FormControl>
                   {/* eslint-disable-next-line jsx-a11y/no-autofocus */}
@@ -124,7 +124,7 @@ export function TableCreateForm({
             name="slug"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
+                <FormLabel isRequired>
                   <Tooltip>
                     <TooltipTrigger
                       className="underline decoration-muted-foreground decoration-dotted"

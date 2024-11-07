@@ -5,7 +5,7 @@ import {
   CommandList,
 } from "#components/ui/command.tsx";
 import { DialogDescription, DialogTitle } from "#components/ui/dialog.tsx";
-import { useReturnFocus } from "#hooks/use-return-focus.js";
+import { useReturnFocus } from "#hooks/use-return-focus.ts";
 
 export function CommandPalette({
   isOpen,

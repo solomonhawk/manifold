@@ -14,7 +14,7 @@ const META_DESCRIPTION = document.getElementById(
   META_DESCRIPTION_ID,
 ) as HTMLMetaElement;
 
-const DEFAULT_TITLE = "Embrace the chaos";
+const DEFAULT_TITLE = "Manifold | Embrace the chaos";
 const DEFAULT_DESCRIPTION =
   "A tool for curating your collection of random tables.";
 

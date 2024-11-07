@@ -10,10 +10,10 @@ import {
   useFormContext,
 } from "react-hook-form";
 
-import { LoadingIndicator } from "#components/loading-indicator.js";
+import { LoadingIndicator } from "#components/loading-indicator.tsx";
 import { Button } from "#components/ui/button.tsx";
 import { Label } from "#components/ui/label.tsx";
-import { useStateGuard } from "#hooks/use-state-guard.js";
+import { useStateGuard } from "#hooks/use-state-guard.ts";
 import { cn } from "#lib/utils.ts";
 
 const Form = FormProvider;
@@ -89,8 +89,10 @@ FormItem.displayName = "FormItem";
 
 const FormLabel = React.forwardRef<
   React.ElementRef<typeof LabelPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
->(({ className, ...props }, ref) => {
+  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> & {
+    isRequired?: boolean;
+  }
+>(({ className, isRequired, children, ...props }, ref) => {
   const { error, formItemId } = useFormField();
 
   return (
@@ -99,7 +101,15 @@ const FormLabel = React.forwardRef<
       className={cn(error && "text-destructive", className)}
       htmlFor={formItemId}
       {...props}
-    />
+    >
+      {children}
+      {isRequired && (
+        <span aria-hidden="true" className="text-accent-foreground">
+          {" "}
+          *
+        </span>
+      )}
+    </Label>
   );
 });
 FormLabel.displayName = "FormLabel";

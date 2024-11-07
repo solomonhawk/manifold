@@ -4,6 +4,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@manifold/ui/components/ui/card";
+import { FlexCol } from "@manifold/ui/components/ui/flex";
 import { useNavigate } from "react-router-dom";
 
 import { TableCreateForm } from "~features/table/components/table-create-form";
@@ -12,7 +13,7 @@ export function TableNew() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex grow flex-col items-center justify-center p-12 sm:p-16">
+    <FlexCol className="items-center justify-center p-12 sm:p-16">
       <Card className="mx-auto w-full max-w-md">
         <CardHeader>
           <CardTitle>New Table</CardTitle>
@@ -26,7 +27,7 @@ export function TableNew() {
           />
         </CardContent>
       </Card>
-    </div>
+    </FlexCol>
   );
 }
 

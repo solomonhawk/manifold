@@ -4,8 +4,6 @@ import { Badge } from "@manifold/ui/components/ui/badge";
 import { Button } from "@manifold/ui/components/ui/button";
 import { Separator } from "@manifold/ui/components/ui/separator";
 import { Skeleton } from "@manifold/ui/components/ui/skeleton";
-import { Toaster } from "@manifold/ui/components/ui/toaster";
-import { cn } from "@manifold/ui/lib/utils";
 import { Link, Outlet } from "react-router-dom";
 import { match } from "ts-pattern";
 
@@ -86,14 +84,6 @@ export function RootLayout() {
         <Outlet />
 
         <Launcher />
-
-        <Toaster
-          cn={cn}
-          position="top-center"
-          offset={4}
-          visibleToasts={1}
-          pauseWhenPageIsHidden
-        />
       </div>
     </DialogManager.Provider>
   );

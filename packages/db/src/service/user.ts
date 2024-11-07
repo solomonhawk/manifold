@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 
 import { db } from "#db.ts";
 import * as schema from "#schema/index.ts";
-import type { UserProfileInsert } from "#types.js";
+import type { UserProfileInsert } from "#types.ts";
 
 export async function getProfile(userId: string) {
   const profile = await db.query.userProfiles.findFirst({
