@@ -24,5 +24,8 @@
   "devDependencies": {
     "@manifold/eslint-config": "*",
     "@manifold/typescript-config": "*"
+  },
+  "dependencies": {
+    "@sindresorhus/slugify": "^2.2.1"
   }
 }

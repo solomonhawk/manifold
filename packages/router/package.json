@@ -7,8 +7,14 @@
     "#*": "./src/*"
   },
   "exports": {
-    ".": "./src/index.ts",
-    "./*": "./src/*.ts"
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./query": {
+      "types": "./src/query.ts",
+      "default": "./src/query.ts"
+    }
   },
   "scripts": {
     "lint": "eslint --cache \"**/*.ts\"",
@@ -24,6 +30,7 @@
   "dependencies": {
     "@manifold/auth": "*",
     "@manifold/db": "*",
+    "@manifold/lib": "*",
     "@manifold/validators": "*",
     "@trpc/server": "^10.45.2",
     "superjson": "^2.2.1",

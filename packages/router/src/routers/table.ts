@@ -1,13 +1,16 @@
-import { and, asc, db, desc, eq, isNull, schema } from "@manifold/db";
+import { and, asc, db, desc, eq, inArray, isNull, schema } from "@manifold/db";
+import { slugify } from "@manifold/lib/utils/string";
 import {
   tableCreateInput,
   tableDeleteInput,
   tableGetInput,
   tableListInput,
   tableUpdateInput,
+  ZodError,
 } from "@manifold/validators";
 import { TRPCError } from "@trpc/server";
 
+import { isQueryError } from "#error.js";
 import { authedProcedure, t } from "#trpc.ts";
 
 // @XXX: Is this really better than an IIFE with a `switch` statement? 🤔
@@ -34,13 +37,41 @@ export const tableRouter = t.router({
   create: authedProcedure
     .input(tableCreateInput)
     .mutation(async ({ input, ctx }) => {
-      const [table] = await db
-        .insert(schema.table)
-        .values({ ...input, userId: ctx.user.id })
-        .returning()
-        .execute();
+      try {
+        const [table] = await db
+          .insert(schema.table)
+          .values({
+            ...input,
+            userId: ctx.user.id,
+            slug: input.slug ?? slugify(input.title),
+          })
+          .returning()
+          .execute();
 
-      return table;
+        return table;
+      } catch (e) {
+        if (isQueryError(e)) {
+          /**
+           * Unique constraint error code
+           * @ref: https://github.com/drizzle-team/drizzle-orm/issues/376
+           */
+          if (e.code === "23505") {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Table with this slug already exists",
+              cause: new ZodError([
+                {
+                  message: "Table with this slug already exists",
+                  path: ["slug"],
+                  code: "custom",
+                },
+              ]),
+            });
+          }
+        }
+
+        throw e;
+      }
     }),
 
   get: authedProcedure.input(tableGetInput).query(async ({ input, ctx }) => {

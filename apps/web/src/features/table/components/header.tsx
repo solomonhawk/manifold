@@ -36,11 +36,11 @@ export function Header({ table }: { table: RouterOutput["table"]["get"] }) {
           <h2 className="text-lg font-bold leading-tight">{table.title}</h2>
 
           {table.deletedAt ? (
-            <span className="text-destructive text-xs">
+            <span className="text-xs text-destructive">
               Deleted {formatRelative(new Date(table.deletedAt), NOW)}
             </span>
           ) : (
-            <span className="text-muted-foreground/80 text-xs">
+            <span className="text-xs text-muted-foreground/80">
               {capitalize(formatRelative(new Date(table.updatedAt), NOW))}
             </span>
           )}
