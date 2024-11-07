@@ -8,6 +8,7 @@ dist-ssr
 .env
 .envrc
 .cache
+.eslintcache
 server/dist
 public/dist
 target

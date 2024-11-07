@@ -20,13 +20,13 @@ module.exports = {
   settings: {
     tailwindcss: {
       callees: ["class", "cn", "cva"],
-      config: "./tailwind.config.ts",
-      whitelist: [
-        "bg-architect",
-        "fade-list-mask",
-        "fade-list-mask-visible",
-        "toaster",
-      ],
+      whitelist: ["toaster"],
+      /**
+       * Performance issue with the plugin, somewhat mitigated setting cssFiles to an empty array.
+       * @see https://github.com/francoismassart/eslint-plugin-tailwindcss/issues/276
+       * @see https://github.com/francoismassart/eslint-plugin-tailwindcss/issues/174
+       */
+      cssFiles: [],
     },
   },
   rules: {

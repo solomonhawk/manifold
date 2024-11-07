@@ -4,9 +4,9 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "lint": "eslint \"**/*.{ts,tsx}\"",
-    "lint:fix": "eslint --fix \"**/*.{ts,tsx}\" --max-warnings 0",
-    "lint:strict": "eslint \"**/*.{ts,tsx}\" --max-warnings 0"
+    "lint": "eslint --cache \"**/*.{ts,tsx}\"",
+    "lint:fix": "eslint --cache --fix \"**/*.{ts,tsx}\" --max-warnings 0",
+    "lint:strict": "eslint --cache \"**/*.{ts,tsx}\" --max-warnings 0"
   },
   "imports": {
     "#*": "./src/*"

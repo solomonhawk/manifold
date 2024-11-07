@@ -8,9 +8,9 @@
     "dev": "tsx watch --inspect src/index.ts",
     "check-types": "tsc --noEmit",
     "start": "tsx src/index.ts",
-    "lint": "eslint \"**/*.{ts,tsx}\"",
-    "lint:fix": "eslint --fix \"**/*.{ts,tsx}\" --max-warnings 0",
-    "lint:strict": "eslint \"**/*.{ts,tsx}\" --max-warnings 0"
+    "lint": "eslint --cache \"**/*.{ts,tsx}\"",
+    "lint:fix": "eslint --cache --fix \"**/*.{ts,tsx}\" --max-warnings 0",
+    "lint:strict": "eslint --cache \"**/*.{ts,tsx}\" --max-warnings 0"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.2",
