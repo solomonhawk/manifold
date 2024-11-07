@@ -131,4 +131,25 @@
     @apply -translate-y-full;
     @apply duration-0;
   }
+
+  .border-reactive {
+    --x: 50%;
+    --y: 50%;
+    @apply border-2;
+    @apply border-transparent;
+  }
+
+  .border-reactive:hover {
+    @apply hover:bg-foreground;
+
+    background:
+      linear-gradient(hsl(var(--foreground)), hsl(var(--foreground)))
+        padding-box,
+      radial-gradient(
+          farthest-corner at var(--x) var(--y),
+          hsl(var(--chart-2)),
+          hsl(var(--foreground))
+        )
+        border-box;
+  }
 }

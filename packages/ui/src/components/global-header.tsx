@@ -1,5 +1,6 @@
 import { GiPlatform, GiSecretDoor } from "react-icons/gi";
 
+import { ReactiveButton } from "#components/reactive-button.js";
 import { Avatar, AvatarFallback, AvatarImage } from "#components/ui/avatar.tsx";
 import { Button } from "#components/ui/button.tsx";
 import { cn, initials } from "#lib/utils.ts";
@@ -59,9 +60,9 @@ function Authed({
 
 function Unauthed({ onSignIn }: { onSignIn: () => void }) {
   return (
-    <Button type="button" onClick={onSignIn} size="sm">
+    <ReactiveButton type="button" onClick={onSignIn} size="sm">
       Sign In
-    </Button>
+    </ReactiveButton>
   );
 }
 

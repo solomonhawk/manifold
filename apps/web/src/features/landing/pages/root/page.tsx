@@ -1,6 +1,6 @@
 import { signIn } from "@manifold/auth/client";
 import { LoadingIndicator } from "@manifold/ui/components/loading-indicator";
-import { Button } from "@manifold/ui/components/ui/button";
+import { ReactiveButton } from "@manifold/ui/components/reactive-button";
 import {
   Card,
   CardContent,
@@ -35,8 +35,10 @@ function Landing() {
         </CardHeader>
 
         <CardContent>
-          <Button
+          <ReactiveButton
+            size="lg"
             className="flex w-full gap-8"
+            reactive={!isLoggingIn}
             disabled={isLoggingIn}
             onClick={() => {
               setIsLoggingIn(true);
@@ -45,13 +47,13 @@ function Landing() {
           >
             {isLoggingIn ? (
               <>
-                <LoadingIndicator />
+                <LoadingIndicator className="size-20" />
                 Signing In…
               </>
             ) : (
               <>Sign In</>
             )}
-          </Button>
+          </ReactiveButton>
         </CardContent>
       </Card>
     </FlexCol>

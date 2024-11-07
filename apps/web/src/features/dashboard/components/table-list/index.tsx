@@ -3,6 +3,7 @@ import {
   AnimatedList,
   AnimatedListItem,
 } from "@manifold/ui/components/animated-list";
+import { ReactiveButton } from "@manifold/ui/components/reactive-button";
 import { Button } from "@manifold/ui/components/ui/button";
 import { Card, CardContent, CardHeader } from "@manifold/ui/components/ui/card";
 import { Checkbox } from "@manifold/ui/components/ui/checkbox";
@@ -123,11 +124,11 @@ export function TableList({
               initial={{ opacity: 0 }}
             >
               You haven’t created any tables yet.
-              <Button asChild>
+              <ReactiveButton asChild className="border-2">
                 <PrefetchableLink to="/table/new">
                   Create a table
                 </PrefetchableLink>
-              </Button>
+              </ReactiveButton>
             </AnimatedListItem>
           )}
 
