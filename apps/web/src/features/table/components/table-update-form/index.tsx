@@ -17,6 +17,7 @@ import { type SubmitHandler } from "react-hook-form";
 
 import { Editor } from "~features/editor";
 import { useUpdateTable } from "~features/table/api/update";
+import { log } from "~utils/logger";
 
 import { TABLE_UPDATE_HEADER_PORTAL_ID } from "../header";
 import { DownloadButton } from "./download-button";
@@ -86,7 +87,9 @@ export function TableUpdateForm({
 
   const handleSubmit: SubmitHandler<FormData> = useCallback(
     async (data) => {
-      await updateTableMutation.mutateAsync(data);
+      await updateTableMutation.mutateAsync(data).catch((e) => {
+        log.error(e);
+      });
     },
     [updateTableMutation],
   );

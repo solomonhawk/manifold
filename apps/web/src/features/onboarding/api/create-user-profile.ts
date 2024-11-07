@@ -3,7 +3,6 @@ import { toast } from "@manifold/ui/components/ui/toaster";
 import { useRef } from "react";
 
 import { useAuth } from "~features/auth/hooks/use-auth";
-import { log } from "~utils/logger";
 import { toastError, toastSuccess } from "~utils/toast";
 import { trpc } from "~utils/trpc";
 
@@ -31,8 +30,6 @@ export function useCreateUserProfile() {
       await session.update(updatedSession);
     },
     onError: (e) => {
-      log.error(e);
-
       if (toastErrorId.current) {
         toast.dismiss(toastErrorId.current);
       }

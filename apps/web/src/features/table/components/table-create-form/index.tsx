@@ -20,7 +20,7 @@ import {
 } from "@manifold/ui/components/ui/tooltip";
 import { useZodForm } from "@manifold/ui/hooks/use-zod-form";
 import { tableCreateInput, type z } from "@manifold/validators";
-import { forwardRef, useEffect } from "react";
+import { forwardRef } from "react";
 import {
   type Control,
   type ControllerRenderProps,
@@ -28,7 +28,9 @@ import {
   useWatch,
 } from "react-hook-form";
 
+import { useZodFormMutationErrors } from "~features/forms/hooks/use-zod-form-mutation-error";
 import { useCreateTable } from "~features/table/api/create";
+import { log } from "~utils/logger";
 
 type FormData = z.infer<typeof tableCreateInput>;
 
@@ -48,55 +50,15 @@ export function TableCreateForm({
     shouldFocusError: false,
   });
 
-  const {
-    setFocus,
-    formState: { errors, isSubmitting },
-  } = form;
-
   const createTableMutation = useCreateTable({ onSuccess: onCreate });
 
+  useZodFormMutationErrors<FormData>(form, createTableMutation.error);
+
   const handleSubmit: SubmitHandler<FormData> = async (data) => {
-    await createTableMutation.mutateAsync(data);
+    await createTableMutation.mutateAsync(data).catch((e) => {
+      log.error(e);
+    });
   };
-
-  // @TODO: move to helper hook
-  useEffect(() => {
-    if (createTableMutation.isError) {
-      const { formErrors, fieldErrors } =
-        createTableMutation.error.data?.zodError ?? {};
-
-      for (const rootError of formErrors ?? []) {
-        form.setError("root", { message: rootError });
-      }
-
-      for (const [key, value] of Object.entries(fieldErrors ?? {})) {
-        if (value) {
-          for (const error of value) {
-            form.setError(key as keyof FormData, {
-              type: "manual",
-              message: error,
-            });
-          }
-        }
-      }
-    }
-  }, [form, createTableMutation.isError, createTableMutation.error]);
-
-  // @TODO: move to helper hook
-  useEffect(() => {
-    if (isSubmitting) {
-      return;
-    }
-
-    // find the first error in the `errors` object
-    const firstError = Object.keys(errors).find(
-      (key) => errors[key as keyof FormData],
-    );
-
-    if (firstError) {
-      setFocus(firstError as keyof FormData);
-    }
-  }, [errors, isSubmitting, setFocus]);
 
   return (
     <Form {...form}>

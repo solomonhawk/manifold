@@ -13,10 +13,12 @@ import { Input } from "@manifold/ui/components/ui/input";
 import { Textarea } from "@manifold/ui/components/ui/textarea";
 import { useZodForm } from "@manifold/ui/hooks/use-zod-form";
 import { userProfileCreateInput, type z } from "@manifold/validators";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { type SubmitHandler, useFormContext, useWatch } from "react-hook-form";
 
+import { useZodFormMutationErrors } from "~features/forms/hooks/use-zod-form-mutation-error";
 import { useCreateUserProfile } from "~features/onboarding/api/create-user-profile";
+import { log } from "~utils/logger";
 
 type FormData = z.infer<typeof userProfileCreateInput>;
 
@@ -32,59 +34,15 @@ export function UserProfileCreateForm() {
     shouldFocusError: false,
   });
 
-  const {
-    setFocus,
-    formState: { errors, isSubmitting },
-  } = form;
-
   const createUserProfileMutation = useCreateUserProfile();
 
+  useZodFormMutationErrors<FormData>(form, createUserProfileMutation.error);
+
   const handleSubmit: SubmitHandler<FormData> = async (data) => {
-    await createUserProfileMutation.mutateAsync(data);
+    await createUserProfileMutation.mutateAsync(data).catch((e) => {
+      log.error(e);
+    });
   };
-
-  // @TODO: move to helper hook
-  useEffect(() => {
-    if (createUserProfileMutation.isError) {
-      const { formErrors, fieldErrors } =
-        createUserProfileMutation.error.data?.zodError ?? {};
-
-      for (const rootError of formErrors ?? []) {
-        form.setError("root", { message: rootError });
-      }
-
-      for (const [key, value] of Object.entries(fieldErrors ?? {})) {
-        if (value) {
-          for (const error of value) {
-            form.setError(key as keyof FormData, {
-              type: "manual",
-              message: error,
-            });
-          }
-        }
-      }
-    }
-  }, [
-    form,
-    createUserProfileMutation.isError,
-    createUserProfileMutation.error,
-  ]);
-
-  // @TODO: move to helper hook
-  useEffect(() => {
-    if (isSubmitting) {
-      return;
-    }
-
-    // find the first error in the `errors` object
-    const firstError = Object.keys(errors).find(
-      (key) => errors[key as keyof FormData],
-    );
-
-    if (firstError) {
-      setFocus(firstError as keyof FormData);
-    }
-  }, [errors, isSubmitting, setFocus]);
 
   return (
     <Form {...form}>

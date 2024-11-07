@@ -21,7 +21,7 @@ export const tableRouter = t.router({
     .input(tableCreateInput)
     .mutation(async ({ input, ctx }) => {
       try {
-        return tableService.createTable(ctx.user.id, input);
+        return await tableService.createTable(ctx.user.id, input);
       } catch (e) {
         if (isUniqueConstraintViolation(e)) {
           throw validationError({
@@ -62,7 +62,6 @@ export const tableRouter = t.router({
   restore: authedProcedure
     .input(tableRestoreInput)
     .mutation(async ({ input, ctx }) => {
-      // restore dependencies (edges)
       return tableService.restoreTable(ctx.user.id, input);
     }),
 

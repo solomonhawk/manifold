@@ -2,7 +2,6 @@ import type { RouterOutput } from "@manifold/router";
 import { toast } from "@manifold/ui/components/ui/toaster";
 import { useRef } from "react";
 
-import { log } from "~utils/logger";
 import { toastError, toastSuccess } from "~utils/toast";
 import { trpc } from "~utils/trpc";
 
@@ -43,8 +42,6 @@ export function useUpdateTable({
       );
     },
     onError: (e) => {
-      log.error(e);
-
       toastErrorId.current = toastError("Table failed to save", {
         description: e.message,
       });
