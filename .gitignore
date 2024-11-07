@@ -3,6 +3,7 @@ node_modules
 .turbo
 *.log
 dist
+dbdata
 dist-ssr
 *.local
 .env
@@ -12,4 +13,3 @@ dist-ssr
 server/dist
 public/dist
 target
-postgres-data
