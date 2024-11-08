@@ -161,7 +161,7 @@ export function TableList({
                       <div className="z-10 -translate-y-12 scale-95 opacity-0 transition-all group-hover:translate-y-0 group-hover:scale-100 group-hover:opacity-100">
                         <span
                           className={cn(
-                            "text-balance text-center text-xs leading-tight",
+                            "block text-balance text-center text-xs leading-tight",
                             {
                               "text-gray-500": table.deletedAt === null,
                               "text-destructive": table.deletedAt !== null,

@@ -60,7 +60,7 @@ function Authed({
 
 function Unauthed({ onSignIn }: { onSignIn: () => void }) {
   return (
-    <ReactiveButton type="button" onClick={onSignIn} size="sm">
+    <ReactiveButton onClick={onSignIn} size="sm">
       Sign In
     </ReactiveButton>
   );

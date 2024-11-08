@@ -27,6 +27,7 @@ const ReactiveButton = forwardRef<HTMLButtonElement, ReactiveButtonProps>(
           className,
         )}
         onMouseMove={handleMouseMove}
+        type="button"
         {...props}
       >
         {children}

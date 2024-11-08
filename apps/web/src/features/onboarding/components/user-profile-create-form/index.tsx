@@ -1,4 +1,5 @@
 import { getRandomElement } from "@manifold/lib/utils/array";
+import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import {
   Form,
   FormControl,
@@ -102,19 +103,14 @@ function UsernameExample() {
   const username = useWatch({ control, name: "username" });
   const usernameFieldState = getFieldState("username");
 
-  const exampleTableName = useMemo(
-    () => `@${username}/${generateExampleTableName()}`,
-    [username],
-  );
+  const exampleTableSlug = useMemo(() => generateExampleTableName(), []);
 
   if (username && !usernameFieldState.invalid) {
     return (
       <FormDescription>
         Your public tables will be imported with e.g.:
         <span className="block">
-          <code className="rounded bg-secondary p-3 px-6 leading-none text-accent-foreground">
-            {exampleTableName}
-          </code>
+          <TableIdentifier username={username} slug={exampleTableSlug} />
         </span>
       </FormDescription>
     );

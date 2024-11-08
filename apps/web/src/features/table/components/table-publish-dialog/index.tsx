@@ -1,5 +1,6 @@
 import { useModal } from "@ebay/nice-modal-react";
 import { pluralize } from "@manifold/lib/utils/string";
+import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -101,9 +102,10 @@ export const TablePublishDialog = ({
             <GoPackageDependents />
             <span>
               Publish {recentVersions.length > 0 ? "a new version of " : null}
-              <code className="rounded bg-secondary p-3 px-6 leading-none text-accent-foreground">
-                @{userProfile.username}/{tableSlug}
-              </code>
+              <TableIdentifier
+                username={userProfile.username}
+                slug={tableSlug}
+              />
             </span>
           </AlertDialogTitle>
           <AlertDialogDescription>

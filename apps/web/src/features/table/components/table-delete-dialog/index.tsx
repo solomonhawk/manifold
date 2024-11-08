@@ -1,5 +1,6 @@
 import { useModal } from "@ebay/nice-modal-react";
 import { LoadingIndicator } from "@manifold/ui/components/loading-indicator";
+import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,10 +11,17 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@manifold/ui/components/ui/alert-dialog";
+import {
+  Notice,
+  NoticeContent,
+  NoticeIcon,
+} from "@manifold/ui/components/ui/notice";
 import { useReturnFocus } from "@manifold/ui/hooks/use-return-focus";
 import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
 import { type MouseEvent } from "react";
+import { GoInfo } from "react-icons/go";
 
+import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
 import { useDeleteTable } from "~features/table/api/delete";
 
 type Props = {
@@ -24,6 +32,7 @@ type Props = {
 
 export const TableDeleteDialog = ({ title, tableId, slug }: Props) => {
   const modal = useModal();
+  const userProfile = useRequiredUserProfile();
   const returnFocus = useReturnFocus(modal.visible);
   const mutation = useDeleteTable({
     title,
@@ -57,6 +66,18 @@ export const TableDeleteDialog = ({ title, tableId, slug }: Props) => {
           <AlertDialogDescription>
             Fear not, deleted tables can be recovered at any time.
           </AlertDialogDescription>
+
+          <Notice variant="loud" className="!mt-24">
+            <NoticeIcon>
+              <GoInfo className="size-18" />
+            </NoticeIcon>
+
+            <NoticeContent className="space-y-12 leading-snug">
+              Any published versions of{" "}
+              <TableIdentifier username={userProfile.username} slug={slug} />{" "}
+              will remain publicly available.
+            </NoticeContent>
+          </Notice>
         </AlertDialogHeader>
 
         <AlertDialogFooter>

@@ -63,7 +63,7 @@ export const AvailableTables = memo(function AvailableTables({
   return (
     <div className="flex flex-col gap-16 p-16">
       <div className="flex items-center">
-        <span className="mr-auto">Available Tables:</span>
+        <span className="mr-auto text-sm font-semibold">Available Tables:</span>
 
         <Checkbox
           id="exported"
