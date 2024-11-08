@@ -65,8 +65,6 @@ export function TableList({
     [setSearchParams],
   );
 
-  console.log(listQuery);
-
   // @TODO: error state
   if (listQuery.isError) {
     log.error(listQuery.error);

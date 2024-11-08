@@ -23,8 +23,6 @@ export function useUpdateTable({
         toast.dismiss(toastErrorId.current);
       }
 
-      toastSuccess("Table updated");
-
       await onSuccess?.(data);
 
       // update query cache (list + get)
@@ -33,8 +31,17 @@ export function useUpdateTable({
           username: userProfile.username,
           slug,
         },
-        data,
+        (existing) => {
+          if (!existing) {
+            return existing;
+          }
+
+          // @NOTE: we don't re-query `recentVersions` and `totalVersionCount`
+          // but we don't expect them to have changed
+          return { ...existing, ...data };
+        },
       );
+
       trpcUtils.table.list.setData({}, (list) => {
         return list?.map((t) => (t.id === data.id ? data : t)) ?? [data];
       });
@@ -51,6 +58,8 @@ export function useUpdateTable({
         },
         { refetchType: "inactive" },
       );
+
+      toastSuccess("Table updated");
     },
     onError: (e) => {
       toastErrorId.current = toastError("Table failed to save", {

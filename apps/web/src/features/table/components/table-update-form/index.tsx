@@ -13,10 +13,14 @@ import { useZodForm } from "@manifold/ui/hooks/use-zod-form";
 import { tableUpdateInput, z } from "@manifold/validators";
 import { type KeyboardEvent, useCallback, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { type SubmitHandler } from "react-hook-form";
+import { type SubmitHandler, useFormContext, useWatch } from "react-hook-form";
 
 import { Editor } from "~features/editor";
 import { useUpdateTable } from "~features/table/api/update";
+import {
+  PublishButton,
+  type PublishButtonProps,
+} from "~features/table/components/table-update-form/publish-button";
 import { log } from "~utils/logger";
 
 import { TABLE_UPDATE_HEADER_PORTAL_ID } from "../header";
@@ -165,9 +169,21 @@ export function TableUpdateForm({
                 createPortal(
                   <>
                     <FormSubmitStatus className="mr-8 text-xs text-muted-foreground/80" />
+
                     <FormSubmitButton form={TABLE_UPDATE_FORM_ID}>
                       Save Changes
                     </FormSubmitButton>
+
+                    <FormPublishButton
+                      slug={table.slug}
+                      isEnabled={
+                        !form.formState.isDirty &&
+                        form.formState.isValid &&
+                        !form.formState.isSubmitting
+                      }
+                      recentVersions={table.recentVersions}
+                      totalVersionCount={table.totalVersionCount}
+                    />
                     <DownloadButton tableId={table.id} />
                   </>,
                   portalRef.current,
@@ -201,5 +217,28 @@ export function TableUpdateForm({
         </form>
       </FlexCol>
     </Form>
+  );
+}
+
+function FormPublishButton(props: PublishButtonProps) {
+  const { isEnabled, recentVersions } = props;
+  const { control } = useFormContext<FormData>();
+
+  const definition = useWatch({ control, name: "definition" });
+
+  const isEmptyDefinition = definition?.trim() === "";
+  const noPreviousVersions = recentVersions.length === 0;
+  const isDifferentFromLastVersion =
+    recentVersions[0]?.definition.trim() !== definition?.trim();
+
+  return (
+    <PublishButton
+      {...props}
+      isEnabled={
+        isEnabled &&
+        !isEmptyDefinition &&
+        (noPreviousVersions || isDifferentFromLastVersion)
+      }
+    />
   );
 }

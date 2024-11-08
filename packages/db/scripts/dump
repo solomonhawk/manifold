@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+set -ueo pipefail
+
+cd "$(dirname "$0")/.."
+
+while true; do
+    read -rp "What should the backup be called? " BACKUP_NAME
+
+    # Replace spaces with hyphens
+    BACKUP_NAME="${BACKUP_NAME// /-}"
+
+    # only lowercase letters and hyphens are allowed
+    if [[ $BACKUP_NAME =~ ^[a-z-]+$ ]]; then
+        FILENAME="$(date +%Y-%m-%d_%H.%M.%S)-backup-$BACKUP_NAME".sql
+        FILEPATH="../../dbdata/postgres-backups/$FILENAME"
+
+        echo "Exporting database dump to '/dbdata/postgres-backups/$FILENAME'"
+
+        PGPASSFILE=.pgpass pg_dump -h localhost -p 5432 -U postgres -w -f "$FILEPATH"
+
+        echo "Done."
+        break
+    else
+        echo "Invalid input. Please use only lowercase letters and hyphens or spaces."
+    fi
+done
+
+

@@ -5,5 +5,5 @@ import { db, eq, schema } from "@manifold/db";
  * `db` except `router`. Maybe this should be moved to a different package?
  */
 export async function getTable(id: string) {
-  return db.query.table.findFirst({ where: eq(schema.table.id, id) });
+  return db.query.tables.findFirst({ where: eq(schema.tables.id, id) });
 }

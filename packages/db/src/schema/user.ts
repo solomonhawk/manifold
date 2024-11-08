@@ -4,6 +4,7 @@ import { index, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { accounts } from "#schema/auth.ts";
 import { createTable } from "#schema/helpers/create-table.ts";
 import { timestamps } from "#schema/helpers/timestamps.ts";
+import { tables } from "#schema/table.ts";
 
 export const users = createTable("user", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -36,5 +37,8 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   profile: one(userProfiles, {
     fields: [users.id],
     references: [userProfiles.userId],
+  }),
+  tables: many(tables, {
+    relationName: "tables",
   }),
 }));

@@ -2,6 +2,7 @@ import NiceModal, { type NiceModalHocProps } from "@ebay/nice-modal-react";
 import type { ComponentProps } from "react";
 
 import { TableDeleteDialog } from "~features/table/components/table-delete-dialog";
+import { TablePublishDialog } from "~features/table/components/table-publish-dialog";
 
 /**
  * @NOTE: Workaround for TypeScript not being able to infer the correct type of
@@ -36,6 +37,14 @@ export const DIALOGS = {
     ID: "DELETE_TABLE",
     COMPONENT: NiceModal.create(TableDeleteDialog),
   },
+  PUBLISH_TABLE: {
+    ID: "PUBLISH_TABLE",
+    COMPONENT: NiceModal.create(TablePublishDialog),
+  },
 } as const;
 
 DialogManager.register(DIALOGS.DELETE_TABLE.ID, DIALOGS.DELETE_TABLE.COMPONENT);
+DialogManager.register(
+  DIALOGS.PUBLISH_TABLE.ID,
+  DIALOGS.PUBLISH_TABLE.COMPONENT,
+);

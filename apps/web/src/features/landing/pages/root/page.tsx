@@ -47,7 +47,7 @@ function Landing() {
           >
             {isLoggingIn ? (
               <>
-                <LoadingIndicator className="size-20" />
+                <LoadingIndicator size="sm" />
                 Signing In…
               </>
             ) : (

@@ -51,7 +51,7 @@ export const TableDeleteDialog = ({ title, tableId, slug }: Props) => {
         }
       }}
     >
-      <AlertDialogContent>
+      <AlertDialogContent className="gap-24">
         <AlertDialogHeader>
           <AlertDialogTitle>Delete “{title}”?</AlertDialogTitle>
           <AlertDialogDescription>

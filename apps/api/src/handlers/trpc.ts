@@ -6,8 +6,11 @@ export const trpc = () =>
     router: appRouter,
     endpoint: "/api/trpc",
     createContext(_opts, c) {
+      const authUser = c.get("authUser");
+
       return {
-        user: c.get("authUser")?.user,
+        user: authUser?.user,
+        session: authUser?.session,
       };
     },
   });

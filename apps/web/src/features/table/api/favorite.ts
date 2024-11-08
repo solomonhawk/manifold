@@ -28,13 +28,19 @@ export function useFavoriteTable({
         toast.dismiss(toastErrorId.current);
       }
 
-      toastSuccess(data.favorited ? "Added favorite" : "Removed favorite");
-
       await onSuccess?.(data);
 
       trpcUtils.table.get.setData(
         { username: userProfile.username, slug },
-        data,
+        (existing) => {
+          if (!existing) {
+            return existing;
+          }
+
+          // @NOTE: we don't re-query `recentVersions` and `totalVersionCount`
+          // but we don't expect them to have changed
+          return { ...existing, ...data };
+        },
       );
 
       // @TODO: this causes the dashboard loader to prefetch the table data again
@@ -45,6 +51,8 @@ export function useFavoriteTable({
         { username: userProfile.username, slug },
         { refetchType: "inactive" },
       );
+
+      toastSuccess(data.favorited ? "Added favorite" : "Removed favorite");
     },
     onError: (e) => {
       log.error(e);

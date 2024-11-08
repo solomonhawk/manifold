@@ -1,57 +1,54 @@
+import type { RouterOutput } from "@manifold/router";
 import { toast } from "@manifold/ui/components/ui/toaster";
 import { useIsMutating } from "@tanstack/react-query";
 import { getQueryKey } from "@trpc/react-query";
 import { useRef } from "react";
 
 import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
-import { log } from "~utils/logger";
 import { toastError, toastSuccess } from "~utils/toast";
 import { trpc } from "~utils/trpc";
 
-export function useDeleteTable({
-  title,
+export function usePublishTable({
   slug,
   onSuccess,
 }: {
-  title: string;
   slug: string;
-  onSuccess?: () => void;
+  onSuccess?: (data: RouterOutput["table"]["publish"]) => void | Promise<void>;
 }) {
+  const userProfile = useRequiredUserProfile();
   const trpcUtils = trpc.useUtils();
   const toastErrorId = useRef<string | number | undefined>(undefined);
-  const userProfile = useRequiredUserProfile();
 
-  return trpc.table.delete.useMutation({
-    onSuccess: async () => {
+  return trpc.table.publish.useMutation({
+    onSuccess: async (data) => {
       if (toastErrorId.current) {
         toast.dismiss(toastErrorId.current);
       }
 
-      await Promise.all([
-        trpcUtils.table.list.refetch(),
-        trpcUtils.table.favorites.refetch(),
-      ]);
+      // invalidate get query
+      await trpcUtils.table.get.invalidate({
+        username: userProfile.username,
+        slug,
+      });
 
-      trpcUtils.table.get.invalidate({ username: userProfile.username, slug });
+      await onSuccess?.(data);
 
-      await onSuccess?.();
-
-      toastSuccess(`${title} deleted`);
+      toastSuccess(
+        `@${userProfile.username}/${slug} v${data.version} published`,
+      );
     },
     onError: (e) => {
-      log.error(e);
-
-      toastErrorId.current = toastError("Failed to delete table", {
+      toastErrorId.current = toastError("Failed to publish", {
         description: e.message,
       });
     },
   });
 }
 
-export function useIsDeletingTable() {
+export function useIsPublishingTable() {
   return (
     useIsMutating({
-      mutationKey: getQueryKey(trpc.table.delete),
+      mutationKey: getQueryKey(trpc.table.publish),
     }) > 0
   );
 }

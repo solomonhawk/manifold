@@ -59,6 +59,13 @@ export const tableUpdateInput = z.object({
 
 export type TableUpdateInput = z.infer<typeof tableUpdateInput>;
 
+export const tablePublishVersionInput = z.object({
+  tableSlug: z.string(),
+  description: z.string().optional(),
+});
+
+export type TablePublishVersionInput = z.infer<typeof tablePublishVersionInput>;
+
 export const tableDeleteInput = z.object({
   id: z.string(),
 });

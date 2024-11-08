@@ -27,6 +27,24 @@ export const authedProcedure = t.procedure.use(({ ctx, next }) => {
   return next({
     ctx: {
       user: ctx.user,
+      session: ctx.session,
+    },
+  });
+});
+
+export const onboardedProcedure = authedProcedure.use(({ ctx, next }) => {
+  if (!ctx.session) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+
+  if (!ctx.session.userProfile) {
+    throw new TRPCError({ code: "FORBIDDEN" });
+  }
+
+  return next({
+    ctx: {
+      user: ctx.user,
+      username: ctx.session.userProfile.username,
     },
   });
 });

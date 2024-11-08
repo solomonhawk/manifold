@@ -8,5 +8,6 @@ export type ErrorFormatter<T> = (
 export type Context = {
   // @TODO: get this type from somewhere else (AdapterUser)?
   user: { id: string; email: string; emailVerified: boolean } | null;
+  session: { userProfile?: { username: string } } | null;
   formatError?: ErrorFormatter<DefaultErrorShape>;
 };

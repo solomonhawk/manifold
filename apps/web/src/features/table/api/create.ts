@@ -19,11 +19,11 @@ export function useCreateTable({
         toast.dismiss(toastErrorId.current);
       }
 
-      toastSuccess("Table created");
-
       trpcUtils.table.list.invalidate();
 
       await onSuccess?.(data);
+
+      toastSuccess("Table created");
     },
     onError: (e) => {
       toastErrorId.current = toastError("Failed to create table", {

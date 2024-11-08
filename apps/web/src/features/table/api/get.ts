@@ -2,6 +2,15 @@ import { useLocation } from "react-router-dom";
 
 import { trpc } from "~utils/trpc";
 
+export type TableVersionSummary = {
+  id: string;
+  version: number;
+  tableSlug: string;
+  ownerId: string;
+  createdAt: string;
+  definition: string;
+};
+
 export function useGetTable({
   username,
   slug,

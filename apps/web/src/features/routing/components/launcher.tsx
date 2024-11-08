@@ -83,11 +83,11 @@ export function Launcher() {
                   key={table.id}
                   asChild
                   onSelect={() => {
-                    navigate(`/table/${username}/${table.slug}/edit`);
+                    navigate(`/t/${username}/${table.slug}/edit`);
                     closeCommandPalette();
                   }}
                 >
-                  <Link to={`/table/${table.id}/edit`}>
+                  <Link to={`/t/${username}/${table.slug}/edit`}>
                     <GoFile />
                     <span>{table.title}</span>
                   </Link>

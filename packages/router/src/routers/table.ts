@@ -4,13 +4,14 @@ import {
   tableDeleteInput,
   tableGetInput,
   tableListInput,
+  tablePublishVersionInput,
   tableRestoreInput,
   tableUpdateInput,
 } from "@manifold/validators";
 import { TRPCError } from "@trpc/server";
 
 import { validationError } from "#error.ts";
-import { authedProcedure, t } from "#trpc.ts";
+import { authedProcedure, onboardedProcedure, t } from "#trpc.ts";
 
 export const tableRouter = t.router({
   list: authedProcedure.input(tableListInput).query(({ input, ctx }) => {
@@ -51,6 +52,12 @@ export const tableRouter = t.router({
     .input(tableUpdateInput)
     .mutation(async ({ input, ctx }) => {
       return tableService.updateTable(ctx.user.id, input);
+    }),
+
+  publish: onboardedProcedure
+    .input(tablePublishVersionInput)
+    .mutation(async ({ input, ctx }) => {
+      return tableService.publishVersion(ctx.user.id, ctx.username, input);
     }),
 
   delete: authedProcedure

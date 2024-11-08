@@ -24,7 +24,7 @@ export function TableNew() {
         <CardContent>
           <TableCreateForm
             onCreate={(table) =>
-              navigate(`/table/${userProfile.username}/${table.slug}/edit`, {
+              navigate(`/t/${userProfile.username}/${table.slug}/edit`, {
                 state: { table },
               })
             }

@@ -24,6 +24,8 @@
     "generate": "drizzle-kit generate",
     "migrate": "drizzle-kit migrate",
     "check": "drizzle-kit check",
+    "push": "drizzle-kit push",
+    "dump": "./scripts/dump",
     "seed": "echo \"Seeding is not implemented!\"",
     "studio": "drizzle-kit studio"
   },
@@ -31,7 +33,7 @@
     "@manifold/eslint-config": "*",
     "@manifold/typescript-config": "*",
     "@types/pg": "^8.11.10",
-    "drizzle-kit": "^0.27.1",
+    "drizzle-kit": "^0.28.0",
     "eslint-plugin-drizzle": "^0.2.3"
   },
   "dependencies": {

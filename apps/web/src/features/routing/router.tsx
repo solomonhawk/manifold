@@ -185,7 +185,7 @@ export function protectedLoaderBuilder(auth: ReturnType<typeof useSession>) {
   return async ({ request }: LoaderFunctionArgs) => {
     const params = new URLSearchParams();
     params.set("from", new URL(request.url).pathname);
-    console.log(auth);
+
     if (auth.status === "unauthenticated") {
       return redirect(`/?${params.toString()}`);
     }
