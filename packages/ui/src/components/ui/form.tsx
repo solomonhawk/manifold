@@ -203,6 +203,7 @@ const FormSubmitButton = React.forwardRef<
   React.HTMLAttributes<HTMLButtonElement> & {
     form?: string;
     savingText?: string;
+    requireDirty?: boolean;
     disabled?: boolean;
     isPending?: boolean;
   }
@@ -212,6 +213,7 @@ const FormSubmitButton = React.forwardRef<
       children,
       form,
       savingText,
+      requireDirty = true,
       disabled = false,
       isPending = false,
       ...props
@@ -226,7 +228,8 @@ const FormSubmitButton = React.forwardRef<
 
     const isDirty = formState.isDirty;
     const showPendingState = isPending || guardedIsSubmitting;
-    const isDisabled = disabled || showPendingState || !isDirty;
+    const isDisabled =
+      disabled || showPendingState || (requireDirty && !isDirty);
 
     const defaultChildren = children || "Save";
 
@@ -253,9 +256,48 @@ const FormSubmitButton = React.forwardRef<
 
 FormSubmitButton.displayName = "FormSubmitButton";
 
+function FormDebug() {
+  const { formState, getValues } = useFormContext();
+  const { errors } = formState;
+
+  React.useEffect(() => {
+    if (process.env.NODE_ENV === "development") {
+      console.log("<Form /> errors:", errors);
+    }
+  }, [errors]);
+
+  if (process.env.NODE_ENV !== "development") {
+    return null;
+  }
+
+  return (
+    <div className="flex gap-8">
+      <button type="button" onClick={() => console.log("values", getValues())}>
+        Log Form Values
+      </button>
+
+      <button type="button" onClick={() => console.log("errors", errors)}>
+        Log Form Errors
+      </button>
+
+      <button
+        type="button"
+        onClick={() => console.log("formState", formState.dirtyFields)}
+      >
+        Log Dirty Fields
+      </button>
+
+      <button type="button" onClick={() => console.log("formState", formState)}>
+        Log Form State
+      </button>
+    </div>
+  );
+}
+
 export {
   Form,
   FormControl,
+  FormDebug,
   FormDescription,
   FormField,
   FormItem,

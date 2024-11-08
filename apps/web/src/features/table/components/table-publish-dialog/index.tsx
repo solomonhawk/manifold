@@ -11,6 +11,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@manifold/ui/components/ui/alert-dialog";
+import { Button } from "@manifold/ui/components/ui/button";
 import {
   Card,
   CardContent,
@@ -33,13 +34,15 @@ import {
   NoticeContent,
   NoticeIcon,
 } from "@manifold/ui/components/ui/notice";
+import { Separator } from "@manifold/ui/components/ui/separator";
 import { Textarea } from "@manifold/ui/components/ui/textarea";
 import { useReturnFocus } from "@manifold/ui/hooks/use-return-focus";
 import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
 import { useZodForm } from "@manifold/ui/hooks/use-zod-form";
 import { type TablePublishVersionInput, z } from "@manifold/validators";
 import { type SubmitHandler } from "react-hook-form";
-import { GoInfo, GoPackageDependents } from "react-icons/go";
+import { GoInfo, GoLinkExternal, GoPackageDependents } from "react-icons/go";
+import { Link } from "react-router-dom";
 
 import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
 import { usePublishTable } from "~features/table/api/publish";
@@ -58,7 +61,6 @@ export const TablePublishDialog = ({
   recentVersions,
   totalVersionCount,
   tableSlug,
-  description,
 }: Props) => {
   const modal = useModal();
   const returnFocus = useReturnFocus(modal.visible);
@@ -75,7 +77,7 @@ export const TablePublishDialog = ({
 
   const form = useZodForm({
     schema,
-    defaultValues: { description },
+    defaultValues: { description: "" },
   });
 
   const handleSubmit: SubmitHandler<FormData> = async (data) => {
@@ -128,19 +130,32 @@ export const TablePublishDialog = ({
 
         {recentVersions.length > 0 && (
           <Card>
-            <CardHeader className="!p-16">
+            <CardHeader className="!p-4">
               <CardTitle asChild>
-                <h4 className="flex items-center justify-between font-semibold">
-                  Recent Versions:
-                  <CardDescription className="inline-block font-normal">
-                    {totalVersionCount}{" "}
-                    {pluralize("version", totalVersionCount)} published total
+                <h4 className="-mt-2 flex items-center justify-between font-semibold">
+                  <span className="p-12">Recent Versions:</span>
+                  <CardDescription>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      asChild
+                      className="flex items-center gap-8 font-normal"
+                    >
+                      {/* @TODO: link to versions page */}
+                      <Link to="#" target="_blank">
+                        {`${totalVersionCount} ${pluralize("version", totalVersionCount)} published`}
+                        <span className="sr-only">View all versions</span>
+                        <GoLinkExternal />
+                      </Link>
+                    </Button>
                   </CardDescription>
                 </h4>
               </CardTitle>
             </CardHeader>
 
-            <CardContent className="!p-16 !pt-0">
+            <Separator />
+
+            <CardContent className="!p-16">
               <ul className="space-y-12">
                 {recentVersions.map((version) => {
                   return (
@@ -154,7 +169,7 @@ export const TablePublishDialog = ({
                       </div>
 
                       {version.description && (
-                        <div className="mt-4 line-clamp-2 text-ellipsis border-l-2 border-muted pl-8 text-xs text-muted-foreground/80">
+                        <div className="mt-4 line-clamp-2 text-ellipsis border-l-2 border-muted pl-8 text-xs text-muted-foreground/70">
                           {version.description}
                         </div>
                       )}
@@ -174,10 +189,10 @@ export const TablePublishDialog = ({
                 name="description"
                 render={({ field }) => (
                   <FormItem className="mb-24">
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>Release Notes</FormLabel>
 
                     <FormControl>
-                      <Textarea rows={3} {...field} />
+                      <Textarea rows={1} {...field} />
                     </FormControl>
 
                     <FormMessage />
@@ -193,7 +208,7 @@ export const TablePublishDialog = ({
               <AlertDialogFooter>
                 <AlertDialogCancel>Nevermind</AlertDialogCancel>
 
-                <FormSubmitButton disabled={isPending}>
+                <FormSubmitButton disabled={isPending} requireDirty={false}>
                   Publish Table
                 </FormSubmitButton>
               </AlertDialogFooter>

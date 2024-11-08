@@ -8,7 +8,7 @@
       "cache": false,
       "persistent": true,
       "inputs": [".env"],
-      "env": ["DEV", "PORT", "DATABASE_URL"]
+      "env": ["DEV", "PORT", "DATABASE_URL", "NODE_ENV"]
     },
     "build": {
       "dependsOn": ["^build"],

@@ -43,8 +43,6 @@ export const DIALOGS = {
   },
 } as const;
 
-DialogManager.register(DIALOGS.DELETE_TABLE.ID, DIALOGS.DELETE_TABLE.COMPONENT);
-DialogManager.register(
-  DIALOGS.PUBLISH_TABLE.ID,
-  DIALOGS.PUBLISH_TABLE.COMPONENT,
-);
+for (const dialog of Object.values(DIALOGS)) {
+  DialogManager.register(dialog.ID, dialog.COMPONENT);
+}
