@@ -43,6 +43,7 @@ export function TableUpdateForm({
     defaultValues: {
       id: table.id,
       definition: table.definition,
+      availableTables: table.availableTables,
     },
     schema: tableUpdateInput.extend({
       definition: z.string().superRefine((_value, ctx) => {
@@ -105,9 +106,13 @@ export function TableUpdateForm({
     [form],
   );
 
-  const handleParseSuccess = useCallback(() => {
-    form.clearErrors("definition");
-  }, [form]);
+  const handleParseSuccess = useCallback(
+    (availableTables: string[]) => {
+      form.setValue("availableTables", availableTables);
+      form.clearErrors("definition");
+    },
+    [form],
+  );
 
   /**
    * Handle submitting the form with `Cmd + Enter`. Requires that the user's

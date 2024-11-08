@@ -49,7 +49,7 @@ type Props = {
   onChange: (value: string) => void;
   onBlur: () => void;
   onParseError: (error: string) => void;
-  onParseSuccess: () => void;
+  onParseSuccess: (availableTables: string[]) => void;
 };
 
 export function InputPanel({
@@ -76,17 +76,21 @@ export function InputPanel({
   const parseAndValidate = useCallback(
     async function parseAndValidate(value: string) {
       try {
+        let availableTables: string[] = [];
+
         if (value) {
           const { hash, metadata } = await workerInstance.parse(value);
 
           setTableHash(hash);
           setTableMetadata(metadata);
+
+          availableTables = metadata.map((m) => m.id);
         } else {
           setTableHash(null);
           setTableMetadata([]);
         }
 
-        onParseSuccess();
+        onParseSuccess(availableTables);
       } catch (e: unknown) {
         log.error(e);
 

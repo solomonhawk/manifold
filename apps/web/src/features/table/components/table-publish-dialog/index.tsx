@@ -1,4 +1,5 @@
 import { useModal } from "@ebay/nice-modal-react";
+import type { TableVersionSummary } from "@manifold/db";
 import { pluralize } from "@manifold/lib/utils/string";
 import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import {
@@ -41,7 +42,6 @@ import { type SubmitHandler } from "react-hook-form";
 import { GoInfo, GoPackageDependents } from "react-icons/go";
 
 import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
-import type { TableVersionSummary } from "~features/table/api/get";
 import { usePublishTable } from "~features/table/api/publish";
 import { log } from "~utils/logger";
 
@@ -140,21 +140,28 @@ export const TablePublishDialog = ({
               </CardTitle>
             </CardHeader>
 
-            <CardContent className="space-y-8 !p-16 !pt-0">
-              {recentVersions.map((version) => {
-                return (
-                  <div
-                    key={version.id}
-                    className="flex items-center gap-4 text-sm"
-                  >
-                    <span className="font-mono">v{version.version}</span>
-                    <span className="text-muted-foreground">
-                      was published on
-                    </span>
-                    {new Date(version.createdAt).toLocaleDateString()}
-                  </div>
-                );
-              })}
+            <CardContent className="!p-16 !pt-0">
+              <ul className="space-y-12">
+                {recentVersions.map((version) => {
+                  return (
+                    <li key={version.id}>
+                      <div className="flex items-center gap-4 text-sm">
+                        <span className="font-mono">v{version.version}</span>
+                        <span className="text-muted-foreground">
+                          was published on
+                        </span>
+                        {new Date(version.createdAt).toLocaleDateString()}
+                      </div>
+
+                      {version.description && (
+                        <div className="mt-4 line-clamp-2 text-ellipsis border-l-2 border-muted pl-8 text-xs text-muted-foreground/80">
+                          {version.description}
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
             </CardContent>
           </Card>
         )}

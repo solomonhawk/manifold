@@ -22,6 +22,7 @@ import {
 
 import { db } from "#db.ts";
 import * as schema from "#schema/index.ts";
+import type { TableVersionSummary } from "#types.ts";
 
 const RECENT_VERSION_COUNT = 3;
 
@@ -71,6 +72,7 @@ export async function findTable(userId: string, input: TableGetInput) {
         .as("version"),
       tableSlug: sql`${schema.tableVersions.tableSlug}`.as("tableSlug"),
       definition: sql`${schema.tableVersions.definition}`.as("definition"),
+      description: sql`${schema.tableVersions.description}`.as("description"),
       ownerId: sql`${schema.tableVersions.ownerId}`.as("ownerId"),
       createdAt: sql`${schema.tableVersions.createdAt}`.as("createdAt"),
       count: sql`count(*) over()`.mapWith(Number).as("count"),
@@ -93,14 +95,7 @@ export async function findTable(userId: string, input: TableGetInput) {
       // `createdAt` gets serialized to a string instead of the mapped Date type
       // for that column). I'd like to just use the `TableVersionModel` type here...
       recentVersions: sql<
-        {
-          id: string;
-          version: number;
-          tableSlug: string;
-          ownerId: string;
-          createdAt: string;
-          definition: string;
-        }[]
+        TableVersionSummary[]
       >`COALESCE(jsonb_agg("tableVersions") FILTER (WHERE "tableVersions"."id" IS NOT NULL), '[]'::jsonb)`.as(
         "recentVersions",
       ),

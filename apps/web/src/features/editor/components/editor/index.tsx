@@ -18,7 +18,7 @@ type Props = {
   onBlur: () => void;
   refCallback: RefCallBack;
   onParseError: (error: string) => void;
-  onParseSuccess: () => void;
+  onParseSuccess: (availableTables: string[]) => void;
 };
 
 export function Editor({
@@ -61,7 +61,7 @@ export function Editor({
 
         <ResizableHandle withHandle />
 
-        <ResizablePanel minSize={50} className="flex flex-1">
+        <ResizablePanel minSize={30} className="flex flex-1">
           <ResultsPanel
             inputRef={inputRef}
             listRef={listRef}

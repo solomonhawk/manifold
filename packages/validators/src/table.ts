@@ -55,6 +55,7 @@ export const tableUpdateInput = z.object({
   title: z.string().min(1).optional(),
   definition: z.string().optional(),
   favorited: z.boolean().optional(),
+  availableTables: z.array(z.string()).default([]),
 });
 
 export type TableUpdateInput = z.infer<typeof tableUpdateInput>;
