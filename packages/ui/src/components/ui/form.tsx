@@ -1,3 +1,4 @@
+import { isEmpty } from "@manifold/lib";
 import * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
@@ -184,7 +185,7 @@ const FormSubmitStatus = React.forwardRef<
 >(({ ...props }, ref) => {
   const { formState } = useFormContext();
 
-  const isDirty = formState.isDirty;
+  const isDirty = !isEmpty(formState.dirtyFields);
   const message = isDirty
     ? "You have unsaved changes"
     : "Everything is up to date";
@@ -226,7 +227,7 @@ const FormSubmitButton = React.forwardRef<
       min: 250,
     });
 
-    const isDirty = formState.isDirty;
+    const isDirty = !isEmpty(formState.dirtyFields);
     const showPendingState = isPending || guardedIsSubmitting;
     const isDisabled =
       disabled || showPendingState || (requireDirty && !isDirty);

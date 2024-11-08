@@ -1,4 +1,4 @@
-import { capitalize } from "@manifold/lib/utils/string";
+import { capitalize } from "@manifold/lib";
 import type { RouterOutput } from "@manifold/router";
 import { Button } from "@manifold/ui/components/ui/button";
 import { transitionAlpha } from "@manifold/ui/lib/animation";

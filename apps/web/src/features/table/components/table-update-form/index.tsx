@@ -1,3 +1,4 @@
+import { isEmpty } from "@manifold/lib";
 import type { RouterOutput } from "@manifold/router";
 import { FlexCol } from "@manifold/ui/components/ui/flex";
 import {
@@ -87,8 +88,9 @@ export function TableUpdateForm({
     form.reset({
       id: table.id,
       definition: table.definition,
+      availableTables: table.availableTables,
     });
-  }, [form, table.id, table.definition]);
+  }, [form, table.id, table.definition, table.availableTables]);
 
   const handleSubmit: SubmitHandler<FormData> = useCallback(
     async (data) => {
@@ -129,7 +131,7 @@ export function TableUpdateForm({
         // when there are no fields with errors.
         await form.trigger(undefined, { shouldFocus: false });
 
-        if (!form.formState.isDirty || !form.formState.isValid) {
+        if (isEmpty(form.formState.dirtyFields) || !form.formState.isValid) {
           return;
         }
 

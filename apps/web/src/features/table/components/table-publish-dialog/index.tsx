@@ -1,6 +1,6 @@
 import { useModal } from "@ebay/nice-modal-react";
 import type { TableVersionSummary } from "@manifold/db";
-import { pluralize } from "@manifold/lib/utils/string";
+import { pluralize } from "@manifold/lib";
 import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import {
   AlertDialog,
@@ -68,6 +68,7 @@ export const TablePublishDialog = ({
   const publishTableMutation = usePublishTable({
     slug: tableSlug,
     onSuccess: () => {
+      form.reset({ description: "" });
       publishTableMutation.reset();
       modal.hide();
     },
@@ -161,7 +162,9 @@ export const TablePublishDialog = ({
                   return (
                     <li key={version.id}>
                       <div className="flex items-center gap-4 text-sm">
-                        <span className="font-mono">v{version.version}</span>
+                        <span className="font-mono font-bold">
+                          v{version.version}
+                        </span>
                         <span className="text-muted-foreground">
                           was published on
                         </span>
@@ -169,9 +172,12 @@ export const TablePublishDialog = ({
                       </div>
 
                       {version.description && (
-                        <div className="mt-4 line-clamp-2 text-ellipsis border-l-2 border-muted pl-8 text-xs text-muted-foreground/70">
+                        <pre
+                          className="mt-4 line-clamp-2 text-ellipsis whitespace-break-spaces border-l-2 border-muted pl-8 font-sans text-xs text-muted-foreground/70"
+                          title={version.description}
+                        >
                           {version.description}
-                        </div>
+                        </pre>
                       )}
                     </li>
                   );

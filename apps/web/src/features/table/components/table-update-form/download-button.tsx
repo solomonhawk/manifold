@@ -1,3 +1,4 @@
+import { isEmpty } from "@manifold/lib";
 import { Button } from "@manifold/ui/components/ui/button";
 import {
   Tooltip,
@@ -13,7 +14,7 @@ export function DownloadButton({ tableId }: { tableId: string }) {
   const definition = useWatch({ control, name: "definition" });
   const canDownload =
     definition !== "" &&
-    !formState.isDirty &&
+    isEmpty(formState.dirtyFields) &&
     !formState.isSubmitting &&
     formState.isValid;
 

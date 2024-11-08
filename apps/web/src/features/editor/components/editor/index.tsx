@@ -42,7 +42,7 @@ export function Editor({
     <FlexCol asChild>
       <ResizablePanelGroup direction="horizontal" className="rounded-md border">
         <ResizablePanel
-          minSize={20}
+          minSize={30}
           defaultSize={50}
           className="flex flex-1 lg:flex-initial"
         >

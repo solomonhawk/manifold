@@ -40,7 +40,7 @@ export function PublishButton({
       <TooltipTrigger asChild>
         {/* @ref https://www.radix-vue.com/components/tooltip#displaying-a-tooltip-from-a-disabled-button */}
         {/* eslint-disable jsx-a11y/no-noninteractive-tabindex */}
-        <span tabIndex={0}>
+        <span tabIndex={canPublish ? undefined : 0}>
           <ReactiveButton
             className="flex items-center gap-8"
             disabled={!canPublish}

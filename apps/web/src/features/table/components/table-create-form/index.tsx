@@ -1,4 +1,4 @@
-import { slugify } from "@manifold/lib/utils/string";
+import { slugify } from "@manifold/lib";
 import type { RouterOutput } from "@manifold/router";
 import {
   Form,

@@ -100,6 +100,16 @@ const config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      fontFamily: {
+        sans: [
+          "General Sans",
+          "Inter",
+          "Avenir",
+          "Helvetica",
+          "Arial",
+          "sans-serif",
+        ],
+      },
       fontSize: {
         xxs: rem(10),
       },

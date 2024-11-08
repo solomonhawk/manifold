@@ -1,4 +1,4 @@
-import { getRandomElement } from "@manifold/lib/utils/array";
+import { getRandomElement } from "@manifold/lib";
 import { useState } from "react";
 
 const SOURCES = {
