@@ -1,5 +1,6 @@
 import { isUniqueConstraintViolation, tableService } from "@manifold/db";
 import {
+  isValidationError,
   tableCreateInput,
   tableDeleteInput,
   tableGetInput,
@@ -28,6 +29,14 @@ export const tableRouter = t.router({
           throw validationError({
             path: ["slug"],
             message: "Table with this slug already exists",
+          });
+        }
+
+        if (isValidationError(e)) {
+          throw validationError({
+            cause: e,
+            message:
+              "We couldn’t generate a valid identifier for this table, please specify one explicitly",
           });
         }
 

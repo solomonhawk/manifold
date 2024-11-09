@@ -5,6 +5,7 @@ export function slug({ message }: { message: string }) {
   return z
     .string()
     .min(1, { message: "Can’t be blank" })
+    .max(64, { message: "Must be 64 characters or less" })
     .refine((slug) => slug === slugify(slug), {
       message,
     });
@@ -13,6 +14,7 @@ export function slug({ message }: { message: string }) {
 export function optionalSlug({ message }: { message: string }) {
   return z
     .string()
+    .max(64, { message: "Must be 64 characters or less" })
     .optional()
     .transform((x) => (x === "" ? undefined : x))
     .refine(

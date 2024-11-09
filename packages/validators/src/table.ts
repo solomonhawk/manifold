@@ -31,11 +31,15 @@ export const tableListInput = z.object({
 
 export type TableListInput = z.infer<typeof tableListInput>;
 
+export const invalidTableSlugMessage =
+  "Identifier is invalid. Can only contain lowercase letters, numbers, and hyphens";
+
 export const tableCreateInput = z.object({
-  title: z.string().min(1, { message: "Title can’t be blank" }),
+  title: z.string().min(1, { message: "Title can’t be blank" }).max(64, {
+    message: "Title must be 64 characters or less",
+  }),
   slug: optionalSlug({
-    message:
-      "Identifier is invalid. Can only contain lowercase letters, numbers, and hyphens",
+    message: invalidTableSlugMessage,
   }),
   description: z.string().optional(),
   definition: z.string(),

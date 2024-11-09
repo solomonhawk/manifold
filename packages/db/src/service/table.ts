@@ -1,6 +1,9 @@
 import { slugify } from "@manifold/lib";
 import {
+  invalidTableSlugMessage,
+  slug,
   type TableCreateInput,
+  tableCreateInput,
   type TableDeleteInput,
   type TableGetInput,
   type TableListInput,
@@ -47,12 +50,20 @@ export async function listTables(userId: string, input: TableListInput) {
 }
 
 export async function createTable(userId: string, input: TableCreateInput) {
+  const inputWithDefaultSlug = tableCreateInput
+    .extend({
+      slug: slug({ message: invalidTableSlugMessage }),
+    })
+    .parse({
+      ...input,
+      slug: input.slug ?? slugify(input.title),
+    });
+
   const [table] = await db
     .insert(schema.tables)
     .values({
-      ...input,
+      ...inputWithDefaultSlug,
       ownerId: userId,
-      slug: input.slug ?? slugify(input.title),
     })
     .returning()
     .execute();
