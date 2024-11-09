@@ -11,7 +11,9 @@ declare const self: DedicatedWorkerGlobalScope;
 const initPromise = init({});
 
 const textToHash = new LRUCache<string, string>({ max: 500 });
-const hashToTabol = new LRUCache<string, TableCollection>({ max: 100 });
+const hashToTableCollection = new LRUCache<string, TableCollection>({
+  max: 100,
+});
 
 function afterInit<U extends unknown[], R>(f: (...args: U) => R) {
   return (...args: U) => {
@@ -20,7 +22,7 @@ function afterInit<U extends unknown[], R>(f: (...args: U) => R) {
 }
 
 /**
- * Parses text with table definitions and instantiates a Tabol. Caches the result.
+ * Parses text with table definitions and instantiates a TableCollection. Caches the result.
  */
 export const parse = afterInit((text: string) => {
   // compute hash based on table definition text, cache for later
@@ -33,21 +35,28 @@ export const parse = afterInit((text: string) => {
   }
 
   // return cached instance, if present
-  if (hashToTabol.has(hash)) {
+  if (hashToTableCollection.has(hash)) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const tableCollection = hashToTableCollection.get(hash)!;
+
     return {
       hash,
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      metadata: hashToTabol.get(hash)!.table_metadata() as TableMetadata[],
+      metadata: tableCollection.table_metadata() as TableMetadata[],
+      dependencies: tableCollection.dependencies() as string[],
+      missingDependencies: tableCollection.validate_tables() as string[],
     };
   }
 
   // otherwise, create a new instance and cache it
-  const tabol = new TableCollection(text);
-  hashToTabol.set(hash, tabol);
+  const tableCollection = new TableCollection(text);
+
+  hashToTableCollection.set(hash, tableCollection);
 
   return {
     hash,
-    metadata: tabol.table_metadata() as TableMetadata[],
+    metadata: tableCollection.table_metadata() as TableMetadata[],
+    dependencies: tableCollection.dependencies() as string[],
+    missingDependencies: tableCollection.validate_tables() as string[],
   };
 });
 
@@ -59,13 +68,13 @@ export const parse = afterInit((text: string) => {
  * ref: https://github.com/vitejs/vite/discussions/7314
  */
 export const gen = afterInit((hash: string, text: string, tableId: string) => {
-  if (!hashToTabol.has(hash)) {
+  if (!hashToTableCollection.has(hash)) {
     // webworker doesn't support HMR, so we fallback to passing the text and re-parsing it if necessary
     parse(text);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const tabol = hashToTabol.get(hash)!;
+  const tabol = hashToTableCollection.get(hash)!;
 
-  return tabol.gen(tableId);
+  return tabol.gen(tableId, false);
 });

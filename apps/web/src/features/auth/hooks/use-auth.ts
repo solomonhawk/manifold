@@ -1,4 +1,5 @@
 import { useSession } from "@manifold/auth/client";
+import { useMemo } from "react";
 
 export function useAuth() {
   return useSession();
@@ -13,5 +14,5 @@ export function useRequiredAuth() {
     throw new Error("Authentication required");
   }
 
-  return session;
+  return useMemo(() => session, [session]);
 }

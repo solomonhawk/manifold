@@ -27,6 +27,7 @@ export function useFavoriteTable({
 
       await onSuccess?.(data);
 
+      // @ ts-expect-error - account for table dependencies after favorite
       trpcUtils.table.get.setData(
         { username: userProfile.username, slug },
         (existing) => {

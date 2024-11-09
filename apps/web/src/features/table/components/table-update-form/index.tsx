@@ -12,11 +12,18 @@ import {
 } from "@manifold/ui/components/ui/form";
 import { useZodForm } from "@manifold/ui/hooks/use-zod-form";
 import { tableUpdateInput, z } from "@manifold/validators";
+import { useAtomValue } from "jotai";
 import { type KeyboardEvent, useCallback, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { type SubmitHandler, useFormContext, useWatch } from "react-hook-form";
 
 import { Editor } from "~features/editor";
+import {
+  currentTableDependenciesAtom,
+  directDependencyVersionsAtom,
+  editorStatusAtom,
+} from "~features/editor/components/editor/state";
+import { useResolveDependencies } from "~features/table/api/resolve-dependencies";
 import { useUpdateTable } from "~features/table/api/update";
 import {
   PublishButton,
@@ -45,6 +52,10 @@ export function TableUpdateForm({
       id: table.id,
       definition: table.definition,
       availableTables: table.availableTables,
+      dependencies: table.dependencies.map((d) => ({
+        dependencyIdentifier: d.tableIdentifier,
+        dependencyVersion: d.version,
+      })),
     },
     schema: tableUpdateInput.extend({
       definition: z.string().superRefine((_value, ctx) => {
@@ -70,6 +81,9 @@ export function TableUpdateForm({
     }),
   });
 
+  // @TODO: naughty cross-feature dependency
+  const directDependencyVersions = useAtomValue(directDependencyVersionsAtom);
+
   const updateTableMutation = useUpdateTable({
     slug: table.slug,
     onSuccess: (data) => {
@@ -77,6 +91,11 @@ export function TableUpdateForm({
       form.reset({
         id: data.id,
         definition: data.definition,
+        availableTables: data.availableTables,
+        dependencies: directDependencyVersions.map((d) => ({
+          dependencyIdentifier: d.tableIdentifier,
+          dependencyVersion: d.version,
+        })),
       });
     },
   });
@@ -89,8 +108,22 @@ export function TableUpdateForm({
       id: table.id,
       definition: table.definition,
       availableTables: table.availableTables,
+      dependencies: table.dependencies.map((d) => ({
+        dependencyIdentifier: d.tableIdentifier,
+        dependencyVersion: d.version,
+      })),
     });
-  }, [form, table.id, table.definition, table.availableTables]);
+  }, [form, table]);
+
+  useEffect(() => {
+    form.setValue(
+      "dependencies",
+      directDependencyVersions.map((d) => ({
+        dependencyIdentifier: d.tableIdentifier,
+        dependencyVersion: d.version,
+      })),
+    );
+  }, [form, directDependencyVersions]);
 
   const handleSubmit: SubmitHandler<FormData> = useCallback(
     async (data) => {
@@ -175,14 +208,13 @@ export function TableUpdateForm({
               {portalRef.current &&
                 createPortal(
                   <>
-                    <FormSubmitStatus className="mr-8 text-xs text-muted-foreground/80" />
+                    <FormSubmitStatus className="text-muted-foreground/80 mr-8 text-xs" />
 
-                    <FormSubmitButton form={TABLE_UPDATE_FORM_ID}>
-                      Save Changes
-                    </FormSubmitButton>
+                    <FormPrimaryActionButton />
 
                     <FormPublishButton
-                      slug={table.slug}
+                      tableId={table.id}
+                      tableSlug={table.slug}
                       isEnabled={
                         !form.formState.isDirty &&
                         form.formState.isValid &&
@@ -205,15 +237,16 @@ export function TableUpdateForm({
                       <FormItem>
                         <FormControl>
                           <Editor
+                            refCallback={ref}
                             onParseError={handleParseError}
                             onParseSuccess={handleParseSuccess}
-                            refCallback={ref}
                             isDisabled={table.deletedAt !== null}
+                            resolvedDependencies={table.dependencies}
                             {...props}
                           />
                         </FormControl>
 
-                        <FormMessage />
+                        <FormMessage className="max-h-128 overflow-auto" />
                       </FormItem>
                     </FlexCol>
                   );
@@ -224,6 +257,38 @@ export function TableUpdateForm({
         </form>
       </FlexCol>
     </Form>
+  );
+}
+
+function FormPrimaryActionButton() {
+  // @TODO: naughty cross-feature dependency
+  const status = useAtomValue(editorStatusAtom);
+  const dependencies = useAtomValue(currentTableDependenciesAtom);
+
+  const resolveDependenciesQuery = useResolveDependencies({
+    dependencies,
+  });
+
+  function handleResolveDependencies() {
+    resolveDependenciesQuery.refetch();
+  }
+
+  if (status === "validation_error") {
+    return (
+      <FormSubmitButton
+        type="button"
+        isPending={resolveDependenciesQuery.isInitialLoading}
+        onClick={handleResolveDependencies}
+      >
+        Resolve Dependencies
+      </FormSubmitButton>
+    );
+  }
+
+  return (
+    <FormSubmitButton form={TABLE_UPDATE_FORM_ID} disabled={status !== "valid"}>
+      Save Changes
+    </FormSubmitButton>
   );
 }
 

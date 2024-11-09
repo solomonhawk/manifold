@@ -1,4 +1,6 @@
 import { isUniqueConstraintViolation, tableService } from "@manifold/db";
+import { tableRegistry } from "@manifold/graph";
+import { flatten } from "@manifold/lib";
 import {
   isValidationError,
   tableCreateInput,
@@ -6,6 +8,7 @@ import {
   tableGetInput,
   tableListInput,
   tablePublishVersionInput,
+  tableResolveDependenciesInput,
   tableRestoreInput,
   tableUpdateInput,
 } from "@manifold/validators";
@@ -19,12 +22,28 @@ export const tableRouter = t.router({
     return tableService.listTables(ctx.user.id, input);
   }),
 
-  create: authedProcedure
+  create: onboardedProcedure
     .input(tableCreateInput)
     .mutation(async ({ input, ctx }) => {
       try {
-        return await tableService.createTable(ctx.user.id, input);
+        const table = await tableService.createTable(
+          ctx.user.id,
+          ctx.username,
+          input,
+        );
+
+        await tableRegistry.createPackage({
+          ownerId: ctx.user.id,
+          ownerUsername: ctx.username,
+          tableId: table.id,
+          tableSlug: table.slug,
+          tableIdentifier: table.tableIdentifier,
+          version: 0,
+        });
+
+        return table;
       } catch (e) {
+        // @TODO: clean up partial records in case of error?
         if (isUniqueConstraintViolation(e)) {
           throw validationError({
             path: ["slug"],
@@ -54,19 +73,86 @@ export const tableRouter = t.router({
       });
     }
 
-    return table;
+    const dependencyIdentifiers = await tableRegistry.getAllDependencies({
+      tableIdentifier: table.tableIdentifier,
+      version: 0,
+    });
+
+    const dependencies = await tableService.listTableVersions(
+      dependencyIdentifiers,
+    );
+
+    return {
+      ...table,
+      dependencies,
+    };
   }),
+
+  resolveDependencies: t.procedure
+    .input(tableResolveDependenciesInput)
+    .query(async ({ input }) => {
+      // @TODO: need to actually resolve this against the graph
+      const tableVersions = await tableService.resolveDependencies(input);
+
+      const dependencies = await Promise.all(
+        tableVersions.map((tableVersion) => {
+          return tableRegistry.getAllDependencies({
+            tableIdentifier: tableVersion.tableIdentifier,
+            version: tableVersion.version,
+          });
+        }),
+      );
+
+      return await tableService.listTableVersions([
+        ...flatten(dependencies),
+        ...tableVersions,
+      ]);
+    }),
 
   update: authedProcedure
     .input(tableUpdateInput)
     .mutation(async ({ input, ctx }) => {
-      return tableService.updateTable(ctx.user.id, input);
+      // https://github.com/SlavaPanevskiy/node-sagas
+      const updatedTable = await tableService.updateTable(ctx.user.id, input);
+
+      if (input.dependencies) {
+        // remove old edges and create new edges
+        await tableRegistry.syncDependencies({
+          tableIdentifier: updatedTable.tableIdentifier,
+          version: 0, // we only ever update the edges on the draft table instance
+          dependencies: input.dependencies,
+        });
+      }
+
+      // @TODO: also retrieve dependencies (for optimistic UI update?)
+      return updatedTable;
     }),
 
   publish: onboardedProcedure
     .input(tablePublishVersionInput)
     .mutation(async ({ input, ctx }) => {
-      return tableService.publishVersion(ctx.user.id, ctx.username, input);
+      const tableVersion = await tableService.publishVersion(
+        ctx.user.id,
+        ctx.username,
+        input,
+      );
+
+      await tableRegistry.createPackage({
+        ownerId: ctx.user.id,
+        ownerUsername: ctx.username,
+        tableId: input.tableId,
+        tableSlug: tableVersion.tableSlug,
+        tableIdentifier: tableVersion.tableIdentifier,
+        version: tableVersion.version,
+      });
+
+      await tableRegistry.addDependencies({
+        tableIdentifier: tableVersion.tableIdentifier,
+        version: tableVersion.version,
+        dependencies: input.dependencies,
+      });
+
+      return tableVersion;
     }),
 
   delete: authedProcedure

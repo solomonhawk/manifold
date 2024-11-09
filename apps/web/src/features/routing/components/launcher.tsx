@@ -6,7 +6,7 @@ import {
 } from "@manifold/ui/components/ui/command";
 import { Skeleton } from "@manifold/ui/components/ui/skeleton";
 import { useCommandPalette } from "@manifold/ui/hooks/use-command-palette";
-import { GoFile, GoFileSymlinkFile } from "react-icons/go";
+import { GoFile, GoHome, GoListUnordered } from "react-icons/go";
 import {
   Link,
   type NavigateOptions,
@@ -67,7 +67,7 @@ export function Launcher() {
           }}
         >
           <Link to="/table/new">
-            <GoFileSymlinkFile />
+            <GoListUnordered className="text-accent-foreground" />
             <span>Create a new Table</span>
           </Link>
         </CommandItem>
@@ -79,7 +79,7 @@ export function Launcher() {
           }}
         >
           <Link to="/">
-            <GoFileSymlinkFile />
+            <GoHome className="text-accent-foreground" />
             <span>Go to Dashboard</span>
           </Link>
         </CommandItem>

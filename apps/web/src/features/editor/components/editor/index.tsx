@@ -1,3 +1,4 @@
+import type { RouterOutput } from "@manifold/router";
 import { FlexCol } from "@manifold/ui/components/ui/flex";
 import {
   ResizableHandle,
@@ -19,6 +20,7 @@ type Props = {
   refCallback: RefCallBack;
   onParseError: (error: string) => void;
   onParseSuccess: (availableTables: string[]) => void;
+  resolvedDependencies: RouterOutput["table"]["get"]["dependencies"];
 };
 
 export function Editor({
@@ -30,6 +32,7 @@ export function Editor({
   refCallback,
   onParseError,
   onParseSuccess,
+  resolvedDependencies,
 }: Props) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
@@ -56,6 +59,7 @@ export function Editor({
             onParseError={onParseError}
             onParseSuccess={onParseSuccess}
             isDisabled={isDisabled}
+            initialResolvedDependencies={resolvedDependencies}
           />
         </ResizablePanel>
 

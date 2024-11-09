@@ -54,19 +54,42 @@ export const tableGetInput = z.object({
 
 export type TableGetInput = z.infer<typeof tableGetInput>;
 
+export const tableResolveDependenciesInput = z.object({
+  dependencies: z.array(z.string()), // ["@username/table-id", ...]
+});
+
+export type TableResolveDependenciesInput = z.infer<
+  typeof tableResolveDependenciesInput
+>;
+
 export const tableUpdateInput = z.object({
   id: z.string(),
   title: z.string().min(1).optional(),
   definition: z.string().optional(),
   favorited: z.boolean().optional(),
   availableTables: z.array(z.string()).default([]),
+  dependencies: z
+    .array(
+      z.object({
+        dependencyIdentifier: z.string(),
+        dependencyVersion: z.number(),
+      }),
+    )
+    .optional(),
 });
 
 export type TableUpdateInput = z.infer<typeof tableUpdateInput>;
 
 export const tablePublishVersionInput = z.object({
+  tableId: z.string(),
   tableSlug: z.string(),
-  description: z.string().optional(),
+  releaseNotes: z.string().optional(),
+  dependencies: z.array(
+    z.object({
+      dependencyIdentifier: z.string(),
+      dependencyVersion: z.number(),
+    }),
+  ),
 });
 
 export type TablePublishVersionInput = z.infer<typeof tablePublishVersionInput>;

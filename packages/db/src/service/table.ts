@@ -1,4 +1,4 @@
-import { slugify } from "@manifold/lib";
+import { buildTableIdentifier, slugify } from "@manifold/lib";
 import {
   invalidTableSlugMessage,
   slug,
@@ -9,6 +9,7 @@ import {
   type TableListInput,
   type TableListOrderBy,
   type TablePublishVersionInput,
+  type TableResolveDependenciesInput,
   type TableRestoreInput,
   type TableUpdateInput,
 } from "@manifold/validators";
@@ -18,6 +19,7 @@ import {
   desc,
   eq,
   getTableColumns,
+  inArray,
   isNull,
   type SQL,
   sql,
@@ -49,7 +51,11 @@ export async function listTables(userId: string, input: TableListInput) {
     .execute();
 }
 
-export async function createTable(userId: string, input: TableCreateInput) {
+export async function createTable(
+  userId: string,
+  username: string,
+  input: TableCreateInput,
+) {
   const inputWithDefaultSlug = tableCreateInput
     .extend({
       slug: slug({ message: invalidTableSlugMessage }),
@@ -63,7 +69,12 @@ export async function createTable(userId: string, input: TableCreateInput) {
     .insert(schema.tables)
     .values({
       ...inputWithDefaultSlug,
+      tableIdentifier: buildTableIdentifier(
+        username,
+        inputWithDefaultSlug.slug,
+      ),
       ownerId: userId,
+      ownerUsername: username,
     })
     .returning()
     .execute();
@@ -71,6 +82,9 @@ export async function createTable(userId: string, input: TableCreateInput) {
   return table;
 }
 
+/**
+ * @TODO @XXX: fix this query now that the tables have `tableIdentifier` columns
+ */
 export async function findTable(userId: string, input: TableGetInput) {
   const tableVersionsSubQuery = db
     .select({
@@ -83,7 +97,9 @@ export async function findTable(userId: string, input: TableGetInput) {
         .as("version"),
       tableSlug: sql`${schema.tableVersions.tableSlug}`.as("tableSlug"),
       definition: sql`${schema.tableVersions.definition}`.as("definition"),
-      description: sql`${schema.tableVersions.description}`.as("description"),
+      releaseNotes: sql`${schema.tableVersions.releaseNotes}`.as(
+        "releaseNotes",
+      ),
       ownerId: sql`${schema.tableVersions.ownerId}`.as("ownerId"),
       createdAt: sql`${schema.tableVersions.createdAt}`.as("createdAt"),
       count: sql`count(*) over()`.mapWith(Number).as("count"),
@@ -92,6 +108,7 @@ export async function findTable(userId: string, input: TableGetInput) {
     .where(eq(schema.tableVersions.tableSlug, input.slug))
     .groupBy(
       schema.tableVersions.ownerId,
+      schema.tableVersions.ownerUsername,
       schema.tableVersions.version,
       schema.tableVersions.tableSlug,
     )
@@ -104,7 +121,7 @@ export async function findTable(userId: string, input: TableGetInput) {
       ...getTableColumns(schema.tables),
       // @NOTE: `jsonb_agg` appears to nuke the Drizzle mapped types (e.g.
       // `createdAt` gets serialized to a string instead of the mapped Date type
-      // for that column). I'd like to just use the `TableVersionModel` type here...
+      // for that column). I'd like to just use the mapped types here (e.g. `createdAt: Date`)...
       recentVersions: sql<
         TableVersionSummary[]
       >`COALESCE(jsonb_agg("tableVersions") FILTER (WHERE "tableVersions"."id" IS NOT NULL), '[]'::jsonb)`.as(
@@ -131,11 +148,60 @@ export async function findTable(userId: string, input: TableGetInput) {
     )
     .groupBy(
       schema.tables.ownerId,
+      schema.tables.ownerUsername,
       schema.tables.slug,
       tableVersionsSubQuery.count,
     );
 
   return table;
+}
+
+export async function resolveDependencies(
+  input: TableResolveDependenciesInput,
+) {
+  const tableVersions = await db
+    .selectDistinctOn([schema.tableVersions.tableIdentifier])
+    .from(schema.tableVersions)
+    .where(inArray(schema.tableVersions.tableIdentifier, input.dependencies))
+    .orderBy(
+      schema.tableVersions.tableIdentifier,
+      desc(schema.tableVersions.version),
+    );
+
+  if (tableVersions.length !== input.dependencies.length) {
+    throw new Error("Some dependencies could not be resolved");
+  }
+
+  return tableVersions;
+}
+
+export async function listTableVersions(
+  input: {
+    tableIdentifier: string;
+    version: number;
+  }[],
+) {
+  if (input.length === 0) {
+    return [];
+  }
+
+  const dependencyPairs = input
+    .map(({ tableIdentifier: ti, version: v }) => `('${ti}', ${v})`)
+    .join(", ");
+
+  // @TS: would rather not use a raw query here so we can rely on drizzle
+  // to serialize the table columns, but having trouble we specifying the
+  // VALUES pairs (maybe because they're aren't homogeneous types?)
+  const whereClause = sql.raw(`EXISTS (
+      SELECT 1
+      FROM (VALUES ${dependencyPairs}) AS pairs(table_identifier, version)
+      WHERE pairs.table_identifier = table_version.table_identifier AND pairs.version = table_version.version
+  )`);
+
+  return await db
+    .selectDistinctOn([schema.tableVersions.tableIdentifier])
+    .from(schema.tableVersions)
+    .where(whereClause);
 }
 
 export async function updateTable(userId: string, input: TableUpdateInput) {
@@ -174,11 +240,13 @@ export async function publishVersion(
     .insert(schema.tableVersions)
     .values({
       version,
+      tableIdentifier: buildTableIdentifier(username, input.tableSlug),
       ownerId: userId,
+      ownerUsername: username,
       tableSlug: input.tableSlug,
       title: table.title,
       definition: table.definition,
-      description: input.description ?? table.description,
+      releaseNotes: input.releaseNotes,
       availableTables: table.availableTables,
     })
     .returning()

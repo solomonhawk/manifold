@@ -7,27 +7,32 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { memo, type RefObject, useCallback } from "react";
 
 import {
-  currentTableHash,
-  exportedOnly,
-  rollHistory,
+  canRollResultAtom,
+  currentTableHashAtom,
+  type EditorStatus,
+  editorStatusAtom,
+  exportedOnlyAtom,
+  rollHistoryAtom,
   type TableMetadata,
-  visibleTableMetadata,
+  visibleTableMetadataAtom,
 } from "../state";
 import { workerInstance } from "../worker";
 
 let id = 0;
 
-export const AvailableTables = memo(function AvailableTables({
+export const RollableTables = memo(function AvailableTables({
   inputRef,
   onRoll,
 }: {
   inputRef: RefObject<HTMLTextAreaElement>;
   onRoll?: () => void;
 }) {
-  const tableHash = useAtomValue(currentTableHash);
-  const tableMetadata = useAtomValue(visibleTableMetadata);
-  const [showExportedOnly, setShowExportedOnly] = useAtom(exportedOnly);
-  const setRollResults = useSetAtom(rollHistory);
+  const tableHash = useAtomValue(currentTableHashAtom);
+  const tableMetadata = useAtomValue(visibleTableMetadataAtom);
+  const isEnabled = useAtomValue(canRollResultAtom);
+  const status = useAtomValue(editorStatusAtom);
+  const [showExportedOnly, setShowExportedOnly] = useAtom(exportedOnlyAtom);
+  const setRollResults = useSetAtom(rollHistoryAtom);
 
   const handleRoll = useCallback(
     async function handleRoll(e: React.MouseEvent, table: TableMetadata) {
@@ -63,7 +68,11 @@ export const AvailableTables = memo(function AvailableTables({
   return (
     <div className="flex flex-col gap-16 p-16">
       <div className="flex items-center">
-        <span className="mr-auto text-sm font-semibold">Available Tables:</span>
+        <span className="mr-auto text-sm font-semibold">
+          {status === "valid"
+            ? "Available Tables:"
+            : displayEditorStatus(status)}
+        </span>
 
         <Checkbox
           id="exported"
@@ -102,6 +111,7 @@ export const AvailableTables = memo(function AvailableTables({
                     variant="outline"
                     onClick={(e) => handleRoll(e, table)}
                     className={table.export ? "font-semibold" : undefined}
+                    disabled={!isEnabled}
                   >
                     {table.title}
                   </Button>
@@ -113,3 +123,20 @@ export const AvailableTables = memo(function AvailableTables({
     </div>
   );
 });
+
+function displayEditorStatus(status: EditorStatus) {
+  switch (status) {
+    case "initial":
+      return "Loading...";
+    case "parsing":
+      return "Parsing...";
+    case "parse_error":
+      return "Parse Error";
+    case "validation_error":
+      return "Validation Error";
+    case "fetching_dependencies":
+      return "Fetching Dependencies...";
+    default:
+      return "Unknown Status";
+  }
+}

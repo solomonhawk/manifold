@@ -22,7 +22,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -54,13 +53,15 @@ type Props = TablePublishVersionInput & {
   totalVersionCount: number;
 };
 
-const schema = z.object({ description: z.string().optional() });
+const schema = z.object({ releaseNotes: z.string().optional() });
 type FormData = z.infer<typeof schema>;
 
 export const TablePublishDialog = ({
+  tableId,
+  tableSlug,
   recentVersions,
   totalVersionCount,
-  tableSlug,
+  dependencies,
 }: Props) => {
   const modal = useModal();
   const returnFocus = useReturnFocus(modal.visible);
@@ -68,7 +69,7 @@ export const TablePublishDialog = ({
   const publishTableMutation = usePublishTable({
     slug: tableSlug,
     onSuccess: () => {
-      form.reset({ description: "" });
+      form.reset({ releaseNotes: "" });
       publishTableMutation.reset();
       modal.hide();
     },
@@ -78,12 +79,18 @@ export const TablePublishDialog = ({
 
   const form = useZodForm({
     schema,
-    defaultValues: { description: "" },
+    defaultValues: { releaseNotes: "" },
   });
 
   const handleSubmit: SubmitHandler<FormData> = async (data) => {
     await publishTableMutation
-      .mutateAsync({ tableSlug, description: data.description })
+      // @TODO: dependencies
+      .mutateAsync({
+        tableId,
+        tableSlug,
+        releaseNotes: data.releaseNotes,
+        dependencies,
+      })
       .catch((e) => {
         log.error(e);
       });
@@ -171,12 +178,12 @@ export const TablePublishDialog = ({
                         {new Date(version.createdAt).toLocaleDateString()}
                       </div>
 
-                      {version.description && (
+                      {version.releaseNotes && (
                         <pre
                           className="mt-4 line-clamp-2 text-ellipsis whitespace-break-spaces border-l-2 border-muted pl-8 font-sans text-xs text-muted-foreground/70"
-                          title={version.description}
+                          title={version.releaseNotes}
                         >
-                          {version.description}
+                          {version.releaseNotes}
                         </pre>
                       )}
                     </li>
@@ -192,7 +199,7 @@ export const TablePublishDialog = ({
             <fieldset disabled={form.formState.isSubmitting}>
               <FormField
                 control={form.control}
-                name="description"
+                name="releaseNotes"
                 render={({ field }) => (
                   <FormItem className="mb-24">
                     <FormLabel>Release Notes</FormLabel>
@@ -202,11 +209,6 @@ export const TablePublishDialog = ({
                     </FormControl>
 
                     <FormMessage />
-
-                    <FormDescription>
-                      This description will be visible to anyone who views this
-                      table.
-                    </FormDescription>
                   </FormItem>
                 )}
               />

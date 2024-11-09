@@ -23,6 +23,7 @@ export function useUpdateTable({
       await onSuccess?.(data);
 
       // update query cache (list + get)
+      // @ ts-expect-error - account for table dependencies after update
       trpcUtils.table.get.setData(
         {
           username: userProfile.username,

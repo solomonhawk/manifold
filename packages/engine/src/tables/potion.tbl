@@ -1,13 +1,13 @@
 ---
-title: Potion
 id: potion
+title: Potion
 export: true
 ---
 1: {{potion-descriptor|indefinite|capitalize}} {{color}} {{potion-substance}} {{containment}} {{container-descriptor|indefinite}} {{container-shape}} {{container-material}} {{container-type}}. It smells like {{smell}} and {{potion-attribute}}. {{potion-effect}}
 
 ---
-title: Containment
 id: containment
+title: Containment
 ---
 1: contained within
 1: trapped in
@@ -21,8 +21,8 @@ id: containment
 1: resting in
 
 ---
-title: Potion Descriptor
 id: potion-descriptor
+title: Potion Descriptor
 ---
 1: fresh
 1: ripe
@@ -61,8 +61,8 @@ id: potion-descriptor
 1: sludgy
 
 ---
-title: Color
 id: color
+title: Color
 ---
 1: red
 1: orange
@@ -102,8 +102,8 @@ id: color
 1: maroon
 
 ---
-title: Potion Substance
 id: potion-substance
+title: Potion Substance
 ---
 5: liquid
 2: gelatin
@@ -115,8 +115,8 @@ id: potion-substance
 1: foam
 
 ---
-title: Container Descriptor
 id: container-descriptor
+title: Container Descriptor
 ---
 1: twisted
 1: jagged
@@ -134,8 +134,8 @@ id: container-descriptor
 1: painted
 
 ---
-title: Container Material
 id: container-material
+title: Container Material
 ---
 5: glass
 2: crystal
@@ -147,8 +147,8 @@ id: container-material
 1: bone
 
 ---
-title: Container Shape
 id: container-shape
+title: Container Shape
 ---
 1: round
 1: spherical
@@ -165,8 +165,8 @@ id: container-shape
 1: {{3d4}}-dimensional
 
 ---
-title: Container Type
 id: container-type
+title: Container Type
 ---
 1: vial
 1: bottle
@@ -188,8 +188,8 @@ id: container-type
 1: elixir
 
 ---
-title: Smell
 id: smell
+title: Smell
 ---
 1: roses
 1: lavender
@@ -225,8 +225,8 @@ id: smell
 1: {{root-material}}root
 
 ---
-title: Root Material
 id: root-material
+title: Root Material
 ---
 1: pine
 1: oak
@@ -238,8 +238,8 @@ id: root-material
 1: ginger
 
 ---
-title: Attribute
 id: potion-attribute
+title: Attribute
 ---
 1: glows with a dim {{color}} light
 1: it shimmers and swirls curiously
@@ -270,8 +270,8 @@ id: potion-attribute
 1: if you close your eyes, it makes you {{emotion}}
 
 ---
-title: Emotion
 id: emotion
+title: Emotion
 ---
 1: happy
 1: sad
@@ -287,8 +287,8 @@ id: emotion
 1: hated
 
 ---
-title: Potion Effect
 id: potion-effect
+title: Potion Effect
 ---
 1: Regular with a slight side effect. {{effect}}. {{side-effect}}.
 1: Regular with no side effect. {{effect}}.
@@ -302,8 +302,8 @@ id: potion-effect
 0.1: Seemingly permanent. {{effect}}. {{side-effect}}.
 
 ---
-title: Effect
 id: effect
+title: Effect
 ---
 1: Healing. It instantly regenerates some health when drank
 1: Vigor. Gives temporary health when drank
@@ -407,8 +407,8 @@ id: effect
 1: Cure-all. Cures any status effects
 
 ---
-title: Side Effect
 id: side-effect
+title: Side Effect
 ---
 1: Nothing bad at all
 1: Puts the user to sleep
@@ -512,8 +512,8 @@ id: side-effect
 1: Laughter
 
 ---
-title: Magical Damage Types
 id: magical-damage-type
+title: Magical Damage Types
 ---
 1: acid
 1: bludgeoning

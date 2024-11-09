@@ -5,6 +5,7 @@ use serde::Serialize;
 use std::collections::HashMap;
 use thiserror::Error;
 use wasm_bindgen::prelude::*;
+use web_sys::console;
 
 #[derive(Debug, Clone, Error)]
 pub enum TableError {
@@ -14,12 +15,15 @@ pub enum TableError {
     InvalidDefinition(String),
     #[error("Invalid call: {0}")]
     CallError(String),
+    #[error("Missing dependency: {0}")]
+    MissingDependencyError(String, String),
 }
 
 #[wasm_bindgen]
 #[derive(Debug, Clone)]
 pub struct TableCollection {
     table_map: HashMap<String, TableDefinition>,
+    external_identifiers: Vec<String>,
 }
 
 #[wasm_bindgen]
@@ -28,31 +32,56 @@ impl TableCollection {
     pub fn new(table_definitions: &str) -> Result<TableCollection, JsError> {
         let mut table_map = HashMap::new();
         let tables = nom_parser::parse_tables(Span::new(table_definitions))
+            // @TODO: do something with `e`, better errors plz
             .map_err(|_e| TableError::ParseError(table_definitions.to_string()))?;
 
+        let mut external_identifiers: Vec<String> = vec![];
+
         for table in tables {
+            if table.namespace.is_none() {
+                external_identifiers.extend(table.external_identifiers());
+            }
+
             table_map.insert(table.id.clone(), table);
         }
 
-        let tabol = Self { table_map };
-
-        tabol.validate_tables()
+        Ok(Self {
+            table_map,
+            external_identifiers,
+        })
     }
 
-    fn validate_tables(self) -> Result<TableCollection, JsError> {
+    // @TODO: this should be able to say "here are the unresolved tables"
+    pub fn validate_tables(&self) -> Result<Vec<String>, JsError> {
+        let mut missing_identifiers: Vec<String> = vec![];
+
         for (table_id, table) in self.table_map.iter() {
-            for rule in table.rules.iter() {
-                if let Err(err) = rule.resolve(&self) {
-                    return Err(TableError::InvalidDefinition(format!(
-                        "in table \"{}\" for rule \"{}\". Original error: \"{}\"",
-                        table_id, rule.raw, err
-                    ))
-                    .into());
+            // only validate non-imported table definitions
+            // @ASSUMPTION: the imported tables are valid
+            if table.namespace.is_none() {
+                for rule in table.rules.iter() {
+                    if let Err(err) = rule.resolve(self) {
+                        console::log_1(&format!("{:?}", err).into());
+                        // only if the call error is missing table and the table is an external table?
+                        // always return all external references?
+                        match err {
+                            TableError::MissingDependencyError(_, id) => {
+                                missing_identifiers.push(id);
+                            }
+                            e => {
+                                return Err(TableError::InvalidDefinition(format!(
+                                    "in table \"{}\" for rule \"{}\". Original error: \"{}\"",
+                                    table_id, rule.raw, e
+                                ))
+                                .into())
+                            }
+                        };
+                    }
                 }
             }
         }
 
-        Ok(self)
+        Ok(missing_identifiers)
     }
 
     pub fn table_metadata(&self) -> Vec<JsValue> {
@@ -66,18 +95,26 @@ impl TableCollection {
             .collect()
     }
 
-    fn _gen(&self, id: &str) -> Result<String, TableError> {
+    pub fn dependencies(&self) -> Vec<String> {
+        self.external_identifiers.clone()
+    }
+
+    fn _gen(&self, id: &str, is_external: bool) -> Result<String, TableError> {
         self.table_map
             .get(id)
-            .ok_or(TableError::CallError(format!(
-                "No table found with id {}",
-                id
-            )))
+            .ok_or(if is_external {
+                TableError::MissingDependencyError(
+                    format!("Missing dependency with id {}", id),
+                    id.to_string(),
+                )
+            } else {
+                TableError::CallError(format!("No table found with id {}", id))
+            })
             .and_then(|table| table.gen(self))
     }
 
-    pub fn gen(&self, id: &str) -> Result<String, JsError> {
-        self._gen(id).map_err(|e| e.into())
+    pub fn gen(&self, id: &str, is_external: bool) -> Result<String, JsError> {
+        self._gen(id, is_external).map_err(|e| e.into())
     }
 
     fn _gen_many(&self, id: &str, count: usize) -> Result<Vec<String>, JsError> {
@@ -103,6 +140,7 @@ impl TableCollection {
 #[derive(Debug, Clone, Serialize)]
 pub struct TableDefinition {
     pub id: String,
+    pub namespace: Option<String>,
     pub title: String,
     pub export: bool,
     #[allow(unused)]
@@ -114,11 +152,21 @@ pub struct TableDefinition {
 }
 
 impl TableDefinition {
-    pub fn new(id: String, title: String, export: bool, rules: Vec<Rule>) -> Self {
+    pub fn new(
+        id: String,
+        namespace: Option<String>,
+        title: String,
+        export: bool,
+        mut rules: Vec<Rule>,
+    ) -> Self {
         let weights: Vec<f32> = rules.iter().map(|rule| rule.weight).collect();
+        let identifier = format_namespaced_id(&namespace, id);
+
+        namespaced_rules(&namespace, &mut rules);
 
         Self {
-            id,
+            id: identifier,
+            namespace: namespace.clone(),
             title,
             export,
             rules,
@@ -132,6 +180,13 @@ impl TableDefinition {
         let rule = &self.rules[self.distribution.sample(&mut rng)];
 
         rule.resolve(tables)
+    }
+
+    pub fn external_identifiers(&self) -> Vec<String> {
+        self.rules
+            .iter()
+            .flat_map(|r| r.external_identifiers())
+            .collect()
     }
 }
 
@@ -154,7 +209,16 @@ impl Rule {
                 RuleInst::DiceRoll(count, sides) => Ok(roll_dice(*count, *sides).to_string()),
                 RuleInst::Literal(str) => Ok(str.to_string()),
                 RuleInst::Interpolation(id, opts) => {
-                    let mut resolved = tables._gen(id)?;
+                    let mut resolved = tables._gen(id, false)?;
+
+                    for opt in opts {
+                        opt.apply(&mut resolved);
+                    }
+
+                    Ok(resolved)
+                }
+                RuleInst::ExternalInterpolation(_ns, _id, nsid, opts) => {
+                    let mut resolved = tables._gen(nsid, true)?;
 
                     for opt in opts {
                         opt.apply(&mut resolved);
@@ -167,13 +231,26 @@ impl Rule {
 
         Ok(resolved?.join(""))
     }
+
+    pub fn external_identifiers(&self) -> Vec<String> {
+        self.parts
+            .iter()
+            .filter_map(|p| match p {
+                RuleInst::ExternalInterpolation(ns, _id, _nsid, _vec) => Some(ns.to_string()),
+                _ => None,
+            })
+            .collect::<Vec<String>>()
+    }
 }
 
 #[derive(Debug, Clone, Serialize)]
 pub enum RuleInst {
     DiceRoll(usize, usize), // (count, sides)
     Literal(String),
+    // (table id, filters)
     Interpolation(String, Vec<FilterOp>),
+    // (namespace, table id, namespaced id, filters)
+    ExternalInterpolation(String, String, String, Vec<FilterOp>),
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -220,6 +297,35 @@ pub fn roll_dice(count: usize, sides: usize) -> usize {
     }
 
     total
+}
+
+pub fn format_namespaced_id(namespace: &Option<String>, id: String) -> String {
+    if namespace.is_some() {
+        format!("{}/{id}", namespace.clone().unwrap())
+    } else {
+        id
+    }
+}
+
+/**
+ * Replaces Interpolation table ID's with a namespace-prefixed id if there is
+ * a namespace that's being used.
+ */
+pub fn namespaced_rules<'a>(namespace: &Option<String>, rules: &'a mut [Rule]) -> &'a mut [Rule] {
+    if namespace.is_some() {
+        for rule in rules.iter_mut() {
+            for part in rule.parts.iter_mut() {
+                if let RuleInst::Interpolation(id, filters) = part {
+                    *part = RuleInst::Interpolation(
+                        format_namespaced_id(namespace, id.to_string()),
+                        filters.clone(),
+                    );
+                }
+            }
+        }
+    }
+
+    rules
 }
 
 #[cfg(test)]

@@ -1,3 +1,5 @@
+import { injectNamespacePragmasWorkaround } from "@manifold/lib";
+import type { RouterOutput } from "@manifold/router";
 import {
   Command,
   CommandEmpty,
@@ -19,7 +21,7 @@ import {
   useInteractions,
 } from "@manifold/ui/lib/floating-ui";
 import { cn } from "@manifold/ui/lib/utils";
-import { useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import {
   type ChangeEvent,
   type KeyboardEvent,
@@ -33,12 +35,22 @@ import {
 import type { RefCallBack } from "react-hook-form";
 import { Caret } from "textarea-caret-ts";
 
+import { useResolveDependencies } from "~features/table/api/resolve-dependencies";
 import { log } from "~utils/logger";
 
-import { currentTableHash, currentTableMetadata, rollHistory } from "./state";
+import {
+  currentAllResolvedDependenciesAtom,
+  currentTableDependenciesAtom,
+  currentTableHashAtom,
+  currentTableMetadataAtom,
+  editorStatusAtom,
+  rollHistoryAtom,
+} from "./state";
 import { workerInstance } from "./worker";
 
 type Selection = { start: number; end: number };
+
+type Dependencies = RouterOutput["table"]["get"]["dependencies"];
 
 type Props = {
   inputRef: MutableRefObject<HTMLTextAreaElement>;
@@ -50,7 +62,10 @@ type Props = {
   onBlur: () => void;
   onParseError: (error: string) => void;
   onParseSuccess: (availableTables: string[]) => void;
+  initialResolvedDependencies: Dependencies;
 };
+
+class MissingDependenciesError extends Error {}
 
 export function InputPanel({
   inputRef,
@@ -62,42 +77,92 @@ export function InputPanel({
   onBlur,
   onParseError,
   onParseSuccess,
+  initialResolvedDependencies,
 }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const selectionRef = useRef<Selection | null>(null);
   const menuPositionRef = useRef<Caret.Position | null>(null);
-  const setTableHash = useSetAtom(currentTableHash);
-  const setRollResults = useSetAtom(rollHistory);
-  const setTableMetadata = useSetAtom(currentTableMetadata);
+  const setTableHash = useSetAtom(currentTableHashAtom);
+  const setEditorStatus = useSetAtom(editorStatusAtom);
+  const setRollResults = useSetAtom(rollHistoryAtom);
+  const setTableMetadata = useSetAtom(currentTableMetadataAtom);
+  const [wantedDependencyIdentifiers, setWantedDependencyIdentifiers] = useAtom(
+    currentTableDependenciesAtom,
+  );
+  const [currentAllResolvedDependencies, setCurrentAllResolvedDependencies] =
+    useAtom(currentAllResolvedDependenciesAtom);
+
+  useResolveDependencies({
+    dependencies: wantedDependencyIdentifiers,
+    onSuccess: (resolvedUpdatedDependencies) => {
+      setCurrentAllResolvedDependencies(resolvedUpdatedDependencies);
+      parseAndValidate(value, resolvedUpdatedDependencies);
+    },
+  });
 
   const [isInlineEditorCommandPaletteOpen, setInlineEditorCommandPaletteOpen] =
     useState(false);
 
   const parseAndValidate = useCallback(
-    async function parseAndValidate(value: string) {
+    async function parseAndValidate(
+      value: string,
+      updatedResolvedDependencies: Dependencies,
+    ) {
       try {
         let availableTables: string[] = [];
 
-        if (value) {
-          const { hash, metadata } = await workerInstance.parse(value);
+        if (!value) {
+          setTableHash(null);
+          setTableMetadata([]);
+        } else {
+          setEditorStatus("parsing");
 
+          const valueWithDependencies = injectNamespacePragmasWorkaround(
+            value.trim(),
+            updatedResolvedDependencies,
+          );
+
+          const { hash, metadata, dependencies, missingDependencies } =
+            await workerInstance.parse(valueWithDependencies);
+
+          setWantedDependencyIdentifiers(dependencies);
+
+          if (missingDependencies.length > 0) {
+            throw new MissingDependenciesError(
+              `Missing dependencies: ${missingDependencies.join(", ")}`,
+            );
+          }
+
+          setEditorStatus("valid");
           setTableHash(hash);
           setTableMetadata(metadata);
 
-          availableTables = metadata.map((m) => m.id);
-        } else {
-          setTableHash(null);
-          setTableMetadata([]);
+          availableTables = metadata
+            .filter((m) => m.namespace === undefined)
+            .map((m) => m.id);
         }
 
         onParseSuccess(availableTables);
       } catch (e: unknown) {
         log.error(e);
 
+        if (e instanceof MissingDependenciesError) {
+          setEditorStatus("validation_error");
+        } else {
+          setEditorStatus("parse_error");
+        }
+
         onParseError(String(e));
       }
     },
-    [onParseSuccess, onParseError, setTableHash, setTableMetadata],
+    [
+      onParseSuccess,
+      setEditorStatus,
+      setWantedDependencyIdentifiers,
+      setTableHash,
+      setTableMetadata,
+      onParseError,
+    ],
   );
 
   const updateValueSelectionAndTable = useCallback(
@@ -107,10 +172,10 @@ export function InputPanel({
         end: selectionEnd,
       };
 
-      parseAndValidate(currentValue.trim());
+      parseAndValidate(currentValue, currentAllResolvedDependencies);
       onChange(currentValue);
     },
-    [onChange, parseAndValidate],
+    [onChange, currentAllResolvedDependencies, parseAndValidate],
   );
 
   const handleKeyDown = useCallback((e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -142,14 +207,14 @@ export function InputPanel({
   const handleCreateNewSubtable = useCallback(() => {
     // just append a new basic table to the end
     const currentValue = value.trim();
-    const newTable = "---\ntitle: Table\nid: table\n---\n1: outcome";
+    const newTable = "---\nid: table\ntitle: Table\n---\n1: variant";
     const modifiedValue = currentValue.length
       ? `${currentValue}\n\n${newTable}`
       : newTable;
 
     // @XXX: magic numbers that depend on the `newTable` above
-    const selectionStart = modifiedValue.length - 30;
-    const selectionEnd = modifiedValue.length - 25;
+    const selectionStart = modifiedValue.length - 33;
+    const selectionEnd = selectionStart + 5;
 
     setInlineEditorCommandPaletteOpen(false);
     updateValueSelectionAndTable(modifiedValue, selectionStart, selectionEnd);
@@ -171,14 +236,18 @@ export function InputPanel({
 
   useEffect(() => {
     if (value) {
-      parseAndValidate(value);
+      setCurrentAllResolvedDependencies(initialResolvedDependencies);
+      parseAndValidate(value, initialResolvedDependencies);
     }
 
     // oof, maybe I can put the jotai atoms into a context?
     return () => {
+      console.log("input-panel unmount");
       setRollResults([]);
       setTableHash(null);
       setTableMetadata([]);
+      setEditorStatus("initial");
+      setWantedDependencyIdentifiers([]);
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -209,7 +278,7 @@ export function InputPanel({
       <Textarea
         id="table-editor-area"
         autoSize
-        className="resize-none bg-background/60 font-mono"
+        className="bg-background/60 resize-none font-mono"
         ref={(node) => {
           // @NOTE: kind of annoying, RHF wants to use a ref callback, but we also want to use a ref object
           refCallback(node);

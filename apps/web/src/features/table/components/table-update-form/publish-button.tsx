@@ -8,13 +8,16 @@ import {
   TooltipTrigger,
 } from "@manifold/ui/components/ui/tooltip";
 import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
+import { useAtomValue } from "jotai";
 import { GoPackageDependents } from "react-icons/go";
 
 import { DialogManager, DIALOGS } from "~features/dialog-manager";
+import { currentAllResolvedDependenciesAtom } from "~features/editor/components/editor/state";
 import { useIsPublishingTable } from "~features/table/api/publish";
 
 export type PublishButtonProps = {
-  slug: string;
+  tableId: string;
+  tableSlug: string;
   isEnabled: boolean;
   // @TODO: fix this type
   recentVersions: TableVersionSummary[];
@@ -22,7 +25,8 @@ export type PublishButtonProps = {
 };
 
 export function PublishButton({
-  slug,
+  tableId,
+  tableSlug,
   isEnabled,
   recentVersions,
   totalVersionCount,
@@ -30,6 +34,9 @@ export function PublishButton({
   const isPublishing = useIsPublishingTable();
   const isPending = useStateGuard(isPublishing, { min: 250 });
   const canPublish = !isPending && isEnabled;
+  const currentResolvedDependencies = useAtomValue(
+    currentAllResolvedDependenciesAtom,
+  );
 
   /**
    * @TODO: change this to <form onSubmit={..} /> and use a submit button. Can't
@@ -46,9 +53,14 @@ export function PublishButton({
             disabled={!canPublish}
             onClick={() =>
               DialogManager.show(DIALOGS.PUBLISH_TABLE.ID, {
-                tableSlug: slug,
+                tableId,
+                tableSlug,
                 recentVersions,
                 totalVersionCount,
+                dependencies: currentResolvedDependencies.map((d) => ({
+                  dependencyIdentifier: d.tableIdentifier,
+                  dependencyVersion: d.version,
+                })),
               })
             }
           >

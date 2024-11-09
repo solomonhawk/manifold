@@ -1,3 +1,4 @@
+@@PRAGMA namespace=@dyr/character
 ---
 title: Mono Races
 id: mono-race
@@ -8,6 +9,7 @@ id: mono-race
 1: Halfling
 1: Gnome
 
+@@PRAGMA namespace=@dyr/character
 ---
 title: Races
 id: race
@@ -15,6 +17,7 @@ id: race
 1: {{mono-race}}
 1: Half-{{mono-race}}
 
+@@PRAGMA namespace=@dyr/character
 ---
 title: Classes
 id: class
@@ -32,6 +35,7 @@ id: class
 1: Sorcerer
 1: Warlock
 
+@@PRAGMA namespace=@dyr/character
 ---
 title: Alignment
 id: alignment
@@ -46,6 +50,7 @@ id: alignment
 1: Neutral Evil
 1: Chaotic Evil
 
+@@PRAGMA namespace=@dyr/character
 ---
 title: First Names
 id: first-name
@@ -61,6 +66,7 @@ id: first-name
 1: Gimli
 1: Boromir
 
+@@PRAGMA namespace=@dyr/character
 ---
 title: Last Names
 id: last-name
@@ -76,6 +82,7 @@ id: last-name
 1: Oakenshield
 1: Hornblower
 
+@@PRAGMA namespace=@dyr/character
 ---
 title: Birthplace
 id: birthplace
@@ -85,6 +92,7 @@ id: birthplace
 5: a small {{geographic-feature}} city
 1: the wilds outside {{city}}
 
+@@PRAGMA namespace=@dyr/character
 ---
 title: City
 id: city
@@ -100,6 +108,7 @@ id: city
 1: Triboar
 1: Yartar
 
+@@PRAGMA namespace=@dyr/character
 ---
 title: Geographic Features
 id: geographic-feature
@@ -113,6 +122,7 @@ id: geographic-feature
 1: tundra
 1: island
 
+@@PRAGMA namespace=@dyr/character
 ---
 title: Economic Pursuits
 id: economic-pursuit
@@ -126,6 +136,7 @@ id: economic-pursuit
 1: steelworking
 1: merchant
 
+@@PRAGMA namespace=@dyr/character
 ---
 title: Reputation
 id: reputation
@@ -139,6 +150,7 @@ id: reputation
 1: untrustworthy
 1: criminal
 
+@@PRAGMA namespace=@dyr/character
 ---
 title: Professions
 id: profession
@@ -179,6 +191,7 @@ id: profession
 1: beggar
 1: banker
 
+@@PRAGMA namespace=@dyr/character
 ---
 title: Skill Levels
 id: skill-level
@@ -190,6 +203,7 @@ id: skill-level
 2: master
 1: grandmaster
 
+@@PRAGMA namespace=@dyr/character
 ---
 title: NPC
 id: npc

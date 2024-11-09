@@ -9,3 +9,14 @@ services:
       POSTGRES_DB: postgres
     volumes:
       - ./dbdata/postgres:/var/lib/postgresql/data
+
+  arango:
+    image: arangodb/arangodb:3.12.3
+    ports:
+      - "8529:8529"
+    environment:
+      ARANGO_ROOT_PASSWORD: root
+      ARANGO_STORAGE_ENGINE: rocksdb
+      ARANGO_NO_AUTH: 1
+    volumes:
+      - ./dbdata/arango:/var/lib/arangodb3

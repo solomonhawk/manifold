@@ -17,5 +17,5 @@ export type TableVersionSummary = {
   ownerId: string;
   createdAt: string;
   definition: string;
-  description: string;
+  releaseNotes: string;
 };

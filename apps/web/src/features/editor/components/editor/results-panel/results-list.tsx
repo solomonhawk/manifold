@@ -16,7 +16,7 @@ import { memo, type RefObject, useCallback, useState } from "react";
 import { GoCheck, GoPaste, GoX } from "react-icons/go";
 
 import {
-  rollHistory,
+  rollHistoryAtom,
   type RollResult,
 } from "~features/editor/components/editor/state";
 
@@ -26,7 +26,7 @@ export function RollResults({
   listRef: RefObject<HTMLUListElement>;
 }) {
   const [listOverflowing, setListOverflowing] = useState(false);
-  const [rollResults, setRollResults] = useAtom(rollHistory);
+  const [rollResults, setRollResults] = useAtom(rollHistoryAtom);
 
   const handleClearResults = useCallback(
     function handleClearResults() {

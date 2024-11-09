@@ -201,7 +201,7 @@ FormSubmitStatus.displayName = "FormSubmitStatus";
 
 const FormSubmitButton = React.forwardRef<
   HTMLButtonElement,
-  React.HTMLAttributes<HTMLButtonElement> & {
+  React.ButtonHTMLAttributes<HTMLButtonElement> & {
     form?: string;
     savingText?: string;
     requireDirty?: boolean;
@@ -238,9 +238,9 @@ const FormSubmitButton = React.forwardRef<
       <Button
         ref={ref}
         form={form}
+        type="submit"
         {...props}
         disabled={isDisabled}
-        type="submit"
       >
         {showPendingState ? (
           <span className="flex items-center gap-6">

@@ -52,6 +52,10 @@ id: variable_frequency
 | `-c`, `--count`      | (default 10): how many to generate                                   |
 | `--debug`            | turn on debug logging                                                |
 
+### Example
+
+    $ cargo run -- --table potion --definition potion
+
 ## TODO
 
 - [ ] optional interpolations?

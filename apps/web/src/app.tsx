@@ -22,7 +22,7 @@ export function App() {
   );
 
   return (
-    <SessionProvider>
+    <SessionProvider refetchOnWindowFocus={true}>
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
         <QueryClientProvider client={queryClient}>
           <TooltipProvider delayDuration={300}>

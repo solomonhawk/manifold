@@ -30,6 +30,7 @@
   "dependencies": {
     "@manifold/auth": "*",
     "@manifold/db": "*",
+    "@manifold/graph": "*",
     "@manifold/lib": "*",
     "@manifold/validators": "*",
     "@trpc/server": "^10.45.2",

@@ -1,0 +1,30 @@
+{
+  "name": "@manifold/graph",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#*": "./src/*"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "dev": "open -a 'Arc' http://localhost:8529",
+    "repl": "docker exec -it manifold-arango-1 arangosh",
+    "lint": "eslint --cache \"**/*.{ts,tsx}\"",
+    "lint:fix": "eslint --cache --fix \"**/*.{ts,tsx}\" --max-warnings 0",
+    "lint:strict": "eslint --cache \"**/*.{ts,tsx}\" --max-warnings 0",
+    "seed": "tsx ./src/seed.ts"
+  },
+  "devDependencies": {
+    "@manifold/env": "*",
+    "@manifold/eslint-config": "*",
+    "@manifold/typescript-config": "*"
+  },
+  "dependencies": {
+    "@manifold/lib": "*",
+    "arangojs": "^9.1.0",
+    "dotenv": "^16.4.5"
+  }
+}

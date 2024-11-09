@@ -1,3 +1,4 @@
+import { buildTableIdentifier } from "@manifold/lib";
 import type { RouterOutput } from "@manifold/router";
 import { useSingletonToast } from "@manifold/ui/hooks/use-singleton-toast";
 import { useIsMutating } from "@tanstack/react-query";
@@ -31,7 +32,7 @@ export function usePublishTable({
       await onSuccess?.(data);
 
       toastSuccess(
-        `@${userProfile.username}/${slug} v${data.version} published`,
+        `${buildTableIdentifier(userProfile.username, slug)} v${data.version} published`,
       );
     },
     onError: (e) => {
