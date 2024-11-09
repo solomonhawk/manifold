@@ -1,6 +1,5 @@
 import type { RouterOutput } from "@manifold/router";
-import { toast } from "@manifold/ui/components/ui/toaster";
-import { useRef } from "react";
+import { useSingletonToast } from "@manifold/ui/hooks/use-singleton-toast";
 
 import { toastError, toastSuccess } from "~utils/toast";
 import { trpc } from "~utils/trpc";
@@ -11,13 +10,11 @@ export function useCreateTable({
   onSuccess?: (table: RouterOutput["table"]["create"]) => void;
 }) {
   const trpcUtils = trpc.useUtils();
-  const toastErrorId = useRef<string | number | undefined>(undefined);
+  const toastErrorInstance = useSingletonToast();
 
   return trpc.table.create.useMutation({
     onSuccess: async (data) => {
-      if (toastErrorId.current) {
-        toast.dismiss(toastErrorId.current);
-      }
+      toastErrorInstance.dismiss();
 
       trpcUtils.table.list.invalidate();
 
@@ -26,9 +23,11 @@ export function useCreateTable({
       toastSuccess("Table created");
     },
     onError: (e) => {
-      toastErrorId.current = toastError("Failed to create table", {
-        description: e.message,
-      });
+      toastErrorInstance.update(
+        toastError("Failed to create table", {
+          description: e.message,
+        }),
+      );
     },
   });
 }

@@ -1,7 +1,6 @@
-import { toast } from "@manifold/ui/components/ui/toaster";
+import { useSingletonToast } from "@manifold/ui/hooks/use-singleton-toast";
 import { useIsMutating } from "@tanstack/react-query";
 import { getQueryKey } from "@trpc/react-query";
-import { useRef } from "react";
 
 import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
 import { log } from "~utils/logger";
@@ -18,14 +17,12 @@ export function useDeleteTable({
   onSuccess?: () => void;
 }) {
   const trpcUtils = trpc.useUtils();
-  const toastErrorId = useRef<string | number | undefined>(undefined);
+  const toastErrorInstance = useSingletonToast();
   const userProfile = useRequiredUserProfile();
 
   return trpc.table.delete.useMutation({
     onSuccess: async () => {
-      if (toastErrorId.current) {
-        toast.dismiss(toastErrorId.current);
-      }
+      toastErrorInstance.dismiss();
 
       await Promise.all([
         trpcUtils.table.list.refetch(),
@@ -41,9 +38,11 @@ export function useDeleteTable({
     onError: (e) => {
       log.error(e);
 
-      toastErrorId.current = toastError("Failed to delete table", {
-        description: e.message,
-      });
+      toastErrorInstance.update(
+        toastError("Failed to delete table", {
+          description: e.message,
+        }),
+      );
     },
   });
 }

@@ -1,8 +1,7 @@
 import type { RouterOutput } from "@manifold/router";
-import { toast } from "@manifold/ui/components/ui/toaster";
+import { useSingletonToast } from "@manifold/ui/hooks/use-singleton-toast";
 import { useIsMutating } from "@tanstack/react-query";
 import { getQueryKey } from "@trpc/react-query";
-import { useRef } from "react";
 
 import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
 import { toastError, toastSuccess } from "~utils/toast";
@@ -17,13 +16,11 @@ export function usePublishTable({
 }) {
   const userProfile = useRequiredUserProfile();
   const trpcUtils = trpc.useUtils();
-  const toastErrorId = useRef<string | number | undefined>(undefined);
+  const toastErrorInstance = useSingletonToast();
 
   return trpc.table.publish.useMutation({
     onSuccess: async (data) => {
-      if (toastErrorId.current) {
-        toast.dismiss(toastErrorId.current);
-      }
+      toastErrorInstance.dismiss();
 
       // invalidate get query
       await trpcUtils.table.get.invalidate({
@@ -38,9 +35,11 @@ export function usePublishTable({
       );
     },
     onError: (e) => {
-      toastErrorId.current = toastError("Failed to publish", {
-        description: e.message,
-      });
+      toastErrorInstance.update(
+        toastError("Failed to publish", {
+          description: e.message,
+        }),
+      );
     },
   });
 }

@@ -1,6 +1,5 @@
 import type { RouterOutput } from "@manifold/router";
-import { toast } from "@manifold/ui/components/ui/toaster";
-import { useRef } from "react";
+import { useSingletonToast } from "@manifold/ui/hooks/use-singleton-toast";
 
 import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
 import { log } from "~utils/logger";
@@ -20,13 +19,11 @@ export function useFavoriteTable({
 }) {
   const userProfile = useRequiredUserProfile();
   const trpcUtils = trpc.useUtils();
-  const toastErrorId = useRef<string | number | undefined>(undefined);
+  const toastErrorInstance = useSingletonToast();
 
   return trpc.table.update.useMutation({
     onSuccess: async (data) => {
-      if (toastErrorId.current) {
-        toast.dismiss(toastErrorId.current);
-      }
+      toastErrorInstance.dismiss();
 
       await onSuccess?.(data);
 
@@ -57,9 +54,11 @@ export function useFavoriteTable({
     onError: (e) => {
       log.error(e);
 
-      toastErrorId.current = toastError("Failed to update favorite status", {
-        description: e.message,
-      });
+      toastErrorInstance.update(
+        toastError("Failed to update favorite status", {
+          description: e.message,
+        }),
+      );
     },
   });
 }

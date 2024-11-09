@@ -1,7 +1,6 @@
-import { toast } from "@manifold/ui/components/ui/toaster";
+import { useSingletonToast } from "@manifold/ui/hooks/use-singleton-toast";
 import { useIsMutating } from "@tanstack/react-query";
 import { getQueryKey } from "@trpc/react-query";
-import { useRef } from "react";
 
 import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
 import { log } from "~utils/logger";
@@ -17,13 +16,11 @@ export function useRestoreTable({
 }) {
   const userProfile = useRequiredUserProfile();
   const trpcUtils = trpc.useUtils();
-  const toastErrorId = useRef<string | number | undefined>(undefined);
+  const toastErrorInstance = useSingletonToast();
 
   return trpc.table.restore.useMutation({
     onSuccess: async () => {
-      if (toastErrorId.current) {
-        toast.dismiss(toastErrorId.current);
-      }
+      toastErrorInstance.dismiss();
 
       // lazily invalidate table list and favorites queries to ensure order is accurate (based on `updatedAt`)
       trpcUtils.table.list.invalidate();
@@ -40,9 +37,11 @@ export function useRestoreTable({
     onError: (e) => {
       log.error(e);
 
-      toastErrorId.current = toastError("Failed to restore table", {
-        description: e.message,
-      });
+      toastErrorInstance.update(
+        toastError("Failed to restore table", {
+          description: e.message,
+        }),
+      );
     },
   });
 }
