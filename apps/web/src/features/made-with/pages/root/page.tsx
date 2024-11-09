@@ -114,8 +114,8 @@ const CLIENT: MadeWithSection = {
           url: "https://tailwindcss.com/",
         },
         {
-          label: "React Query",
-          url: "https://react-query.tanstack.com/",
+          label: "Tanstack React Query",
+          url: "https://tanstack.com/query/v4",
         },
         {
           label: "comlink",

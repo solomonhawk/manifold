@@ -56,7 +56,7 @@ export function SectionGroup({ title, children }: GroupProps) {
   return (
     <section>
       {title && (
-        <h4 className="mt-16 pb-4 text-sm font-semibold sm:text-base md:pb-8">
+        <h4 className="mt-16 pb-4 text-sm font-semibold sm:text-base">
           {title}
         </h4>
       )}

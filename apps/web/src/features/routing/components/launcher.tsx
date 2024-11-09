@@ -3,12 +3,16 @@ import {
   CommandGroup,
   CommandItem,
   CommandSeparator,
-  CommandShortcut,
 } from "@manifold/ui/components/ui/command";
 import { Skeleton } from "@manifold/ui/components/ui/skeleton";
 import { useCommandPalette } from "@manifold/ui/hooks/use-command-palette";
 import { GoFile, GoFileSymlinkFile } from "react-icons/go";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Link,
+  type NavigateOptions,
+  type To,
+  useNavigate,
+} from "react-router-dom";
 
 import { useAuth } from "~features/auth/hooks/use-auth";
 import { useListTables } from "~features/table/api/list";
@@ -26,7 +30,7 @@ export function Launcher() {
     },
   });
 
-  function handleCreateTable() {
+  function navigateAndDismissLauncher(to: To, options?: NavigateOptions) {
     closeCommandPalette();
 
     /**
@@ -47,7 +51,7 @@ export function Launcher() {
      * as of right now.
      */
     requestAnimationFrame(() => {
-      navigate("/table/new");
+      navigate(to, options);
     });
   }
 
@@ -56,10 +60,28 @@ export function Launcher() {
   return (
     <CommandPalette isOpen={isCommandPaletteOpen} onClose={closeCommandPalette}>
       <CommandGroup heading="Quick Actions">
-        <CommandItem onSelect={handleCreateTable}>
-          <GoFileSymlinkFile />
-          <span>Create a new Table</span>
-          <CommandShortcut>⌘E</CommandShortcut>
+        <CommandItem
+          asChild
+          onSelect={() => {
+            navigateAndDismissLauncher("/table/new");
+          }}
+        >
+          <Link to="/table/new">
+            <GoFileSymlinkFile />
+            <span>Create a new Table</span>
+          </Link>
+        </CommandItem>
+
+        <CommandItem
+          asChild
+          onSelect={() => {
+            navigateAndDismissLauncher("/");
+          }}
+        >
+          <Link to="/">
+            <GoFileSymlinkFile />
+            <span>Go to Dashboard</span>
+          </Link>
         </CommandItem>
       </CommandGroup>
 
@@ -69,8 +91,6 @@ export function Launcher() {
         <CommandGroup heading="Your Tables">
           {tablesQuery.isLoading && (
             <div className="space-y-8">
-              <Skeleton className="h-44" />
-              <Skeleton className="h-44" />
               <Skeleton className="h-44" />
             </div>
           )}
@@ -83,8 +103,9 @@ export function Launcher() {
                   key={table.id}
                   asChild
                   onSelect={() => {
-                    navigate(`/t/${username}/${table.slug}/edit`);
-                    closeCommandPalette();
+                    navigateAndDismissLauncher(
+                      `/t/${username}/${table.slug}/edit`,
+                    );
                   }}
                 >
                   <Link to={`/t/${username}/${table.slug}/edit`}>

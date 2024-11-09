@@ -115,7 +115,7 @@ export function TableList({
       </CardHeader>
 
       <CardContent className={cn({ "opacity-50": isPending })}>
-        <AnimatedList className="grid grid-cols-2 gap-12 transition-opacity sm:grid-cols-3 sm:gap-16 md:grid-cols-[repeat(auto-fill,minmax(150px,200px))]">
+        <AnimatedList className="grid grid-cols-3 gap-12 transition-opacity sm:grid-cols-4 sm:gap-16 md:grid-cols-[repeat(auto-fill,minmax(120px,180px))]">
           {listQuery.data.length === 0 && (
             <AnimatedListItem
               className="col-span-full flex items-center gap-16 text-center text-gray-500"
@@ -151,9 +151,10 @@ export function TableList({
                           : `/t/${userProfile.username}/${table.slug}/edit`
                       }
                       state={{ table }}
+                      title={table.title}
                     >
                       <div className="z-20 translate-y-14 transition-transform group-hover:translate-y-0">
-                        <h2 className="whitespace-normal text-center text-lg !leading-tight sm:text-xl">
+                        <h2 className="line-clamp-2 whitespace-normal text-center text-sm !leading-tight sm:text-base md:text-lg">
                           {table.title}
                         </h2>
                       </div>
