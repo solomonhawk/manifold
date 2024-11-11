@@ -240,9 +240,8 @@ export function InputPanel({
       parseAndValidate(value, initialResolvedDependencies);
     }
 
-    // oof, maybe I can put the jotai atoms into a context?
+    // @TODO: oof, maybe I can put the jotai atoms into a context?
     return () => {
-      console.log("input-panel unmount");
       setRollResults([]);
       setTableHash(null);
       setTableMetadata([]);
@@ -278,7 +277,7 @@ export function InputPanel({
       <Textarea
         id="table-editor-area"
         autoSize
-        className="bg-background/60 resize-none font-mono"
+        className="resize-none bg-background/60 font-mono"
         ref={(node) => {
           // @NOTE: kind of annoying, RHF wants to use a ref callback, but we also want to use a ref object
           refCallback(node);

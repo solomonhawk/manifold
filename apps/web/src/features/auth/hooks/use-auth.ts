@@ -1,12 +1,25 @@
 import { useSession } from "@manifold/auth/client";
-import { useMemo } from "react";
+import deepEqual from "fast-deep-equal";
+import { useEffect, useState } from "react";
 
 export function useAuth() {
-  return useSession();
+  const currentSession = useSession();
+  const [session, setSession] = useState(currentSession);
+
+  useEffect(() => {
+    if (
+      currentSession.status !== session.status ||
+      !deepEqual(currentSession.data, session.data)
+    ) {
+      setSession(currentSession);
+    }
+  }, [session, currentSession]);
+
+  return session;
 }
 
 export function useRequiredAuth() {
-  const session = useSession();
+  const session = useAuth();
 
   if (session.status !== "authenticated") {
     // @TODO: Redirect? This is covered by the `protectedLoader` at the router
@@ -14,5 +27,5 @@ export function useRequiredAuth() {
     throw new Error("Authentication required");
   }
 
-  return useMemo(() => session, [session]);
+  return session;
 }
