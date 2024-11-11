@@ -1,6 +1,6 @@
 use nom::{
     bytes::complete::{take_until, take_while1},
-    character::complete::{digit1, line_ending, multispace0, not_line_ending},
+    character::complete::{digit1, line_ending, not_line_ending},
     combinator::{map_parser, opt},
     error::make_error,
     multi::{fold_many1, many0, many1, separated_list1},
@@ -11,7 +11,6 @@ use nom::{
 use nom_locate::LocatedSpan;
 use nom_supreme::{error::ErrorTree, tag::complete::tag};
 use nom_supreme::{final_parser::final_parser, parser_ext::ParserExt};
-use std::collections::HashMap;
 
 use crate::table_collection::{FilterOp, Rule, RuleInst, TableDefinition};
 

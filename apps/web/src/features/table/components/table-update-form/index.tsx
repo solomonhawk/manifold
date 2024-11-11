@@ -208,7 +208,7 @@ export function TableUpdateForm({
               {portalRef.current &&
                 createPortal(
                   <>
-                    <FormSubmitStatus className="text-muted-foreground/80 mr-8 text-xs" />
+                    <FormSubmitStatus className="mr-8 text-xs text-muted-foreground/80" />
 
                     <FormPrimaryActionButton />
 
@@ -216,7 +216,7 @@ export function TableUpdateForm({
                       tableId={table.id}
                       tableSlug={table.slug}
                       isEnabled={
-                        !form.formState.isDirty &&
+                        isEmpty(form.formState.dirtyFields) &&
                         form.formState.isValid &&
                         !form.formState.isSubmitting
                       }

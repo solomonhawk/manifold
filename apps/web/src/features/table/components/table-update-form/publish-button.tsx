@@ -34,6 +34,15 @@ export function PublishButton({
   const isPublishing = useIsPublishingTable();
   const isPending = useStateGuard(isPublishing, { min: 250 });
   const canPublish = !isPending && isEnabled;
+
+  /**
+   * Users may only publish a saved version of a table therefore using
+   * `currentAllResolvedDependenciesAtom` is safe here. This atom has _at least_
+   * all of the dependencies that the saved table depends on and possible more
+   * if the user has added new dependencies since the last save. If the user has
+   * removed dependencies since the last save, then this atom may have
+   * extraneous dependencies.
+   */
   const currentResolvedDependencies = useAtomValue(
     currentAllResolvedDependenciesAtom,
   );
