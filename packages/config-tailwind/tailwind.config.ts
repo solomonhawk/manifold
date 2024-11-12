@@ -58,6 +58,7 @@ const config = {
       ...remPair(240),
       ...remPair(256),
       ...remPair(384),
+      ...remPair(396),
     },
     extend: {
       colors: {

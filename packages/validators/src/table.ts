@@ -53,6 +53,14 @@ export const tableGetInput = z.object({
 
 export type TableGetInput = z.infer<typeof tableGetInput>;
 
+export const tableFindDependenciesInput = z.object({
+  searchQuery: z.string().min(1, { message: "Search query can’t be blank" }),
+});
+
+export type TableFindDependenciesInput = z.infer<
+  typeof tableFindDependenciesInput
+>;
+
 export const tableResolveDependenciesInput = z.object({
   dependencies: z.array(z.string()), // ["@username/table-id", ...]
 });

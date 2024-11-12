@@ -29,11 +29,7 @@ type Props = {
   tableIdentifier: string;
 };
 
-export const TableDeleteDialog = ({
-  title,
-  tableId,
-  tableIdentifier,
-}: Props) => {
+export function TableDeleteDialog({ title, tableId, tableIdentifier }: Props) {
   const modal = useModal();
   const returnFocus = useReturnFocus(modal.visible);
   const mutation = useDeleteTable({
@@ -62,7 +58,14 @@ export const TableDeleteDialog = ({
         }
       }}
     >
-      <AlertDialogContent className="gap-24">
+      <AlertDialogContent
+        className="gap-24"
+        onAnimationEnd={() => {
+          if (!modal.visible) {
+            modal.remove();
+          }
+        }}
+      >
         <AlertDialogHeader>
           <AlertDialogTitle>Delete “{title}”?</AlertDialogTitle>
           <AlertDialogDescription>
@@ -97,4 +100,4 @@ export const TableDeleteDialog = ({
       </AlertDialogContent>
     </AlertDialog>
   );
-};
+}

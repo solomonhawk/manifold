@@ -1,6 +1,8 @@
 import NiceModal, { type NiceModalHocProps } from "@ebay/nice-modal-react";
 import type { ComponentProps } from "react";
 
+import { FindDependencyDialog } from "~features/editor/components/find-dependency-dialog";
+import { PreviewDependencyDialog } from "~features/editor/components/preview-dependency-dialog";
 import { TableDeleteDialog } from "~features/table/components/table-delete-dialog";
 import { TablePublishDialog } from "~features/table/components/table-publish-dialog";
 
@@ -40,6 +42,14 @@ export const DIALOGS = {
   PUBLISH_TABLE: {
     ID: "PUBLISH_TABLE",
     COMPONENT: NiceModal.create(TablePublishDialog),
+  },
+  FIND_DEPENDENCY: {
+    ID: "FIND_DEPENDENCY",
+    COMPONENT: NiceModal.create(FindDependencyDialog),
+  },
+  PREVIEW_DEPENDENCY: {
+    ID: "PREVIEW_DEPENDENCY",
+    COMPONENT: NiceModal.create(PreviewDependencyDialog),
   },
 } as const;
 

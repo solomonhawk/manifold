@@ -237,6 +237,7 @@ export function TableUpdateForm({
                       <FormItem>
                         <FormControl>
                           <Editor
+                            tableIdentifier={table.tableIdentifier}
                             refCallback={ref}
                             onParseError={handleParseError}
                             onParseSuccess={handleParseSuccess}

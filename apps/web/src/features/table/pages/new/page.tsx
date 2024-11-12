@@ -15,7 +15,7 @@ export function TableNew() {
   const navigate = useNavigate();
 
   return (
-    <FlexCol className="items-center justify-center p-12 sm:p-16">
+    <FlexCol className="items-center justify-around overflow-auto p-12 sm:p-16">
       <Card className="mx-auto w-full max-w-md">
         <CardHeader>
           <CardTitle>New Table</CardTitle>

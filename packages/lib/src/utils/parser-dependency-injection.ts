@@ -9,7 +9,7 @@ export function injectNamespacePragmasWorkaround(
   const modifiedDependencyDefinitions = tableVersions
     .map(({ definition, tableIdentifier }) => {
       const pragma = `@@PRAGMA namespace=${tableIdentifier}\n`;
-      const tables = definition.split("\n\n");
+      const tables = definition.trim().split("\n\n");
 
       return `${pragma}${tables.join(`\n\n${pragma}`)}`;
     })

@@ -20,7 +20,10 @@ export function RootLayout() {
     <DialogManager.Provider>
       <RouteMeta />
 
-      <div className="bg-architect flex h-full flex-col">
+      <div
+        className="bg-architect flex h-full flex-col"
+        data-vaul-drawer-wrapper
+      >
         <GlobalHeader.Root>
           <GlobalHeader.Center>
             <PrefetchableLink

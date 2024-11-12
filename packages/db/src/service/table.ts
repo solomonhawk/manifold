@@ -5,6 +5,7 @@ import {
   type TableCreateInput,
   tableCreateInput,
   type TableDeleteInput,
+  type TableFindDependenciesInput,
   type TableGetInput,
   type TableListInput,
   type TableListOrderBy,
@@ -15,12 +16,15 @@ import {
 } from "@manifold/validators";
 import {
   and,
+  arrayContains,
   asc,
   desc,
   eq,
   getTableColumns,
+  ilike,
   inArray,
   isNull,
+  or,
   type SQL,
   sql,
 } from "drizzle-orm";
@@ -154,6 +158,35 @@ export async function findTable(userId: string, input: TableGetInput) {
     );
 
   return table;
+}
+
+export async function findDependencies(input: TableFindDependenciesInput) {
+  const tableVersions = await db
+    .selectDistinctOn([schema.tableVersions.tableIdentifier], {
+      ...getTableColumns(schema.tableVersions),
+      table: schema.tables,
+    })
+    .from(schema.tableVersions)
+    .where(
+      or(
+        ilike(schema.tableVersions.title, `%${input.searchQuery}%`),
+        ilike(schema.tableVersions.tableSlug, `%${input.searchQuery}%`),
+        ilike(schema.tableVersions.tableIdentifier, `%${input.searchQuery}%`),
+        arrayContains(schema.tableVersions.availableTables, [
+          input.searchQuery,
+        ]),
+      ),
+    )
+    .leftJoin(
+      schema.tables,
+      eq(schema.tables.tableIdentifier, schema.tableVersions.tableIdentifier),
+    )
+    .orderBy(
+      schema.tableVersions.tableIdentifier,
+      desc(schema.tableVersions.updatedAt),
+    );
+
+  return tableVersions;
 }
 
 export async function resolveDependencies(

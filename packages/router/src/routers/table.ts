@@ -5,6 +5,7 @@ import {
   isValidationError,
   tableCreateInput,
   tableDeleteInput,
+  tableFindDependenciesInput,
   tableGetInput,
   tableListInput,
   tablePublishVersionInput,
@@ -87,6 +88,12 @@ export const tableRouter = t.router({
       dependencies,
     };
   }),
+
+  findDependencies: t.procedure
+    .input(tableFindDependenciesInput)
+    .query(({ input }) => {
+      return tableService.findDependencies(input);
+    }),
 
   resolveDependencies: t.procedure
     .input(tableResolveDependenciesInput)

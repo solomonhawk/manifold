@@ -1,7 +1,7 @@
 {
   "name": "@manifold/engine",
   "scripts": {
-    "dev": "cargo watch -i .gitignore -s \"npm run build\"",
+    "dev:engine": "cargo watch -i .gitignore -s \"npm run build\"",
     "potion": "cargo run --release -- --definition potion",
     "build": "RUST_LOG=info wasm-pack build --release --target web --out-dir web/dist",
     "build:release": "cargo build --release",

@@ -207,6 +207,7 @@ const FormSubmitButton = React.forwardRef<
     requireDirty?: boolean;
     disabled?: boolean;
     isPending?: boolean;
+    minDuration?: number;
   }
 >(
   (
@@ -217,6 +218,7 @@ const FormSubmitButton = React.forwardRef<
       requireDirty = true,
       disabled = false,
       isPending = false,
+      minDuration = 250,
       ...props
     },
     ref,
@@ -224,11 +226,12 @@ const FormSubmitButton = React.forwardRef<
     const { formState } = useFormContext();
 
     const guardedIsSubmitting = useStateGuard(formState.isSubmitting, {
-      min: 250,
+      min: minDuration,
     });
 
     const isDirty = !isEmpty(formState.dirtyFields);
-    const showPendingState = isPending || guardedIsSubmitting;
+    const showPendingState =
+      isPending || (minDuration ? guardedIsSubmitting : formState.isSubmitting);
     const isDisabled =
       disabled || showPendingState || (requireDirty && !isDirty);
 

@@ -108,7 +108,13 @@ export const TablePublishDialog = ({
         }
       }}
     >
-      <AlertDialogContent>
+      <AlertDialogContent
+        onAnimationEnd={() => {
+          if (!modal.visible) {
+            modal.remove();
+          }
+        }}
+      >
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-8">
             <GoPackageDependents />

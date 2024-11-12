@@ -12,6 +12,7 @@ import { InputPanel } from "./input-panel";
 import { ResultsPanel } from "./results-panel";
 
 type Props = {
+  tableIdentifier: string;
   name: string;
   value: string | undefined;
   isDisabled?: boolean;
@@ -24,6 +25,7 @@ type Props = {
 };
 
 export function Editor({
+  tableIdentifier,
   name,
   value,
   isDisabled,
@@ -50,6 +52,7 @@ export function Editor({
           className="flex flex-1 lg:flex-initial"
         >
           <InputPanel
+            tableIdentifier={tableIdentifier}
             inputRef={inputRef as MutableRefObject<HTMLTextAreaElement>}
             name={name}
             value={value ?? ""}

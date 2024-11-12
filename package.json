@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "work": "docker-compose up -d && turbo dev lint",
+    "work:engine": "docker-compose up -d && turbo dev dev:engine lint",
     "work:test": "docker-compose up -d && turbo dev lint test:watch",
     "build": "turbo build",
     "preview": "turbo preview",

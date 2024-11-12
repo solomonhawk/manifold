@@ -76,7 +76,13 @@ export function TableCreateForm({
 
                 <FormControl>
                   {/* eslint-disable-next-line jsx-a11y/no-autofocus */}
-                  <Input placeholder="Dragons" {...field} autoFocus />
+                  <Input
+                    inputProps={{
+                      ...field,
+                      placeholder: "Dragons",
+                      autoFocus: true,
+                    }}
+                  />
                 </FormControl>
 
                 <FormMessage />
@@ -192,7 +198,12 @@ const IdentifierInput = forwardRef<HTMLInputElement, IdentifierInputProps>(
     const title = useWatch({ control, name: "title" });
     const slug = slugify(title);
 
-    return <Input ref={ref} placeholder={slug ?? "dragons"} {...field} />;
+    return (
+      <Input
+        ref={ref}
+        inputProps={{ ...field, placeholder: slug ?? "dragons" }}
+      />
+    );
   },
 );
 IdentifierInput.displayName = "IdentifierInput";

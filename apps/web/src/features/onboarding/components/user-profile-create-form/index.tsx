@@ -57,7 +57,13 @@ export function UserProfileCreateForm() {
                 <FormLabel isRequired>Username</FormLabel>
 
                 <FormControl>
-                  <Input {...field} autoComplete="off" autoCorrect="false" />
+                  <Input
+                    inputProps={{
+                      ...field,
+                      autoComplete: "off",
+                      autoCorrect: "false",
+                    }}
+                  />
                 </FormControl>
 
                 <div>

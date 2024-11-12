@@ -33,10 +33,13 @@ import {
   useState,
 } from "react";
 import type { RefCallBack } from "react-hook-form";
+import { GoListUnordered, GoPackageDependencies } from "react-icons/go";
 import { Caret } from "textarea-caret-ts";
 
+import { DialogManager, DIALOGS } from "~features/dialog-manager";
 import { useResolveDependencies } from "~features/table/api/resolve-dependencies";
 import { log } from "~utils/logger";
+import { toastSuccess } from "~utils/toast";
 
 import {
   currentAllResolvedDependenciesAtom,
@@ -51,8 +54,10 @@ import { workerInstance } from "./worker";
 type Selection = { start: number; end: number };
 
 type Dependencies = RouterOutput["table"]["get"]["dependencies"];
+type FoundDependency = RouterOutput["table"]["findDependencies"][number];
 
 type Props = {
+  tableIdentifier: string;
   inputRef: MutableRefObject<HTMLTextAreaElement>;
   refCallback: RefCallBack;
   name: string;
@@ -68,6 +73,7 @@ type Props = {
 class MissingDependenciesError extends Error {}
 
 export function InputPanel({
+  tableIdentifier,
   inputRef,
   refCallback,
   name,
@@ -139,6 +145,7 @@ export function InputPanel({
 
           availableTables = metadata
             .filter((m) => m.namespace === undefined)
+            .sort((a, b) => (a.export ? -1 : b.export ? 1 : 0))
             .map((m) => m.id);
         }
 
@@ -166,13 +173,21 @@ export function InputPanel({
   );
 
   const updateValueSelectionAndTable = useCallback(
-    (currentValue: string, selectionStart: number, selectionEnd: number) => {
+    (
+      currentValue: string,
+      selectionStart: number,
+      selectionEnd: number,
+      dependencies?: Dependencies,
+    ) => {
       selectionRef.current = {
         start: selectionStart,
         end: selectionEnd,
       };
 
-      parseAndValidate(currentValue, currentAllResolvedDependencies);
+      parseAndValidate(
+        currentValue,
+        dependencies ?? currentAllResolvedDependencies,
+      );
       onChange(currentValue);
     },
     [onChange, currentAllResolvedDependencies, parseAndValidate],
@@ -234,6 +249,46 @@ export function InputPanel({
     });
   }, [inputRef, updateValueSelectionAndTable, value]);
 
+  const handleAddDependency = useCallback(
+    (dependency: FoundDependency) => {
+      let dependencies = currentAllResolvedDependencies;
+
+      // add to currentResolvedDependencies
+      setCurrentAllResolvedDependencies((prev) => {
+        if (prev.find((d) => d.id === dependency.id)) {
+          return prev;
+        }
+
+        dependencies = [...prev, dependency];
+        return dependencies;
+      });
+
+      toastSuccess(`Added dependency: ${dependency.tableIdentifier}`);
+
+      // insert text reference into editor
+      const currentValue = value.trim();
+
+      if (selectionRef.current) {
+        const valuePrefix = currentValue.slice(0, selectionRef.current?.start);
+        const valueSuffix = currentValue.slice(selectionRef.current?.end);
+        const textToInsert = `{${dependency.tableIdentifier}/${dependency.availableTables[0]}}`;
+
+        updateValueSelectionAndTable(
+          `${valuePrefix}${textToInsert}${valueSuffix}`,
+          valuePrefix.length,
+          valuePrefix.length + textToInsert.length,
+          dependencies,
+        );
+      }
+    },
+    [
+      value,
+      currentAllResolvedDependencies,
+      setCurrentAllResolvedDependencies,
+      updateValueSelectionAndTable,
+    ],
+  );
+
   useEffect(() => {
     if (value) {
       setCurrentAllResolvedDependencies(initialResolvedDependencies);
@@ -247,6 +302,7 @@ export function InputPanel({
       setTableMetadata([]);
       setEditorStatus("initial");
       setWantedDependencyIdentifiers([]);
+      setCurrentAllResolvedDependencies([]);
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -260,13 +316,28 @@ export function InputPanel({
     >
       <CommandPopup
         isOpen={isInlineEditorCommandPaletteOpen}
+        tableIdentifier={tableIdentifier}
         inputRef={inputRef}
         selectionRef={selectionRef}
         onCreateNewSubtable={handleCreateNewSubtable}
+        onAddDependency={handleAddDependency}
         menuPositionRef={menuPositionRef}
-        onOpenChange={(nextIsOpen) =>
-          setInlineEditorCommandPaletteOpen(nextIsOpen)
-        }
+        onOpenChange={(nextIsOpen) => {
+          if (!nextIsOpen) {
+            requestAnimationFrame(() => {
+              inputRef.current?.focus();
+
+              if (selectionRef.current) {
+                inputRef.current?.setSelectionRange(
+                  selectionRef.current.start,
+                  selectionRef.current.end,
+                  "forward",
+                );
+              }
+            });
+          }
+          setInlineEditorCommandPaletteOpen(nextIsOpen);
+        }}
       />
 
       <label htmlFor="table-editor-area" className="sr-only">
@@ -302,18 +373,22 @@ export function InputPanel({
 
 function CommandPopup({
   isOpen,
+  tableIdentifier,
   inputRef,
   selectionRef,
   menuPositionRef,
   onOpenChange,
   onCreateNewSubtable,
+  onAddDependency,
 }: {
   isOpen: boolean;
+  tableIdentifier: string;
   inputRef: RefObject<HTMLTextAreaElement>;
   selectionRef: RefObject<Selection | null>;
   menuPositionRef: RefObject<Caret.Position | null>;
   onOpenChange: (nextIsOpen: boolean) => void;
   onCreateNewSubtable: () => void;
+  onAddDependency: (version: FoundDependency) => void;
 }) {
   const { refs, floatingStyles, context } = useFloating({
     placement: "right-start",
@@ -357,7 +432,7 @@ function CommandPopup({
   return (
     <>
       <div
-        className="absolute"
+        className="fixed z-50"
         ref={refs.setReference}
         {...getReferenceProps()}
         style={{
@@ -375,7 +450,9 @@ function CommandPopup({
               {...getFloatingProps()}
             >
               <InlineEditorCommandPalette
+                tableIdentifier={tableIdentifier}
                 onCreateNewSubtable={onCreateNewSubtable}
+                onAddDependency={onAddDependency}
               />
             </div>
           </FloatingFocusManager>
@@ -386,9 +463,13 @@ function CommandPopup({
 }
 
 function InlineEditorCommandPalette({
+  tableIdentifier,
   onCreateNewSubtable,
+  onAddDependency,
 }: {
+  tableIdentifier: string;
   onCreateNewSubtable: () => void;
+  onAddDependency: (version: FoundDependency) => void;
 }) {
   return (
     <Command className="border shadow-lg drop-shadow-lg">
@@ -398,7 +479,19 @@ function InlineEditorCommandPalette({
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup>
           <CommandItem onSelect={onCreateNewSubtable}>
+            <GoListUnordered className="mr-6 text-accent-foreground" />
             <span>Create a new subtable</span>
+          </CommandItem>
+          <CommandItem
+            onSelect={() =>
+              DialogManager.show(DIALOGS.FIND_DEPENDENCY.ID, {
+                tableIdentifier,
+                onAddDependency,
+              })
+            }
+          >
+            <GoPackageDependencies className="mr-6 text-accent-foreground" />
+            <span>Find a dependency</span>
           </CommandItem>
         </CommandGroup>
       </CommandList>
