@@ -14,8 +14,8 @@ id: mono-race
 title: Races
 id: race
 ---
-1: {{mono-race}}
-1: Half-{{mono-race}}
+1: {mono-race}
+1: Half-{mono-race}
 
 @@PRAGMA namespace=@dyr/character
 ---
@@ -87,10 +87,10 @@ id: last-name
 title: Birthplace
 id: birthplace
 ---
-10: a large {{geographic-feature}} city
-5: a small {{economic-pursuit}} village outside {{city}}
-5: a small {{geographic-feature}} city
-1: the wilds outside {{city}}
+10: a large {geographic-feature} city
+5: a small {economic-pursuit} village outside {city}
+5: a small {geographic-feature} city
+1: the wilds outside {city}
 
 @@PRAGMA namespace=@dyr/character
 ---
@@ -209,5 +209,5 @@ title: NPC
 id: npc
 export: true
 ---
-1: {{first-name}} {{last-name}} is {{alignment|indefinite}} {{race}} {{class}} originally from {{birthplace}}, known as {{reputation|indefinite}} {{skill-level}} {{profession}}.
-3: {{first-name}} {{last-name}} is a commoner from {{birthplace}}, known as {{skill-level|indefinite}} {{profession}}.
+1: {first-name} {last-name} is {alignment|indefinite} {race} {class} originally from {birthplace}, known as {reputation|indefinite} {skill-level} {profession}.
+3: {first-name} {last-name} is a commoner from {birthplace}, known as {skill-level|indefinite} {profession}.

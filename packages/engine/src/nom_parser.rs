@@ -193,7 +193,7 @@ fn rule_line(input: Span) -> ParserResult<Rule> {
 // --------- Rule ---------
 pub fn rule(input: Span) -> ParserResult<(Span, Vec<RuleInst>)> {
     many1(rule_dice_roll.or(imported_rule_interpolation).or(rule_interpolation).or(rule_literal))
-        .context("Invalid rule text, expected a dice roll (`2d4`), an interpolation (`{{other}}`) or a literal")
+        .context("Invalid rule text, expected a dice roll (`2d4`), an interpolation (`{other}`) or a literal")
         .with_recognized()
         .parse(input)
 }
@@ -209,17 +209,17 @@ fn rule_dice_roll(input: Span) -> ParserResult<RuleInst> {
         .map_res(|span: Span| span.fragment().parse::<usize>())
         .preceded_by(tag("d"))
         .map(|sides| (1, sides)))
-    .preceded_by(tag("{{"))
-    .terminated(tag("}}"))
+    .preceded_by(tag("{"))
+    .terminated(tag("}"))
     .context("dice roll literal")
     .map(|(count, sides)| RuleInst::DiceRoll(count, sides))
     .parse(input)
 }
 
 fn rule_literal(input: Span) -> ParserResult<RuleInst> {
-    // can't just do `take_until("{{").or(not_line_ending)` or else we'll
+    // can't just do `take_until("{").or(not_line_ending)` or else we'll
     // successfully parse "" which causes many1 to fail
-    map_parser(take_until("{{").or(not_line_ending), literal)
+    map_parser(take_until("{").or(not_line_ending), literal)
         .context("rule literal")
         .map(|x| RuleInst::Literal((*x).to_string()))
         .parse(input)
@@ -227,8 +227,8 @@ fn rule_literal(input: Span) -> ParserResult<RuleInst> {
 
 fn imported_rule_interpolation(input: Span) -> ParserResult<RuleInst> {
     imported_pipeline
-        .preceded_by(tag("{{"))
-        .terminated(tag("}}"))
+        .preceded_by(tag("{"))
+        .terminated(tag("}"))
         .context("Invalid imported rule interpolation")
         .map(|(ns, id, filters)| {
             RuleInst::ExternalInterpolation(
@@ -249,8 +249,8 @@ fn imported_pipeline(input: Span) -> ParserResult<(Span, Span, Vec<FilterOp>)> {
 
 fn rule_interpolation(input: Span) -> ParserResult<RuleInst> {
     pipeline
-        .preceded_by(tag("{{"))
-        .terminated(tag("}}"))
+        .preceded_by(tag("{"))
+        .terminated(tag("}"))
         .context("Invalid rule interpolation")
         .map(|(s, filters)| RuleInst::Interpolation((*s).to_string(), filters))
         .parse(input)
@@ -427,7 +427,7 @@ title: Shapes
     #[test]
     fn imported_rule_interpolation_test() {
         let result: Result<RuleInst, ErrorTree<Span>> =
-            final_parser(imported_rule_interpolation)("{{@hello/there/friend|capitalize}}".into());
+            final_parser(imported_rule_interpolation)("{@hello/there/friend|capitalize}".into());
 
         assert!(result.is_ok());
         let rule_inst = result.unwrap();

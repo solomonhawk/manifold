@@ -3,7 +3,7 @@ id: potion
 title: Potion
 export: true
 ---
-1: {{potion-descriptor|indefinite|capitalize}} {{color}} {{potion-substance}} {{containment}} {{container-descriptor|indefinite}} {{container-shape}} {{container-material}} {{container-type}}. It smells like {{smell}} and {{potion-attribute}}. {{potion-effect}}
+1: {potion-descriptor|indefinite|capitalize} {color} {potion-substance} {containment} {container-descriptor|indefinite} {container-shape} {container-material} {container-type}. It smells like {smell} and {potion-attribute}. {potion-effect}
 
 ---
 id: containment
@@ -75,10 +75,10 @@ title: Color
 1: white
 1: multi-colored
 1: chromatic
-1: {{color}}-{{color}}
-1: pale {{color}}
-1: light {{color}}
-1: dark {{color}}
+1: {color}-{color}
+1: pale {color}
+1: light {color}
+1: dark {color}
 1: gold
 1: silver
 1: magenta
@@ -162,7 +162,7 @@ title: Container Shape
 1: thin-rimmed
 1: crystalline
 1: hexagonal
-1: {{3d4}}-dimensional
+1: {3d4}-dimensional
 
 ---
 id: container-type
@@ -222,7 +222,7 @@ title: Smell
 1: vanilla
 1: sandalwood
 1: lemon
-1: {{root-material}}root
+1: {root-material}root
 
 ---
 id: root-material
@@ -241,16 +241,16 @@ title: Root Material
 id: potion-attribute
 title: Attribute
 ---
-1: glows with a dim {{color}} light
+1: glows with a dim {color} light
 1: it shimmers and swirls curiously
 1: reminds you of someone you used to know
 1: it's warm to the touch
 1: it's cold to the touch
 1: it roils and bubbles energetically
-1: it sparkles with {{color}} flecks
-1: it gives off a {{color}} smoke when agitated
+1: it sparkles with {color} flecks
+1: it gives off a {color} smoke when agitated
 1: it's viscous and thick
-1: makes you feel {{emotion}}
+1: makes you feel {emotion}
 1: it's a little bit sticky
 1: it pops and crackles
 1: makes you uneasy when you look at it
@@ -260,14 +260,14 @@ title: Attribute
 1: it's troubling to look at
 1: it's a little bit slimy
 1: resembles a failed science experiment
-1: thrums with {{color}} energy
+1: thrums with {color} energy
 1: vibrates intriguingly
 1: it seems ordinary enough
 1: it's like nothing you've ever seen before
 1: spins lazily on its own
 1: you've heard of something like this before
 1: when agitated, it hums and whines softly
-1: if you close your eyes, it makes you {{emotion}}
+1: if you close your eyes, it makes you {emotion}
 
 ---
 id: emotion
@@ -290,16 +290,16 @@ title: Emotion
 id: potion-effect
 title: Potion Effect
 ---
-1: Regular with a slight side effect. {{effect}}. {{side-effect}}.
-1: Regular with no side effect. {{effect}}.
-1: Regular with a strong side effect, {{effect}}. {{side-effect}}. {{side-effect}}.
-1: Minor with a strong side effect. {{effect}}. {{side-effect}}. {{side-effect}}.
-1: Minor with a slight side effect. {{effect}}. {{side-effect}}.
-1: Major with a strong side effect. {{effect}}. {{side-effect}}. {{side-effect}}.
-1: Major with a small side effect. {{effect}}. {{side-effect}}.
-1: A poison - almost no positive affect all side effect. {{side-effect}}, {{side-effect}}
-1: Temporary but strong and wears off quickly. {{effect}}. {{side-effect}}.
-0.1: Seemingly permanent. {{effect}}. {{side-effect}}.
+1: Regular with a slight side effect. {effect}. {side-effect}.
+1: Regular with no side effect. {effect}.
+1: Regular with a strong side effect, {effect}. {side-effect}. {side-effect}.
+1: Minor with a strong side effect. {effect}. {side-effect}. {side-effect}.
+1: Minor with a slight side effect. {effect}. {side-effect}.
+1: Major with a strong side effect. {effect}. {side-effect}. {side-effect}.
+1: Major with a small side effect. {effect}. {side-effect}.
+1: A poison - almost no positive affect all side effect. {side-effect}, {side-effect}
+1: Temporary but strong and wears off quickly. {effect}. {side-effect}.
+0.1: Seemingly permanent. {effect}. {side-effect}.
 
 ---
 id: effect
@@ -456,7 +456,7 @@ title: Side Effect
 1: Loss of a random item
 1: Curses
 1: Damage
-1: Weakness to a {{magical-damage-type}}
+1: Weakness to a {magical-damage-type}
 1: Weakness to physical damage
 1: Feelings of Guilt
 1: Feelings of Anxiety
