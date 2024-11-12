@@ -8,6 +8,7 @@ import {
   type RouteObject,
 } from "react-router-dom";
 
+import { AuthGuard } from "~features/auth/components/auth-guard";
 import { userIsOnboarded } from "~features/onboarding/helpers";
 import { RootError } from "~features/routing/pages/root/error";
 import { RootLayout } from "~features/routing/pages/root/layout";
@@ -53,6 +54,7 @@ export function buildAppRoutes({
           path: "onboarding",
           loader: protectedLoader,
           errorElement: <RootError />,
+          element: <AuthGuard />,
           children: [
             {
               index: true,
@@ -73,6 +75,7 @@ export function buildAppRoutes({
           path: "dashboard",
           loader: protectedLoader,
           errorElement: <RootError />,
+          element: <AuthGuard />,
           children: [
             {
               index: true,
@@ -97,6 +100,7 @@ export function buildAppRoutes({
           path: "t",
           loader: protectedLoader,
           errorElement: <RootError />,
+          element: <AuthGuard />,
           children: [
             {
               index: true,
@@ -134,6 +138,7 @@ export function buildAppRoutes({
           path: "table",
           loader: protectedLoader,
           errorElement: <RootError />,
+          element: <AuthGuard />,
           children: [
             {
               index: true,

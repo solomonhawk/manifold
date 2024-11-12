@@ -1,5 +1,6 @@
-import { slugify } from "@manifold/lib";
+import { buildTableIdentifier, slugify } from "@manifold/lib";
 import type { RouterOutput } from "@manifold/router";
+import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import {
   Form,
   FormControl,
@@ -25,10 +26,12 @@ import {
   type Control,
   type ControllerRenderProps,
   type SubmitHandler,
+  useFormContext,
   useWatch,
 } from "react-hook-form";
 
 import { useZodFormMutationErrors } from "~features/forms/hooks/use-zod-form-mutation-error";
+import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
 import { useCreateTable } from "~features/table/api/create";
 import { log } from "~utils/logger";
 
@@ -107,14 +110,7 @@ export function TableCreateForm({
                 </FormControl>
 
                 <div>
-                  <FormDescription>
-                    Can only contain only lowercase letters, numbers, and
-                    hyphens.
-                  </FormDescription>
-
-                  <FormDescription>
-                    <em>Leave blank to auto-generate.</em>
-                  </FormDescription>
+                  <TableIdentifierExample />
 
                   <FormMessage />
                 </div>
@@ -148,6 +144,39 @@ export function TableCreateForm({
         </fieldset>
       </form>
     </Form>
+  );
+}
+
+function TableIdentifierExample() {
+  const userProfile = useRequiredUserProfile();
+  const { control, getFieldState } = useFormContext<FormData>();
+  const title = useWatch({ control, name: "title" });
+  const slug = useWatch({ control, name: "slug" });
+  const slugFieldState = getFieldState("slug");
+
+  const tableIdentifier = buildTableIdentifier(
+    userProfile.username,
+    slug || slugify(title),
+  );
+
+  if ((title || slug) && !slugFieldState.invalid) {
+    return (
+      <FormDescription>
+        Imported as <TableIdentifier tableIdentifier={tableIdentifier} />
+      </FormDescription>
+    );
+  }
+
+  return (
+    <>
+      <FormDescription>
+        Can only contain only lowercase letters, numbers, and hyphens.
+      </FormDescription>
+
+      <FormDescription>
+        <em>Leave blank to auto-generate.</em>
+      </FormDescription>
+    </>
   );
 }
 
