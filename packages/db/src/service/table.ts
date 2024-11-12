@@ -114,12 +114,6 @@ export async function findTable(userId: string, input: TableGetInput) {
         eq(schema.tableVersions.ownerId, userId),
       ),
     )
-    .groupBy(
-      schema.tableVersions.ownerId,
-      schema.tableVersions.ownerUsername,
-      schema.tableVersions.version,
-      schema.tableVersions.tableSlug,
-    )
     .orderBy(desc(schema.tableVersions.version))
     .limit(RECENT_VERSION_COUNT)
     .as("tableVersions");
@@ -154,7 +148,6 @@ export async function findTable(userId: string, input: TableGetInput) {
       ),
     )
     .groupBy(
-      schema.tables.ownerId,
       schema.tables.ownerUsername,
       schema.tables.slug,
       tableVersionsSubQuery.count,
@@ -196,9 +189,22 @@ export async function listTableVersions(
     .map(({ tableIdentifier: ti, version: v }) => `('${ti}', ${v})`)
     .join(", ");
 
-  // @TS: would rather not use a raw query here so we can rely on drizzle
-  // to serialize the table columns, but having trouble we specifying the
-  // VALUES pairs (maybe because they're aren't homogeneous types?)
+  /**
+   * @TS: would rather not use a raw query here so we can rely on drizzle
+   * to serialize the table columns, but having trouble we specifying the
+   * VALUES pairs (maybe because they're aren't homogeneous types?)
+   *
+   * Example query:
+   *   SELECT DISTINCT ON ("table_version"."table_identifier") [ ... selected columns ... ]
+   *   FROM "table_version"
+   *   WHERE EXISTS (
+   *     SELECT 1
+   *     FROM (
+   *       VALUES ('@solomonhawk/dragon-snacks', 6), ('@solomonhawk/creature', 1)
+   *     ) AS pairs(table_identifier, version)
+   *     WHERE pairs.table_identifier = table_version.table_identifier AND pairs.version = table_version.version
+   *   )
+   */
   const whereClause = sql.raw(`EXISTS (
       SELECT 1
       FROM (VALUES ${dependencyPairs}) AS pairs(table_identifier, version)

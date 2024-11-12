@@ -79,7 +79,7 @@ export const tableVersions = createTable(
     version: integer("version").notNull(),
     title: text("title").notNull(),
     definition: text("definition").notNull(),
-    releaseNotes: text("releaseNotes"),
+    releaseNotes: text("release_notes"),
     availableTables: text("available_tables")
       .array()
       .notNull()

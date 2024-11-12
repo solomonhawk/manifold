@@ -27,7 +27,8 @@
     "push": "drizzle-kit push",
     "dump": "./scripts/dump",
     "seed": "echo \"Seeding is not implemented!\"",
-    "studio": "drizzle-kit studio"
+    "studio": "drizzle-kit studio",
+    "scratch": "tsx ./scratch.ts"
   },
   "devDependencies": {
     "@manifold/eslint-config": "*",
