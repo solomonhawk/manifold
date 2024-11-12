@@ -21,22 +21,24 @@ import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
 import { type MouseEvent } from "react";
 import { GoInfo } from "react-icons/go";
 
-import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
 import { useDeleteTable } from "~features/table/api/delete";
 
 type Props = {
   title: string;
   tableId: string;
-  slug: string;
+  tableIdentifier: string;
 };
 
-export const TableDeleteDialog = ({ title, tableId, slug }: Props) => {
+export const TableDeleteDialog = ({
+  title,
+  tableId,
+  tableIdentifier,
+}: Props) => {
   const modal = useModal();
-  const userProfile = useRequiredUserProfile();
   const returnFocus = useReturnFocus(modal.visible);
   const mutation = useDeleteTable({
     title,
-    slug,
+    tableIdentifier,
     onSuccess: () => {
       mutation.reset();
       modal.hide();
@@ -74,8 +76,8 @@ export const TableDeleteDialog = ({ title, tableId, slug }: Props) => {
 
             <NoticeContent className="space-y-12 leading-snug">
               Any published versions of{" "}
-              <TableIdentifier username={userProfile.username} slug={slug} />{" "}
-              will remain publicly available.
+              <TableIdentifier tableIdentifier={tableIdentifier} /> will remain
+              publicly available.
             </NoticeContent>
           </Notice>
         </AlertDialogHeader>

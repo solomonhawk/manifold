@@ -15,11 +15,11 @@ import { useIsDeletingTable } from "~features/table/api/delete";
 export function DeleteButton({
   title,
   tableId,
-  slug,
+  tableIdentifier,
 }: {
   title: string;
   tableId: string;
-  slug: string;
+  tableIdentifier: string;
 }) {
   const isDeleting = useIsDeletingTable();
   const isPending = useStateGuard(isDeleting, { min: 250 });
@@ -42,7 +42,7 @@ export function DeleteButton({
             DialogManager.show(DIALOGS.DELETE_TABLE.ID, {
               tableId,
               title,
-              slug,
+              tableIdentifier,
             })
           }
         >

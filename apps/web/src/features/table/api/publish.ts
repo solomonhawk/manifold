@@ -25,8 +25,7 @@ export function usePublishTable({
 
       // invalidate get query
       await trpcUtils.table.get.invalidate({
-        username: userProfile.username,
-        slug,
+        tableIdentifier: data.tableIdentifier,
       });
 
       await onSuccess?.(data);

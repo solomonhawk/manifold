@@ -1,3 +1,4 @@
+import { buildTableIdentifier } from "@manifold/lib";
 import { FullScreenLoader } from "@manifold/ui/components/full-screen-loader";
 import { FlexCol } from "@manifold/ui/components/ui/flex";
 
@@ -9,7 +10,9 @@ import { tableEditParams } from "~features/table/pages/edit/params";
 
 export function TableEdit() {
   const { username, slug } = useRouteParams(tableEditParams);
-  const tableQuery = useGetTable({ username, slug });
+  const tableQuery = useGetTable({
+    tableIdentifier: buildTableIdentifier(username, slug),
+  });
 
   // @TODO: replace with skeleton?
   if (tableQuery.isLoading) {

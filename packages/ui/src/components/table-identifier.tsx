@@ -1,12 +1,26 @@
+import { buildTableIdentifier } from "@manifold/lib";
+
 import { cn } from "#lib/utils.ts";
 
-type Props = {
-  username: string;
-  slug: string;
-  className?: string;
-};
+type Props = { className?: string } & (
+  | {
+      tableIdentifier?: never;
+      username: string;
+      slug: string;
+    }
+  | {
+      tableIdentifier: string;
+      username?: never;
+      slug?: never;
+    }
+);
 
-export function TableIdentifier({ username, slug, className }: Props) {
+export function TableIdentifier({
+  username,
+  slug,
+  tableIdentifier,
+  className,
+}: Props) {
   return (
     <code
       className={cn(
@@ -14,7 +28,7 @@ export function TableIdentifier({ username, slug, className }: Props) {
         className,
       )}
     >
-      @{username}/{slug}
+      {tableIdentifier ?? buildTableIdentifier(username, slug)}
     </code>
   );
 }

@@ -18,6 +18,7 @@ import { useIsPublishingTable } from "~features/table/api/publish";
 export type PublishButtonProps = {
   tableId: string;
   tableSlug: string;
+  tableIdentifier: string;
   isEnabled: boolean;
   // @TODO: fix this type
   recentVersions: TableVersionSummary[];
@@ -27,6 +28,7 @@ export type PublishButtonProps = {
 export function PublishButton({
   tableId,
   tableSlug,
+  tableIdentifier,
   isEnabled,
   recentVersions,
   totalVersionCount,
@@ -64,6 +66,7 @@ export function PublishButton({
               DialogManager.show(DIALOGS.PUBLISH_TABLE.ID, {
                 tableId,
                 tableSlug,
+                tableIdentifier,
                 recentVersions,
                 totalVersionCount,
                 dependencies: currentResolvedDependencies.map((d) => ({

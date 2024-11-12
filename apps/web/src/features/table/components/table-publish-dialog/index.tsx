@@ -58,6 +58,7 @@ type FormData = z.infer<typeof schema>;
 
 export const TablePublishDialog = ({
   tableId,
+  tableIdentifier,
   tableSlug,
   recentVersions,
   totalVersionCount,
@@ -88,6 +89,7 @@ export const TablePublishDialog = ({
       .mutateAsync({
         tableId,
         tableSlug,
+        tableIdentifier,
         releaseNotes: data.releaseNotes,
         dependencies,
       })

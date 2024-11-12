@@ -85,7 +85,6 @@ export function TableUpdateForm({
   const directDependencyVersions = useAtomValue(directDependencyVersionsAtom);
 
   const updateTableMutation = useUpdateTable({
-    slug: table.slug,
     onSuccess: (data) => {
       // ensure form touched/dirty state is accurate after a successful save.
       form.reset({
@@ -215,6 +214,7 @@ export function TableUpdateForm({
                     <FormPublishButton
                       tableId={table.id}
                       tableSlug={table.slug}
+                      tableIdentifier={table.tableIdentifier}
                       isEnabled={
                         isEmpty(form.formState.dirtyFields) &&
                         form.formState.isValid &&

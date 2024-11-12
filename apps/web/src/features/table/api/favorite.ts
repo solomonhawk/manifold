@@ -1,7 +1,6 @@
 import type { RouterOutput } from "@manifold/router";
 import { useSingletonToast } from "@manifold/ui/hooks/use-singleton-toast";
 
-import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
 import { log } from "~utils/logger";
 import { toastError, toastSuccess } from "~utils/toast";
 import { trpc } from "~utils/trpc";
@@ -11,13 +10,12 @@ export function useListTableFavorites() {
 }
 
 export function useFavoriteTable({
-  slug,
+  tableIdentifier,
   onSuccess,
 }: {
-  slug: string;
+  tableIdentifier: string;
   onSuccess?: (data: RouterOutput["table"]["update"]) => void;
 }) {
-  const userProfile = useRequiredUserProfile();
   const trpcUtils = trpc.useUtils();
   const toastErrorInstance = useSingletonToast();
 
@@ -28,25 +26,22 @@ export function useFavoriteTable({
       await onSuccess?.(data);
 
       // @ ts-expect-error - account for table dependencies after favorite
-      trpcUtils.table.get.setData(
-        { username: userProfile.username, slug },
-        (existing) => {
-          if (!existing) {
-            return existing;
-          }
+      trpcUtils.table.get.setData({ tableIdentifier }, (existing) => {
+        if (!existing) {
+          return existing;
+        }
 
-          // @NOTE: we don't re-query `recentVersions` and `totalVersionCount`
-          // but we don't expect them to have changed
-          return { ...existing, ...data };
-        },
-      );
+        // @NOTE: we don't re-query `recentVersions` and `totalVersionCount`
+        // but we don't expect them to have changed
+        return { ...existing, ...data };
+      });
 
       // @TODO: this causes the dashboard loader to prefetch the table data again
       // which means we no longer see the animation of the item entering/leaving
       trpcUtils.table.favorites.invalidate();
 
       trpcUtils.table.get.invalidate(
-        { username: userProfile.username, slug },
+        { tableIdentifier },
         { refetchType: "inactive" },
       );
 

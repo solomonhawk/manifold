@@ -1,3 +1,4 @@
+import { buildTableIdentifier } from "@manifold/lib";
 import { z } from "@manifold/validators";
 import { type LoaderFunctionArgs } from "react-router-dom";
 
@@ -11,8 +12,7 @@ export function loaderBuilder(trpcUtils: TrpcUtils) {
 
     if (p.success) {
       return await trpcUtils.table.get.fetch({
-        username: p.data.username,
-        slug: p.data.slug,
+        tableIdentifier: buildTableIdentifier(p.data.username, p.data.slug),
       });
     }
 

@@ -48,8 +48,7 @@ export const tableCreateInput = z.object({
 export type TableCreateInput = z.infer<typeof tableCreateInput>;
 
 export const tableGetInput = z.object({
-  username: z.string(),
-  slug: z.string(),
+  tableIdentifier: z.string(),
 });
 
 export type TableGetInput = z.infer<typeof tableGetInput>;
@@ -83,6 +82,7 @@ export type TableUpdateInput = z.infer<typeof tableUpdateInput>;
 export const tablePublishVersionInput = z.object({
   tableId: z.string(),
   tableSlug: z.string(),
+  tableIdentifier: z.string(),
   releaseNotes: z.string().optional(),
   dependencies: z.array(
     z.object({

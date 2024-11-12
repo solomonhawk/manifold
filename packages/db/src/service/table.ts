@@ -95,6 +95,9 @@ export async function findTable(userId: string, input: TableGetInput) {
       version: sql`${schema.tableVersions.version}`
         .mapWith(Number)
         .as("version"),
+      tableIdentifier: sql`${schema.tableVersions.tableIdentifier}`.as(
+        "tableIdentifier",
+      ),
       tableSlug: sql`${schema.tableVersions.tableSlug}`.as("tableSlug"),
       definition: sql`${schema.tableVersions.definition}`.as("definition"),
       releaseNotes: sql`${schema.tableVersions.releaseNotes}`.as(
@@ -105,7 +108,12 @@ export async function findTable(userId: string, input: TableGetInput) {
       count: sql`count(*) over()`.mapWith(Number).as("count"),
     })
     .from(schema.tableVersions)
-    .where(eq(schema.tableVersions.tableSlug, input.slug))
+    .where(
+      and(
+        eq(schema.tableVersions.tableIdentifier, input.tableIdentifier),
+        eq(schema.tableVersions.ownerId, userId),
+      ),
+    )
     .groupBy(
       schema.tableVersions.ownerId,
       schema.tableVersions.ownerUsername,
@@ -130,19 +138,18 @@ export async function findTable(userId: string, input: TableGetInput) {
       totalVersionCount: tableVersionsSubQuery.count,
     })
     .from(schema.tables)
-    .leftJoin(schema.users, eq(schema.users.id, schema.tables.ownerId))
-    .leftJoin(
-      schema.userProfiles,
-      eq(schema.users.id, schema.userProfiles.userId),
-    )
     .leftJoin(
       tableVersionsSubQuery,
-      and(eq(schema.tables.slug, tableVersionsSubQuery.tableSlug)),
+      and(
+        eq(
+          schema.tables.tableIdentifier,
+          tableVersionsSubQuery.tableIdentifier,
+        ),
+      ),
     )
     .where(
       and(
-        eq(schema.userProfiles.username, input.username),
-        eq(schema.tables.slug, input.slug),
+        eq(schema.tables.tableIdentifier, input.tableIdentifier),
         eq(schema.tables.ownerId, userId), // @TODO: remove this for public tables so anyone can view them?
       ),
     )
@@ -222,7 +229,9 @@ export async function publishVersion(
   username: string,
   input: TablePublishVersionInput,
 ) {
-  const table = await findTable(userId, { slug: input.tableSlug, username });
+  const table = await findTable(userId, {
+    tableIdentifier: input.tableIdentifier,
+  });
 
   const [{ version }] = await db
     .select({
@@ -240,7 +249,7 @@ export async function publishVersion(
     .insert(schema.tableVersions)
     .values({
       version,
-      tableIdentifier: buildTableIdentifier(username, input.tableSlug),
+      tableIdentifier: input.tableIdentifier,
       ownerId: userId,
       ownerUsername: username,
       tableSlug: input.tableSlug,

@@ -57,21 +57,21 @@ export function Header({ table }: { table: RouterOutput["table"]["get"] }) {
 
         {table.deletedAt ? (
           <RestoreButton
-            slug={table.slug}
             title={table.title}
             tableId={table.id}
+            tableIdentifier={table.tableIdentifier}
           />
         ) : (
           <>
             <FavoriteButton
-              slug={table.slug}
               tableId={table.id}
+              tableIdentifier={table.tableIdentifier}
               isFavorite={table.favorited ?? false}
             />
             <DeleteButton
-              slug={table.slug}
               title={table.title}
               tableId={table.id}
+              tableIdentifier={table.tableIdentifier}
             />
           </>
         )}
