@@ -37,13 +37,13 @@ import { TABLE_LIST_ORDER_BY_STORAGE_KEY } from "~features/table/constants";
 import { log } from "~utils/logger";
 import { storage } from "~utils/storage";
 
-const NOW = new Date();
-
 export function TableList({
   routeOrderBy,
 }: {
   routeOrderBy: TableListOrderBy;
 }) {
+  const NOW = new Date();
+
   const userProfile = useRequiredUserProfile();
   const [includeDeleted, setIncludeDeleted] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();

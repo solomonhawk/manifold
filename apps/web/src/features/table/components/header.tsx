@@ -12,11 +12,11 @@ import { DeleteButton } from "~features/table/components/table-update-form/delet
 import { FavoriteButton } from "~features/table/components/table-update-form/favorite-button";
 import { RestoreButton } from "~features/table/components/table-update-form/restore-button";
 
-const NOW = new Date();
-
 export const TABLE_UPDATE_HEADER_PORTAL_ID = "table-update-header-portal";
 
 export function Header({ table }: { table: RouterOutput["table"]["get"] }) {
+  const NOW = new Date();
+
   return (
     <header className="flex items-center justify-between">
       <motion.div
