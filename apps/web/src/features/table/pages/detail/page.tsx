@@ -3,6 +3,8 @@ import { FullScreenLoader } from "@manifold/ui/components/full-screen-loader";
 import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import { Button } from "@manifold/ui/components/ui/button";
 import { FlexCol } from "@manifold/ui/components/ui/flex";
+import { transitionAlpha } from "@manifold/ui/lib/animation";
+import { motion } from "framer-motion";
 import { GoArrowRight, GoCopy, GoPackage, GoPencil } from "react-icons/go";
 
 import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
@@ -31,19 +33,34 @@ export function TableDetail() {
   return (
     <FlexCol className="container max-w-screen-xl">
       <header className="my-12 flex gap-12 sm:my-16 md:mb-24 md:mt-36 md:items-center md:justify-between">
-        <div>
-          <h2 className="flex items-center gap-10 text-2xl font-bold sm:text-3xl md:mb-8 md:text-4xl">
+        <motion.div
+          layout="position"
+          layoutId={`table-title-header-${table.data.id}`}
+          transition={transitionAlpha}
+        >
+          <h2 className="-mt-4 flex items-center gap-10 text-2xl font-bold sm:text-3xl md:mb-8 md:text-4xl">
             {table.data.title}
-            <GoPackage className="size-20 sm:size-24 md:size-28" />
+
+            <motion.span
+              layout
+              layoutId={`table-title-header-${table.data.id}-icon`}
+              transition={transitionAlpha}
+            >
+              <GoPackage className="size-20 sm:size-24 md:size-28" />
+            </motion.span>
           </h2>
-          <TableIdentifier tableIdentifier={table.data.tableIdentifier} />
+
+          <TableIdentifier
+            className="text-xs sm:text-base"
+            tableIdentifier={table.data.tableIdentifier}
+          />
 
           {table.data.description ? (
             <p className="mt-12 text-muted-foreground">
               {table.data.description}
             </p>
           ) : null}
-        </div>
+        </motion.div>
 
         <div className="mb-auto flex grow justify-end gap-8">
           <Button variant="outline" size="icon">
