@@ -149,7 +149,7 @@ export function PrevPageLink({
   }
 
   return (
-    <Button asChild={!disabled} {...props} disabled={disabled}>
+    <Button asChild={!disabled} size="icon" {...props} disabled={disabled}>
       <Link
         className={cn("flex items-center gap-8 transition-colors", className)}
         to={{
@@ -159,7 +159,8 @@ export function PrevPageLink({
       >
         {children || (
           <>
-            <GoChevronLeft /> Previous Page
+            <span className="sr-only">Previous Page</span>
+            <GoChevronLeft />
           </>
         )}
       </Link>
@@ -180,7 +181,7 @@ export function NextPageLink({
   }
 
   return (
-    <Button asChild={!disabled} {...props} disabled={disabled}>
+    <Button asChild={!disabled} size="icon" {...props} disabled={disabled}>
       <Link
         className={cn("flex items-center gap-8 transition-colors", className)}
         to={{
@@ -190,7 +191,8 @@ export function NextPageLink({
       >
         {children || (
           <>
-            Next Page <GoChevronRight />
+            <span className="sr-only">Next Page</span>
+            <GoChevronRight />
           </>
         )}
       </Link>

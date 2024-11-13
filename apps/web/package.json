@@ -24,7 +24,6 @@
     "@manifold/env": "*",
     "@manifold/lib": "*",
     "@manifold/router": "*",
-    "@manifold/tailwind-config": "*",
     "@manifold/types": "*",
     "@manifold/ui": "*",
     "@manifold/validators": "*",
@@ -51,6 +50,7 @@
   },
   "devDependencies": {
     "@manifold/eslint-config": "*",
+    "@manifold/tailwind-config": "*",
     "@manifold/typescript-config": "*",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",

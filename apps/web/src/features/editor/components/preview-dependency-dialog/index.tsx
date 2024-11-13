@@ -66,7 +66,7 @@ export function PreviewDependencyDialog({
                   Last&nbsp;updated
                 </dt>
                 <dd className="border-b border-r px-10 py-8">
-                  {dependency.updatedAt.toLocaleDateString()}
+                  {dependency.createdAt.toLocaleDateString()}
                 </dd>
 
                 <dt className="border-b border-r px-10 py-8 font-semibold text-muted-foreground">

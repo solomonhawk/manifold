@@ -13,6 +13,7 @@ import { userIsOnboarded } from "~features/onboarding/helpers";
 import { RootError } from "~features/routing/pages/root/error";
 import { RootLayout } from "~features/routing/pages/root/layout";
 import type { Handle } from "~features/routing/types";
+import type { TableDetailLoaderData } from "~features/table/pages/detail";
 import type { TableEditLoaderData } from "~features/table/pages/edit";
 import type { TableVersionDetailLoaderData } from "~features/table-version/pages/detail";
 import type { TableVersionsSearchBrowseLoaderData } from "~features/table-version/pages/search-browse";
@@ -113,6 +114,24 @@ export function buildAppRoutes({
               children: [
                 {
                   index: true,
+                  lazy: async () => {
+                    const { TableDetail, loaderBuilder } = await import(
+                      "~features/table/pages/detail"
+                    );
+
+                    return {
+                      loader: loaderBuilder(trpcUtils),
+                      Component: TableDetail,
+                    };
+                  },
+                  handle: {
+                    title: ({ data }) => `Manifold | ${data.title}`,
+                    description: ({ data }) =>
+                      data.description ?? `Details of ${data.title}.`,
+                  } satisfies Handle<TableDetailLoaderData>,
+                },
+                {
+                  path: "v/:version",
                   lazy: async () => {
                     const { TableVersionDetail, loaderBuilder } = await import(
                       "~features/table-version/pages/detail"

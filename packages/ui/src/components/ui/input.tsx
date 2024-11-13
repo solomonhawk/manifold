@@ -26,15 +26,16 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {startAdornment}
         <input
           id={id}
+          {...inputProps}
           className={cn(
-            "size-full bg-transparent px-12 py-4 outline-none file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground",
+            "size-full bg-transparent px-12 py-4 outline-none transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground",
             {
               "!pl-0": !!startAdornment,
               "!pr-0": !!endAdornment,
             },
+            inputProps?.className,
           )}
           ref={ref}
-          {...inputProps}
           aria-describedby={props["aria-describedby"]}
           aria-invalid={props["aria-invalid"]}
         />

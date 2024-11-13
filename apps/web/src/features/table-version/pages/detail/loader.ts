@@ -13,10 +13,11 @@ export function loaderBuilder(trpcUtils: TrpcUtils) {
     if (p.success) {
       return await trpcUtils.tableVersion.get.fetch({
         tableIdentifier: buildTableIdentifier(p.data.username, p.data.slug),
+        version: p.data.version,
       });
     }
 
-    throw new RoutingError("Invalid params");
+    throw new RoutingError("Invalid params", { cause: p.error });
   };
 }
 

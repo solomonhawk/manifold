@@ -1,40 +1,31 @@
 import { buildTableIdentifier } from "@manifold/lib";
-import type { RouterOutput } from "@manifold/router";
 import { FullScreenLoader } from "@manifold/ui/components/full-screen-loader";
 import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import { Button } from "@manifold/ui/components/ui/button";
 import { FlexCol } from "@manifold/ui/components/ui/flex";
-import {
-  GoArrowRight,
-  GoChevronLeft,
-  GoChevronRight,
-  GoCopy,
-  GoPackage,
-  GoPencil,
-} from "react-icons/go";
+import { GoArrowRight, GoCopy, GoPackage, GoPencil } from "react-icons/go";
 
 import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
 import { useRouteParams } from "~features/routing/hooks/use-route-params";
-import { tableVersionDetailParams } from "~features/table-version/pages/detail/params";
+import { tableDetailParams } from "~features/table/pages/detail/params";
 import { trpc } from "~utils/trpc";
 
-export function TableVersionDetail() {
+export function TableDetail() {
   const userProfile = useRequiredUserProfile();
-  const { username, slug, version } = useRouteParams(tableVersionDetailParams);
-  const tableVersion = trpc.tableVersion.get.useQuery({
+  const { username, slug } = useRouteParams(tableDetailParams);
+  const table = trpc.table.get.useQuery({
     tableIdentifier: buildTableIdentifier(username, slug),
-    version,
   });
 
-  if (tableVersion.isLoading) {
+  if (table.isLoading) {
     // @TODO: better loading state
     return <FullScreenLoader />;
   }
 
-  if (tableVersion.isError) {
+  if (table.isError) {
     // @TODO: better error state
-    return <div>Error: {tableVersion.error.message}</div>;
+    return <div>Error: {table.error.message}</div>;
   }
 
   return (
@@ -42,31 +33,25 @@ export function TableVersionDetail() {
       <header className="my-12 flex gap-12 sm:my-16 md:mb-24 md:mt-36 md:items-center md:justify-between">
         <div>
           <h2 className="flex items-center gap-10 text-2xl font-bold sm:text-3xl md:mb-8 md:text-4xl">
-            {tableVersion.data.table.title}{" "}
-            <span className="text-muted-foreground">v{version}</span>
+            {table.data.title}
             <GoPackage className="size-20 sm:size-24 md:size-28" />
           </h2>
+          <TableIdentifier tableIdentifier={table.data.tableIdentifier} />
 
-          <TableIdentifier
-            tableIdentifier={tableVersion.data.table.tableIdentifier}
-          />
-
-          {tableVersion.data.table.description ? (
+          {table.data.description ? (
             <p className="mt-12 text-muted-foreground">
-              {tableVersion.data.table.description}
+              {table.data.description}
             </p>
           ) : null}
         </div>
 
         <div className="mb-auto flex grow justify-end gap-8">
-          <VersionNavigation version={tableVersion.data} />
-
           <Button variant="outline" size="icon">
             <span className="sr-only">Copy Table</span>
             <GoCopy />
           </Button>
 
-          {userProfile.userId === tableVersion.data.table.ownerId ? (
+          {userProfile.userId === table.data.ownerId ? (
             <Button asChild variant="outline" size="icon">
               <PrefetchableLink to={`/t/${username}/${slug}/edit`}>
                 <span className="sr-only">Edit Table</span>
@@ -86,59 +71,31 @@ export function TableVersionDetail() {
               Last&nbsp;updated
             </dt>
             <dd className="border-b border-r px-10 py-8">
-              {tableVersion.data.table.updatedAt.toLocaleDateString()}
+              {table.data.updatedAt.toLocaleDateString()}
             </dd>
 
             <dt className="border-b border-r px-10 py-8 font-semibold text-muted-foreground">
-              Total versions
+              Total&nbsp;versions
             </dt>
             <dd className="border-b border-r px-10 py-8">
-              {tableVersion.data.versions.length}
+              {table.data.totalVersionCount}
             </dd>
-
-            {tableVersion.data.versions.length > 0 ? (
-              <>
-                <dt className="border-b border-r px-10 py-8 font-semibold text-muted-foreground">
-                  Latest&nbsp;release&nbsp;notes
-                </dt>
-                <dd className="border-b border-r px-10 py-8">
-                  {tableVersion.data.versions[0].releaseNotes || (
-                    <em className="text-muted-foreground">No release notes</em>
-                  )}
-                </dd>
-                <dt className="border-b border-r px-10 py-8 font-semibold text-muted-foreground">
-                  Available&nbsp;Tables
-                </dt>
-                <dd className="flex flex-wrap gap-4 border-b border-r px-10 py-8">
-                  {tableVersion.data.versions[0].availableTables.map(
-                    (tableId) => (
-                      <code
-                        key={tableId}
-                        className="rounded bg-secondary p-3 px-6 text-xs leading-none text-accent-foreground"
-                      >
-                        {tableId}
-                      </code>
-                    ),
-                  )}
-                </dd>
-              </>
-            ) : null}
           </dl>
 
-          <h3 className="mb-8 font-semibold">Definition</h3>
+          <h3 className="mb-8 font-semibold">Latest draft</h3>
 
           <div className="rounded border bg-background">
             <pre className="max-h-384 overflow-auto px-16 py-12 text-xs leading-tight">
-              {tableVersion.data.definition}
+              {table.data.definition}
             </pre>
           </div>
         </section>
 
         <section>
-          <h3 className="mb-8 font-semibold">Other Versions</h3>
+          <h3 className="mb-8 font-semibold">Versions</h3>
 
           <ul className="divide-y rounded border bg-background">
-            {tableVersion.data.versions.map((version) => {
+            {table.data.recentVersions.map((version) => {
               return (
                 <li key={version.id}>
                   <PrefetchableLink
@@ -152,7 +109,7 @@ export function TableVersionDetail() {
                         </strong>{" "}
                         published on{" "}
                         <span className="text-foreground">
-                          {version.createdAt.toLocaleDateString()}
+                          {new Date(version.createdAt).toLocaleDateString()}
                         </span>
                       </div>
 
@@ -198,63 +155,5 @@ export function TableVersionDetail() {
         </section>
       </section>
     </FlexCol>
-  );
-}
-
-function VersionNavigation({
-  version,
-}: {
-  version: RouterOutput["tableVersion"]["get"];
-}) {
-  const currentIndex = version.versions.findIndex(
-    (v) => v.version === version.version,
-  );
-  const totalVersions = version.versions.length;
-
-  // versions are in descending order by `version`, so these seem backwards
-  const hasNextVersion = currentIndex > 0;
-  const hasPreviousVersion = currentIndex < totalVersions - 1;
-
-  const PrevLinkComponent = hasPreviousVersion ? PrefetchableLink : "span";
-  const NextLinkComponent = hasNextVersion ? PrefetchableLink : "span";
-
-  return (
-    <>
-      <Button
-        variant="outline"
-        size="icon"
-        asChild={hasPreviousVersion}
-        disabled={!hasPreviousVersion}
-      >
-        <PrevLinkComponent
-          to={
-            hasPreviousVersion
-              ? `/t/${version.ownerUsername}/${version.tableSlug}/v/${version.version - 1}`
-              : "#"
-          }
-        >
-          <span className="sr-only">Previous version</span>
-          <GoChevronLeft />
-        </PrevLinkComponent>
-      </Button>
-
-      <Button
-        variant="outline"
-        size="icon"
-        asChild={hasNextVersion}
-        disabled={!hasNextVersion}
-      >
-        <NextLinkComponent
-          to={
-            hasNextVersion
-              ? `/t/${version.ownerUsername}/${version.tableSlug}/v/${version.version + 1}`
-              : "#"
-          }
-        >
-          <span className="sr-only">Next version</span>
-          <GoChevronRight />
-        </NextLinkComponent>
-      </Button>
-    </>
   );
 }

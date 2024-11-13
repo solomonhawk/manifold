@@ -5,6 +5,7 @@ import { tableListOrderBy } from "./helpers";
 
 export const tableVersionGetInput = z.object({
   tableIdentifier: z.string(),
+  version: z.number().or(z.string().pipe(z.coerce.number().positive().int())),
 });
 
 export type TableVersionGetInput = z.infer<typeof tableVersionGetInput>;

@@ -33,8 +33,6 @@ import { db } from "#db.ts";
 import * as schema from "#schema/index.ts";
 import type { TableVersionSummary } from "#types.ts";
 
-const RECENT_VERSION_COUNT = 3;
-
 export const tableOrderByMap = {
   recently_edited: desc(schema.tables.updatedAt),
   recently_not_edited: asc(schema.tables.updatedAt),
@@ -86,7 +84,7 @@ export async function createTable(
 /**
  * @TODO @XXX: fix this query now that the tables have `tableIdentifier` columns
  */
-export async function findTable(userId: string, input: TableGetInput) {
+export async function findTable(input: TableGetInput) {
   const tableVersionsSubQuery = db
     .select({
       // @TODO: Drizzle doesn't correctly map/alias the subquery columns so they
@@ -104,17 +102,19 @@ export async function findTable(userId: string, input: TableGetInput) {
       ),
       ownerId: sql`${schema.tableVersions.ownerId}`.as("ownerId"),
       createdAt: sql`${schema.tableVersions.createdAt}`.as("createdAt"),
+      availableTables: sql`${schema.tableVersions.availableTables}`.as(
+        "availableTables",
+      ),
       count: sql`count(*) over()`.mapWith(Number).as("count"),
     })
     .from(schema.tableVersions)
-    .where(
-      and(
-        eq(schema.tableVersions.tableIdentifier, input.tableIdentifier),
-        eq(schema.tableVersions.ownerId, userId),
-      ),
-    )
+    .where(and(eq(schema.tableVersions.tableIdentifier, input.tableIdentifier)))
     .orderBy(desc(schema.tableVersions.version))
-    .limit(RECENT_VERSION_COUNT)
+    .limit(
+      input.versionsCount === "all"
+        ? Number.MAX_SAFE_INTEGER
+        : input.versionsCount,
+    )
     .as("tableVersions");
 
   const [table] = await db
@@ -140,12 +140,7 @@ export async function findTable(userId: string, input: TableGetInput) {
         ),
       ),
     )
-    .where(
-      and(
-        eq(schema.tables.tableIdentifier, input.tableIdentifier),
-        eq(schema.tables.ownerId, userId), // @TODO: remove this for public tables so anyone can view them?
-      ),
-    )
+    .where(and(eq(schema.tables.tableIdentifier, input.tableIdentifier)))
     .groupBy(
       schema.tables.ownerUsername,
       schema.tables.slug,
@@ -261,8 +256,9 @@ export async function publishVersion(
   username: string,
   input: TablePublishVersionInput,
 ) {
-  const table = await findTable(userId, {
+  const table = await findTable({
     tableIdentifier: input.tableIdentifier,
+    versionsCount: 3,
   });
 
   const [{ version }] = await db

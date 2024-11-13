@@ -91,8 +91,8 @@ export const tableRouter = t.router({
    *
    * @throws {TRPCError} with a NOT_FOUND code if the table cannot be found
    */
-  get: authedProcedure.input(tableGetInput).query(async ({ input, ctx }) => {
-    const table = await tableService.findTable(ctx.user.id, input);
+  get: t.procedure.input(tableGetInput).query(async ({ input }) => {
+    const table = await tableService.findTable(input);
 
     if (!table) {
       throw new TRPCError({

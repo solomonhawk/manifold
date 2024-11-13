@@ -2,6 +2,10 @@
   "name": "@manifold/eslint-config",
   "version": "0.0.0",
   "main": "index.js",
+  "exports": {
+    "./base.js": "./base.js",
+    "./react.js": "./react.js"
+  },
   "license": "MIT",
   "publishConfig": {
     "access": "public"

@@ -1,7 +1,7 @@
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
   extends: [
-    "./index.js",
+    "./base.js",
     "plugin:jsx-a11y/recommended",
     "plugin:react-hooks/recommended",
     "plugin:react/recommended",

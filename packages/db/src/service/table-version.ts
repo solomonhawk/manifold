@@ -17,7 +17,8 @@ import {
 } from "drizzle-orm";
 
 import { db } from "#db.ts";
-import { schema } from "#index.js";
+
+import * as schema from "../schema";
 
 export const tableVersionOrderByMap = {
   recently_edited: desc(schema.tableVersions.updatedAt),
@@ -35,7 +36,14 @@ export async function findTableVersion(input: TableVersionGetInput) {
     orderBy: desc(schema.tableVersions.version),
   });
 
+  const tableVersion = tableVersions.find((v) => v.version === input.version);
+
+  if (!tableVersion) {
+    return null;
+  }
+
   return {
+    ...tableVersion,
     table: tableVersions[0].table,
     versions: tableVersions,
   };

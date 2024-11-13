@@ -2,13 +2,13 @@ import { buildTableIdentifier } from "@manifold/lib";
 import { z } from "@manifold/validators";
 import { type LoaderFunctionArgs } from "react-router-dom";
 
-import { tableEditParams } from "~features/table/pages/edit/params";
+import { tableDetailParams } from "~features/table/pages/detail/params";
 import { RoutingError } from "~utils/errors";
 import type { TrpcUtils } from "~utils/trpc";
 
 export function loaderBuilder(trpcUtils: TrpcUtils) {
   return async ({ params }: LoaderFunctionArgs) => {
-    const p = z.object(tableEditParams).safeParse(params);
+    const p = z.object(tableDetailParams).safeParse(params);
 
     if (p.success) {
       return await trpcUtils.table.get.fetch({
@@ -20,6 +20,6 @@ export function loaderBuilder(trpcUtils: TrpcUtils) {
   };
 }
 
-export type TableEditLoaderData = Awaited<
+export type TableDetailLoaderData = Awaited<
   ReturnType<ReturnType<typeof loaderBuilder>>
 >;

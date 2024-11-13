@@ -29,7 +29,9 @@ export function Section({ title, config }: Props) {
           </CardTitle>
         </CardHeader>
 
-        <Separator className="mx-16 my-8 sm:mx-20 md:mx-24" />
+        <div className="my-8 px-16 sm:px-20 md:px-24">
+          <Separator />
+        </div>
 
         <CardContent className="space-y-20 sm:space-y-24 lg:space-y-28" flush>
           {config.groups.map((group, i) => {

@@ -236,7 +236,7 @@ function MadeWith() {
 
       <AnimatePresence>
         <motion.section
-          className="grid w-full grid-flow-row-dense grid-cols-[repeat(auto-fill,_minmax(250px,_1fr))] gap-12 pb-32 sm:gap-16"
+          className="grid w-full grid-flow-row-dense grid-cols-[repeat(auto-fill,_minmax(200px,_1fr))] gap-12 pb-32 sm:gap-16"
           variants={variants}
           initial="hidden"
           animate="visible"

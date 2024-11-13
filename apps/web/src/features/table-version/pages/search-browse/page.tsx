@@ -17,8 +17,9 @@ import { LayoutGroup, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { GiMagnifyingGlass } from "react-icons/gi";
 import { GoSearch, GoX } from "react-icons/go";
-import { Link, useLoaderData, useSearchParams } from "react-router-dom";
+import { useLoaderData, useSearchParams } from "react-router-dom";
 
+import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
 import type { TableVersionsSearchBrowseLoaderData } from "~features/table-version/pages/search-browse/loader";
 import { trpc } from "~utils/trpc";
 
@@ -56,85 +57,91 @@ export function TableVersionsSearchBrowse() {
 
   return (
     <FlexCol className="container max-w-screen-xl">
-      <header className="my-12 flex flex-col gap-12 sm:my-16 md:mb-24 md:mt-36 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h2 className="flex items-center gap-10 text-2xl font-bold sm:text-3xl md:mb-8 md:text-4xl">
-            Discover{" "}
-            <GiMagnifyingGlass className="size-20 sm:size-24 md:size-28" />
-          </h2>
-          <p className="text-muted-foreground">
-            Find the table you’ve been searching for:
-          </p>
-        </div>
+      <section className="pb-24 sm:pb-32">
+        <header className="my-12 flex flex-col gap-12 sm:my-16 md:mb-24 md:mt-36 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h2 className="flex items-center gap-10 text-2xl font-bold sm:text-3xl md:mb-8 md:text-4xl">
+              Discover{" "}
+              <GiMagnifyingGlass className="size-20 sm:size-24 md:size-28" />
+            </h2>
+            <p className="text-muted-foreground">
+              Find the table you’ve been searching for:
+            </p>
+          </div>
 
-        <div className="flex grow justify-end">
-          <SearchForm
-            onSubmit={handleSearch}
-            defaultSearchQuery={searchQuery}
-          />
-        </div>
-      </header>
+          <div className="flex grow justify-end">
+            <SearchForm
+              onSubmit={handleSearch}
+              defaultSearchQuery={searchQuery}
+            />
+          </div>
+        </header>
 
-      <Pagination.Root paginator={paginator} metadata={pagination}>
-        <Pagination.RootLayout className="my-12 sm:my-16">
-          <Pagination.Metadata />
+        <Pagination.Root paginator={paginator} metadata={pagination}>
+          <Pagination.RootLayout className="my-12 sm:my-16">
+            <Pagination.Metadata />
 
-          <Pagination.RightArea>
-            <Pagination.PrevPageLink variant="outline" />
-            <Pagination.NextPageLink variant="outline" />
-          </Pagination.RightArea>
-        </Pagination.RootLayout>
-      </Pagination.Root>
+            <Pagination.RightArea>
+              <Pagination.PrevPageLink variant="outline" />
+              <Pagination.NextPageLink variant="outline" />
+            </Pagination.RightArea>
+          </Pagination.RootLayout>
+        </Pagination.Root>
 
-      <LayoutGroup>
-        <AnimatedList className="relative" transition={transitionAlpha} initial>
-          {tableVersions.data.data.length === 0 ? (
-            <AnimatedListItem
-              key="empty"
-              transition={transitionAlpha}
-              initial={{ opacity: 0 }}
-            >
-              <div className="flex flex-col items-center gap-8 rounded bg-background p-16 text-center">
-                <h3 className="text-lg font-bold sm:text-xl">
-                  No tables found for{" "}
-                  <span className="text-accent-foreground">
-                    “{searchQuery}”
-                  </span>
-                </h3>
-                <p className="text-muted-foreground">
-                  Try searching for something else.
-                </p>
-              </div>
-            </AnimatedListItem>
-          ) : null}
-
-          {tableVersions.data.data.map((tableVersion) => {
-            return (
+        <LayoutGroup>
+          <AnimatedList
+            className="relative"
+            transition={transitionAlpha}
+            initial
+          >
+            {tableVersions.data.data.length === 0 ? (
               <AnimatedListItem
-                key={tableVersion.id}
+                key="empty"
                 transition={transitionAlpha}
-                initial={{ opacity: 0, scale: 0.99 }}
-                className="mb-12 sm:mb-16"
+                initial={{ opacity: 0 }}
               >
-                <ListItem tableVersion={tableVersion} />
+                <div className="flex flex-col items-center gap-8 rounded bg-background p-16 text-center">
+                  <h3 className="text-lg font-bold sm:text-xl">
+                    No tables found for{" "}
+                    <span className="text-accent-foreground">
+                      “{searchQuery}”
+                    </span>
+                  </h3>
+                  <p className="text-muted-foreground">
+                    Try searching for something else.
+                  </p>
+                </div>
               </AnimatedListItem>
-            );
-          })}
-        </AnimatedList>
+            ) : null}
 
-        {tableVersions.data.data.length > 0 ? (
-          <motion.div layout transition={transitionAlpha}>
-            <Pagination.Root paginator={paginator} metadata={pagination}>
-              <Pagination.RootLayout>
-                <Pagination.RightArea>
-                  <Pagination.PrevPageLink variant="outline" />
-                  <Pagination.NextPageLink variant="outline" />
-                </Pagination.RightArea>
-              </Pagination.RootLayout>
-            </Pagination.Root>
-          </motion.div>
-        ) : null}
-      </LayoutGroup>
+            {tableVersions.data.data.map((tableVersion) => {
+              return (
+                <AnimatedListItem
+                  key={tableVersion.id}
+                  transition={transitionAlpha}
+                  initial={{ opacity: 0, scale: 0.99 }}
+                  className="mb-12 sm:mb-16"
+                >
+                  <ListItem tableVersion={tableVersion} />
+                </AnimatedListItem>
+              );
+            })}
+          </AnimatedList>
+
+          {tableVersions.data.data.length > 0 ? (
+            <motion.div layout transition={transitionAlpha}>
+              <Pagination.Root paginator={paginator} metadata={pagination}>
+                <Pagination.RootLayout>
+                  <Pagination.RightArea>
+                    <Pagination.PrevPageLink variant="outline" />
+                    <Pagination.NextPageLink variant="outline" />
+                  </Pagination.RightArea>
+                </Pagination.RootLayout>
+              </Pagination.Root>
+            </motion.div>
+          ) : null}
+        </LayoutGroup>
+      </section>
     </FlexCol>
   );
 }
@@ -177,6 +184,7 @@ function SearchForm({
           placeholder: "Search tables",
           value,
           onChange: (e) => setValue(e.target.value),
+          className: "focus:bg-background",
         }}
         startAdornment={
           <InputAdornment>
@@ -237,7 +245,7 @@ function ListItem({
 
   return (
     <section className="group relative flex flex-col justify-between rounded border bg-background ring-0 ring-transparent ring-offset-2 ring-offset-background transition-all focus-within:bg-secondary focus-within:ring-2 focus-within:ring-ring hover:bg-secondary sm:flex-row sm:gap-16 sm:p-16">
-      <Link
+      <PrefetchableLink
         to={`/t/${tableVersion.ownerUsername}/${tableVersion.tableSlug}`}
         className="flex flex-col p-16 after:absolute after:inset-0 focus:outline-none sm:p-0"
       >
@@ -251,7 +259,7 @@ function ListItem({
             tableIdentifier={tableVersion.tableIdentifier}
           />
         </span>
-      </Link>
+      </PrefetchableLink>
 
       <Separator className="sm:hidden" orientation="horizontal" />
 

@@ -18,4 +18,5 @@ export type TableVersionSummary = {
   createdAt: string;
   definition: string;
   releaseNotes: string;
+  availableTables: string[];
 };
