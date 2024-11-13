@@ -18,7 +18,7 @@ export function TableNew() {
     <FlexCol className="items-center justify-around overflow-auto p-12 sm:p-16">
       <Card className="mx-auto w-full max-w-md">
         <CardHeader>
-          <CardTitle>New Table</CardTitle>
+          <CardTitle className="text-xl">New Table</CardTitle>
         </CardHeader>
 
         <CardContent>

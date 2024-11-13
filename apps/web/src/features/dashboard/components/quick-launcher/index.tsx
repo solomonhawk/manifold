@@ -24,7 +24,7 @@ export function QuickLauncher() {
   }
 
   return (
-    <ul className="flex gap-6 sm:gap-8">
+    <ul className="flex w-max gap-6 sm:gap-8">
       <AnimatePresence initial={false} mode="popLayout">
         {favoritesQuery.data.map((table) => {
           return (

@@ -43,17 +43,16 @@ export function RootLayout() {
             />
 
             {session.status === "authenticated" && (
-              <Button
-                asChild
-                size="sm"
-                variant="outline"
-                className="bg-transparent"
-              >
+              <Button asChild size="sm">
                 <PrefetchableLink to="/table/new">
                   Create Table
                 </PrefetchableLink>
               </Button>
             )}
+
+            <Button asChild size="sm" variant="ghost">
+              <PrefetchableLink to="/table/discover">Discover</PrefetchableLink>
+            </Button>
           </GlobalHeader.Center>
 
           <GlobalHeader.Center>

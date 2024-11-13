@@ -226,7 +226,7 @@ const variants = {
 
 function MadeWith() {
   return (
-    <FlexCol className="container">
+    <FlexCol className="container max-w-screen-xl">
       <header className="my-12 sm:my-16 md:mb-24 md:mt-36">
         <h2 className="flex items-center gap-10 text-2xl font-bold sm:text-3xl md:mb-8 md:text-4xl">
           Made With <GiPaintRoller className="size-20 sm:size-24 md:size-28" />

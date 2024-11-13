@@ -35,8 +35,7 @@ import type { TableVersionSummary } from "#types.ts";
 
 const RECENT_VERSION_COUNT = 3;
 
-// @XXX: Is this really better than an IIFE with a `switch` statement? 🤔
-const tableOrderByMap = {
+export const tableOrderByMap = {
   recently_edited: desc(schema.tables.updatedAt),
   recently_not_edited: asc(schema.tables.updatedAt),
   oldest: asc(schema.tables.createdAt),
@@ -44,15 +43,13 @@ const tableOrderByMap = {
 } as const satisfies Record<TableListOrderBy, SQL>;
 
 export async function listTables(userId: string, input: TableListInput) {
-  return db.query.tables
-    .findMany({
-      where: and(
-        eq(schema.tables.ownerId, userId),
-        input.includeDeleted ? undefined : isNull(schema.tables.deletedAt),
-      ),
-      orderBy: tableOrderByMap[input.orderBy ?? "newest"],
-    })
-    .execute();
+  return db.query.tables.findMany({
+    where: and(
+      eq(schema.tables.ownerId, userId),
+      input.includeDeleted ? undefined : isNull(schema.tables.deletedAt),
+    ),
+    orderBy: tableOrderByMap[input.orderBy ?? "newest"],
+  });
 }
 
 export async function createTable(
@@ -159,7 +156,7 @@ export async function findTable(userId: string, input: TableGetInput) {
 }
 
 export async function findDependencies(input: TableFindDependenciesInput) {
-  const tableVersions = await db
+  return await db
     .selectDistinctOn([schema.tableVersions.tableIdentifier], {
       ...getTableColumns(schema.tableVersions),
       table: schema.tables,
@@ -183,8 +180,6 @@ export async function findDependencies(input: TableFindDependenciesInput) {
       schema.tableVersions.tableIdentifier,
       desc(schema.tableVersions.updatedAt),
     );
-
-  return tableVersions;
 }
 
 export async function resolveDependencies(

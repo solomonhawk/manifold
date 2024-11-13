@@ -12,7 +12,7 @@ import type { TrpcUtils } from "~utils/trpc";
  */
 export function loaderBuilder(trpcUtils: TrpcUtils) {
   return async ({ request }: LoaderFunctionArgs) => {
-    const searchParams = new URLSearchParams(request.url);
+    const searchParams = new URLSearchParams(new URL(request.url).searchParams);
     const orderByFromUrl = tableListOrderBy.safeParse(searchParams.get("sort"));
     const savedOrderBy = await storage.getItem(TABLE_LIST_ORDER_BY_STORAGE_KEY);
 

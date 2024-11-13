@@ -18,16 +18,24 @@
     "./utils/string": {
       "types": "./src/utils/string.ts",
       "default": "./src/utils/string.ts"
+    },
+    "./models/pagination": {
+      "types": "./src/models/pagination/index.ts",
+      "default": "./src/models/pagination/index.ts"
     }
   },
   "scripts": {
     "lint": "eslint --cache \"**/*.{ts,tsx}\"",
     "lint:fix": "eslint --cache --fix \"**/*.{ts,tsx}\" --max-warnings 0",
-    "lint:strict": "eslint --cache \"**/*.{ts,tsx}\" --max-warnings 0"
+    "lint:strict": "eslint --cache \"**/*.{ts,tsx}\" --max-warnings 0",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "devDependencies": {
     "@manifold/eslint-config": "*",
-    "@manifold/typescript-config": "*"
+    "@manifold/typescript-config": "*",
+    "@testing-library/react": "16.0.1",
+    "vitest": "2.1.4"
   },
   "dependencies": {
     "@sindresorhus/slugify": "^2.2.1"
