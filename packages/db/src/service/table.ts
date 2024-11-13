@@ -95,15 +95,13 @@ export async function findTable(userId: string, input: TableGetInput) {
       // @TODO: Drizzle doesn't correctly map/alias the subquery columns so they
       // end up as the snake_case (db) keys in the final result. Is this a bug?
       // ...getTableColumns(schema.tableVersions),
-      id: sql`${schema.tableVersions.id}`.mapWith(String).as("id"),
-      version: sql`${schema.tableVersions.version}`
-        .mapWith(Number)
-        .as("version"),
+      id: sql`${schema.tableVersions.id}`.mapWith(String),
+      version: sql`${schema.tableVersions.version}`.mapWith(Number),
       tableIdentifier: sql`${schema.tableVersions.tableIdentifier}`.as(
         "tableIdentifier",
       ),
       tableSlug: sql`${schema.tableVersions.tableSlug}`.as("tableSlug"),
-      definition: sql`${schema.tableVersions.definition}`.as("definition"),
+      definition: sql`${schema.tableVersions.definition}`,
       releaseNotes: sql`${schema.tableVersions.releaseNotes}`.as(
         "releaseNotes",
       ),
