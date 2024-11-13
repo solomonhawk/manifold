@@ -1,0 +1,1 @@
+export { TableNew } from "./page";

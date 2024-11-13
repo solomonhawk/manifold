@@ -1,5 +1,6 @@
+import { useComposedRefs } from "@radix-ui/react-compose-refs";
 import { useAtomValue } from "jotai";
-import { useCallback, useEffect, useRef } from "react";
+import { forwardRef, useCallback, useEffect, useRef } from "react";
 import { Link, type LinkProps, matchRoutes } from "react-router-dom";
 
 import { routesAtom } from "~features/routing/state";
@@ -21,18 +22,16 @@ type PrefetchableLinkProps = LinkProps &
  * @NOTE: Does not support following loader redirects and prefetching those
  * routes.
  */
-export function PrefetchableLink({
-  children,
-  to,
-  mode = "intent",
-  wait = 250,
-  ...props
-}: PrefetchableLinkProps) {
+export const PrefetchableLink = forwardRef<
+  HTMLAnchorElement,
+  PrefetchableLinkProps
+>(({ children, to, mode = "intent", wait = 250, ...props }, ref) => {
   if (import.meta.env.DEV && wait < 0) {
     log.warn("PrefecthableLink: `wait` must be a positive number");
   }
 
-  const ref = useRef<HTMLAnchorElement | null>(null);
+  const linkRef = useRef<HTMLAnchorElement | null>(null);
+  const combinedRef = useComposedRefs(ref, linkRef);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const routes = useAtomValue(routesAtom);
 
@@ -119,7 +118,7 @@ export function PrefetchableLink({
       }
     });
 
-    const currentTarget = ref.current;
+    const currentTarget = linkRef.current;
 
     if (currentTarget) {
       observer.observe(currentTarget);
@@ -134,8 +133,8 @@ export function PrefetchableLink({
 
   return (
     <Link
-      ref={ref}
       to={to}
+      ref={combinedRef}
       {...props}
       onMouseEnter={handleIntent}
       onMouseLeave={handleUnintent}
@@ -145,4 +144,5 @@ export function PrefetchableLink({
       {children}
     </Link>
   );
-}
+});
+PrefetchableLink.displayName = "PrefetchableLink";

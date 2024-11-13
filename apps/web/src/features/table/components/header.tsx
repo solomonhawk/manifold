@@ -1,11 +1,17 @@
 import { capitalize } from "@manifold/lib";
 import type { RouterOutput } from "@manifold/router";
 import { Button } from "@manifold/ui/components/ui/button";
+import {
+  Tooltip,
+  TooltipArrow,
+  TooltipContent,
+  TooltipTrigger,
+} from "@manifold/ui/components/ui/tooltip";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
 import { cn } from "@manifold/ui/lib/utils";
 import { formatRelative } from "date-fns";
 import { motion } from "framer-motion";
-import { GoArrowLeft } from "react-icons/go";
+import { GoArrowLeft, GoEye } from "react-icons/go";
 
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
 import { DeleteButton } from "~features/table/components/table-update-form/delete-button";
@@ -63,6 +69,24 @@ export function Header({ table }: { table: RouterOutput["table"]["get"] }) {
           />
         ) : (
           <>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button asChild size="icon" variant="outline">
+                  <PrefetchableLink
+                    to={`/t/${table.ownerUsername}/${table.slug}`}
+                  >
+                    <span className="sr-only">View public table page</span>
+                    <GoEye />
+                  </PrefetchableLink>
+                </Button>
+              </TooltipTrigger>
+
+              <TooltipContent>
+                View public table page
+                <TooltipArrow />
+              </TooltipContent>
+            </Tooltip>
+
             <FavoriteButton
               tableId={table.id}
               tableIdentifier={table.tableIdentifier}

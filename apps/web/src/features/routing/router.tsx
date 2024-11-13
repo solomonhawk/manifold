@@ -9,14 +9,16 @@ import {
 } from "react-router-dom";
 
 import { AuthGuard } from "~features/auth/components/auth-guard";
+import { loadDashboardRoute } from "~features/dashboard/pages/root/lazy";
 import { userIsOnboarded } from "~features/onboarding/helpers";
 import { RootError } from "~features/routing/pages/root/error";
 import { RootLayout } from "~features/routing/pages/root/layout";
 import type { Handle } from "~features/routing/types";
-import type { TableDetailLoaderData } from "~features/table/pages/detail";
-import type { TableEditLoaderData } from "~features/table/pages/edit";
-import type { TableVersionDetailLoaderData } from "~features/table-version/pages/detail";
-import type { TableVersionsSearchBrowseLoaderData } from "~features/table-version/pages/search-browse";
+import { loadTableDetailRoute } from "~features/table/pages/detail/lazy";
+import { loadTableEditRoute } from "~features/table/pages/edit/lazy";
+import { loadTableNewRoute } from "~features/table/pages/new/lazy";
+import { loadTableVersionDetailRoute } from "~features/table-version/pages/detail/lazy";
+import { loadTableVersionSearchBrowseRoute } from "~features/table-version/pages/search-browse/lazy";
 import type { TrpcUtils } from "~utils/trpc";
 
 export function buildAppRoutes({
@@ -82,20 +84,7 @@ export function buildAppRoutes({
           children: [
             {
               index: true,
-              lazy: async () => {
-                const { DashboardRoot, loaderBuilder } = await import(
-                  "~features/dashboard/pages/root"
-                );
-
-                return {
-                  loader: loaderBuilder(trpcUtils),
-                  Component: DashboardRoot,
-                };
-              },
-              handle: {
-                title: () => "Manifold | Dashboard",
-                description: () => "Where it all begins.",
-              } satisfies Handle,
+              lazy: loadDashboardRoute(trpcUtils),
             },
           ],
         },
@@ -114,57 +103,15 @@ export function buildAppRoutes({
               children: [
                 {
                   index: true,
-                  lazy: async () => {
-                    const { TableDetail, loaderBuilder } = await import(
-                      "~features/table/pages/detail"
-                    );
-
-                    return {
-                      loader: loaderBuilder(trpcUtils),
-                      Component: TableDetail,
-                    };
-                  },
-                  handle: {
-                    title: ({ data }) => `Manifold | ${data.title}`,
-                    description: ({ data }) =>
-                      data.description ?? `Details of ${data.title}.`,
-                  } satisfies Handle<TableDetailLoaderData>,
+                  lazy: loadTableDetailRoute(trpcUtils),
                 },
                 {
                   path: "v/:version",
-                  lazy: async () => {
-                    const { TableVersionDetail, loaderBuilder } = await import(
-                      "~features/table-version/pages/detail"
-                    );
-
-                    return {
-                      loader: loaderBuilder(trpcUtils),
-                      Component: TableVersionDetail,
-                    };
-                  },
-                  handle: {
-                    title: ({ data }) => `Manifold | ${data.table.title}`,
-                    description: ({ data }) =>
-                      data.table.description ??
-                      `Details of ${data.table.title}.`,
-                  } satisfies Handle<TableVersionDetailLoaderData>,
+                  lazy: loadTableVersionDetailRoute(trpcUtils),
                 },
                 {
                   path: "edit",
-                  lazy: async () => {
-                    const { TableEdit, loaderBuilder } = await import(
-                      "~features/table/pages/edit"
-                    );
-
-                    return {
-                      loader: loaderBuilder(trpcUtils),
-                      Component: TableEdit,
-                    };
-                  },
-                  handle: {
-                    title: ({ data }) => `Manifold | Edit ${data.title}`,
-                    description: ({ data }) => `Edit ${data.title} table.`,
-                  } satisfies Handle<TableEditLoaderData>,
+                  lazy: loadTableEditRoute(trpcUtils),
                 },
                 {
                   index: true,
@@ -186,29 +133,11 @@ export function buildAppRoutes({
             },
             {
               path: "new",
-              lazy: () => import("~features/table/pages/new/page"),
-              handle: {
-                title: () => "Manifold | New Table",
-                description: () => "Create a new random table.",
-              } satisfies Handle,
+              lazy: loadTableNewRoute(),
             },
             {
               path: "discover",
-              lazy: async () => {
-                const { TableVersionsSearchBrowse, loaderBuilder } =
-                  await import("~features/table-version/pages/search-browse");
-
-                return {
-                  loader: loaderBuilder(trpcUtils),
-                  Component: TableVersionsSearchBrowse,
-                };
-              },
-              handle: {
-                title: ({ data }) =>
-                  `Manifold | Browse ${data.pagination.totalItems} Tables`,
-                description: () =>
-                  `Search and browse to discover exactly what you need.`,
-              } satisfies Handle<TableVersionsSearchBrowseLoaderData>,
+              lazy: loadTableVersionSearchBrowseRoute(trpcUtils),
             },
           ],
         },

@@ -162,7 +162,14 @@ export function TableList({
                       title={table.title}
                     >
                       <div className="z-20 translate-y-14 transition-transform group-hover:translate-y-0">
-                        <h2 className="line-clamp-2 whitespace-normal text-center text-sm !leading-tight sm:text-base md:text-lg">
+                        <h2
+                          className={cn(
+                            "line-clamp-2 whitespace-normal text-center text-sm !leading-tight sm:text-base md:text-lg",
+                            {
+                              "line-through": table.deletedAt !== null,
+                            },
+                          )}
+                        >
                           {table.title}
                         </h2>
                       </div>
