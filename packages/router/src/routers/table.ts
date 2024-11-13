@@ -19,10 +19,30 @@ import { validationError } from "#error.ts";
 import { authedProcedure, onboardedProcedure, t } from "#trpc.ts";
 
 export const tableRouter = t.router({
+  /**
+   * List tables. Supports ordering and optionally including deleted tables.
+   */
   list: authedProcedure.input(tableListInput).query(({ input, ctx }) => {
     return tableService.listTables(ctx.user.id, input);
   }),
 
+  /**
+   * Create a new table.
+   *
+   * This procedure is wrapped in an `onboardedProcedure` because it requires
+   * a user to have a username set (which is used as the namespace for the
+   * table's public identifier).
+   *
+   * Creates a new entry in the registry's table packages collection so that
+   * new dependency relationships can be connected to it.
+   *
+   * @throws {TRPCError} with a BAD_REQUEST code if the slug is already taken,
+   *                     the error will contain a ZodError with the validation
+   *                     error details
+   * @throws {TRPCError} with a BAD_REQUEST code if slug can not be
+   *                     auto-generated, the error will contain a ZodError with
+   *                     the validation error details
+   */
   create: onboardedProcedure
     .input(tableCreateInput)
     .mutation(async ({ input, ctx }) => {
@@ -64,6 +84,13 @@ export const tableRouter = t.router({
       }
     }),
 
+  /**
+   * Get a single table by it's `tableIdentifier`.
+   *
+   * Resolves all the table's dependencies and includes them in the response.
+   *
+   * @throws {TRPCError} with a NOT_FOUND code if the table cannot be found
+   */
   get: authedProcedure.input(tableGetInput).query(async ({ input, ctx }) => {
     const table = await tableService.findTable(ctx.user.id, input);
 
@@ -89,18 +116,30 @@ export const tableRouter = t.router({
     };
   }),
 
+  /**
+   * Searches for a list of `tableVersion`s that match the given search query.
+   */
   findDependencies: t.procedure
     .input(tableFindDependenciesInput)
     .query(({ input }) => {
       return tableService.findDependencies(input);
     }),
 
+  /**
+   * Resolves `tableVersion`s for a list of `tableIdentifiers`s.
+   *
+   * Each `tableVersion` will have it's dependencies resolved and included in
+   * the response, which is flat list of `tableVersions` including those
+   * corresponding to the `tableIdentifier`s passed in along with their
+   * dependencies.
+   */
   resolveDependencies: t.procedure
     .input(tableResolveDependenciesInput)
     .query(async ({ input }) => {
-      // @TODO: need to actually resolve this against the graph
+      // get the latest version of each `tableVersion` in the input
       const tableVersions = await tableService.resolveDependencies(input);
 
+      // get all dependencies for each `tableVersion` (graph edges)
       const dependencies = await Promise.all(
         tableVersions.map((tableVersion) => {
           return tableRegistry.getAllDependencies({
@@ -110,12 +149,20 @@ export const tableRouter = t.router({
         }),
       );
 
+      // resolve table identifiers to `tableVersion` records
       return await tableService.listTableVersions([
         ...flatten(dependencies),
         ...tableVersions,
       ]);
     }),
 
+  /**
+   * Update a table. The params passed in are all optional except the `id`.
+   *
+   * If `dependencies` is passed in, the edges in the graph will be updated to
+   * reflect the new dependencies and remove any stale references to old
+   * dependencies.
+   */
   update: authedProcedure
     .input(tableUpdateInput)
     .mutation(async ({ input, ctx }) => {
@@ -135,6 +182,18 @@ export const tableRouter = t.router({
       return updatedTable;
     }),
 
+  /**
+   * Publish a new version of a table.
+   *
+   * This procedure is wrapped in an `onboardedProcedure` because it requires
+   * a user to have a username set (which is used as the namespace for the
+   * table's public identifier).
+   *
+   * Creates a new entry for the new version in the registry's table packages
+   * collection so that new dependency relationships can be connected to it.
+   *
+   * Adds all of the dependencies to the table registry.
+   */
   publish: onboardedProcedure
     .input(tablePublishVersionInput)
     .mutation(async ({ input, ctx }) => {
@@ -162,18 +221,27 @@ export const tableRouter = t.router({
       return tableVersion;
     }),
 
+  /**
+   * Delete a table, softly.
+   */
   delete: authedProcedure
     .input(tableDeleteInput)
     .mutation(async ({ input, ctx }) => {
       return tableService.deleteTable(ctx.user.id, input);
     }),
 
+  /**
+   * Restore a table that was previously deleted.
+   */
   restore: authedProcedure
     .input(tableRestoreInput)
     .mutation(async ({ input, ctx }) => {
       return tableService.restoreTable(ctx.user.id, input);
     }),
 
+  /**
+   * Lists a user's favorited tables.
+   */
   favorites: authedProcedure.query(({ ctx }) => {
     return tableService.listFavorites(ctx.user.id);
   }),
