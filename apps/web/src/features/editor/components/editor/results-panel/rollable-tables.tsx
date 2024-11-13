@@ -1,10 +1,15 @@
 import { AnimatedList } from "@manifold/ui/components/animated-list";
 import { Button } from "@manifold/ui/components/ui/button";
-import { Checkbox } from "@manifold/ui/components/ui/checkbox";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@manifold/ui/components/ui/tooltip";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
 import { motion } from "framer-motion";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { memo, type RefObject, useCallback } from "react";
+import { GoLinkExternal, GoListUnordered } from "react-icons/go";
 
 import {
   canRollResultAtom,
@@ -74,21 +79,26 @@ export const RollableTables = memo(function AvailableTables({
             : displayEditorStatus(status)}
         </span>
 
-        <Checkbox
-          id="exported"
-          aria-labelledby="exported-label"
-          checked={showExportedOnly}
-          onCheckedChange={(checked) =>
-            setShowExportedOnly(checked === "indeterminate" ? false : checked)
-          }
-        />
-        <label
-          id="exported-label"
-          htmlFor="exported"
-          className="pl-8 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-        >
-          Exported Only
-        </label>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={() => setShowExportedOnly(!showExportedOnly)}
+            >
+              <span className="sr-only">
+                {showExportedOnly ? "Show all tables" : "Show exported only"}
+              </span>
+
+              {showExportedOnly ? <GoListUnordered /> : <GoLinkExternal />}
+            </Button>
+          </TooltipTrigger>
+
+          <TooltipContent side="left">
+            {showExportedOnly ? "Show all tables" : "Show exported only"}
+          </TooltipContent>
+        </Tooltip>
       </div>
 
       <AnimatedList

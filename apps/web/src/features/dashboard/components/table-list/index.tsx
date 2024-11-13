@@ -6,13 +6,17 @@ import {
 import { ReactiveButton } from "@manifold/ui/components/reactive-button";
 import { Button } from "@manifold/ui/components/ui/button";
 import { Card, CardContent, CardHeader } from "@manifold/ui/components/ui/card";
-import { Checkbox } from "@manifold/ui/components/ui/checkbox";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
 } from "@manifold/ui/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@manifold/ui/components/ui/tooltip";
 import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
 import { transitionGamma } from "@manifold/ui/lib/animation";
 import { cn } from "@manifold/ui/lib/utils";
@@ -23,6 +27,7 @@ import {
 } from "@manifold/validators";
 import { formatRelative } from "date-fns";
 import { useCallback, useState } from "react";
+import { GoCircle, GoCircleSlash } from "react-icons/go";
 import { useSearchParams } from "react-router-dom";
 
 import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
@@ -95,23 +100,26 @@ export function TableList({
           </Select>
         </div>
 
-        <div className="flex items-center">
-          <Checkbox
-            id="deleted"
-            aria-labelledby="deleted-label"
-            checked={includeDeleted}
-            onCheckedChange={(checked) =>
-              setIncludeDeleted(checked === "indeterminate" ? false : checked)
-            }
-          />
-          <label
-            id="deleted-label"
-            htmlFor="deleted"
-            className="pl-8 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            Show Deleted
-          </label>
-        </div>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={() => setIncludeDeleted((v) => !v)}
+            >
+              <span className="sr-only">
+                {includeDeleted ? "Hide deleted" : "Show deleted"}
+              </span>
+
+              {includeDeleted ? <GoCircle /> : <GoCircleSlash />}
+            </Button>
+          </TooltipTrigger>
+
+          <TooltipContent side="left">
+            {includeDeleted ? "Hide deleted" : "Show deleted"}
+          </TooltipContent>
+        </Tooltip>
       </CardHeader>
 
       <CardContent className={cn({ "opacity-50": isPending })}>
