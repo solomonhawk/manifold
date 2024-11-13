@@ -179,7 +179,7 @@ export function FindDependencyDialog({
                           <TooltipTrigger asChild>
                             <Button
                               variant="ghost"
-                              size="icon"
+                              size="icon-sm"
                               type="button"
                               className="text-muted-foreground group-hover:text-foreground"
                               onClick={() =>
@@ -214,7 +214,7 @@ export function FindDependencyDialog({
                           <TooltipTrigger asChild>
                             <Button
                               variant="ghost"
-                              size="icon"
+                              size="icon-sm"
                               type="button"
                               className="text-muted-foreground group-hover:text-foreground"
                               onClick={(e: MouseEvent) => {

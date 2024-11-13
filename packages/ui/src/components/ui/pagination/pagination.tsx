@@ -155,6 +155,7 @@ export function PrevPageLink({
         to={{
           search: paginator.getSearchParams(controller.prevPage()).toString(),
         }}
+        tabIndex={disabled ? -1 : undefined}
       >
         {children || (
           <>
@@ -185,6 +186,7 @@ export function NextPageLink({
         to={{
           search: paginator.getSearchParams(controller.nextPage()).toString(),
         }}
+        tabIndex={disabled ? -1 : undefined}
       >
         {children || (
           <>
