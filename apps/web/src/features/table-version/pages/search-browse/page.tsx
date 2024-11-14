@@ -51,6 +51,7 @@ export function TableVersionsSearchBrowse() {
     const params = new URLSearchParams(location.search);
 
     params.set("q", value);
+    params.set("page", "1");
 
     setSearchParams(params);
   }
@@ -216,7 +217,7 @@ function SearchForm({
               size="sm"
               variant="ghost"
               className="mr-1"
-              disabled={!value}
+              disabled={value === defaultSearchQuery}
             >
               Search
             </Button>
@@ -297,7 +298,7 @@ function ListItem({
             {tableVersion.availableTables.length > 5 ? (
               <span className="text-xs text-foreground">
                 {showAllTables
-                  ? "Show fewer"
+                  ? "show fewer"
                   : `and ${tableVersion.availableTables.length - 5} more`}
               </span>
             ) : null}
