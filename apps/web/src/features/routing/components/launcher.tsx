@@ -6,7 +6,7 @@ import {
 } from "@manifold/ui/components/ui/command";
 import { Skeleton } from "@manifold/ui/components/ui/skeleton";
 import { useCommandPalette } from "@manifold/ui/hooks/use-command-palette";
-import { GoFile, GoHome, GoListUnordered } from "react-icons/go";
+import { GoFile, GoHome, GoListUnordered, GoSearch } from "react-icons/go";
 import {
   Link,
   type NavigateOptions,
@@ -80,7 +80,19 @@ export function Launcher() {
         >
           <Link to="/">
             <GoHome className="text-accent-foreground" />
-            <span>Go to Dashboard</span>
+            <span>Dashboard</span>
+          </Link>
+        </CommandItem>
+
+        <CommandItem
+          asChild
+          onSelect={() => {
+            navigateAndDismissLauncher("/table/discover");
+          }}
+        >
+          <Link to="/table/discover">
+            <GoSearch className="text-accent-foreground" />
+            <span>Discover</span>
           </Link>
         </CommandItem>
       </CommandGroup>
