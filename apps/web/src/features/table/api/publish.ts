@@ -28,6 +28,8 @@ export function usePublishTable({
         tableIdentifier: data.tableIdentifier,
       });
 
+      trpcUtils.tableVersion.list.invalidate();
+
       await onSuccess?.(data);
 
       toastSuccess(
