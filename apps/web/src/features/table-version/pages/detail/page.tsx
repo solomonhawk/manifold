@@ -86,7 +86,7 @@ export function TableVersionDetail() {
         <h3 className="mb-8 font-semibold">Versions</h3>
 
         <ul className="divide-y overflow-hidden rounded border bg-background">
-          {tableVersion.data.versions.map((version) => {
+          {tableVersion.data.versions.map((version, i) => {
             const isCurrentVersion =
               version.version === tableVersion.data.version;
             const LinkComponent = isCurrentVersion ? "span" : PrefetchableLink;
@@ -125,6 +125,7 @@ export function TableVersionDetail() {
                         {isCurrentVersion ? (
                           <Badge variant="accent">Current</Badge>
                         ) : null}
+                        {i === 0 ? <Badge>Latest</Badge> : null}
                       </div>
 
                       {version.releaseNotes ? (
