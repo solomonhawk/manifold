@@ -1,11 +1,29 @@
 import { buildTableIdentifier } from "@manifold/lib";
 import { FullScreenLoader } from "@manifold/ui/components/full-screen-loader";
 import { TableIdentifier } from "@manifold/ui/components/table-identifier";
+import { Badge } from "@manifold/ui/components/ui/badge";
 import { Button } from "@manifold/ui/components/ui/button";
 import { FlexCol } from "@manifold/ui/components/ui/flex";
+import {
+  Notice,
+  NoticeContent,
+  NoticeIcon,
+} from "@manifold/ui/components/ui/notice";
+import {
+  Tooltip,
+  TooltipArrow,
+  TooltipContent,
+  TooltipTrigger,
+} from "@manifold/ui/components/ui/tooltip";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
 import { motion } from "framer-motion";
-import { GoArrowRight, GoCopy, GoPackage, GoPencil } from "react-icons/go";
+import {
+  GoArrowRight,
+  GoCopy,
+  GoInfo,
+  GoPackage,
+  GoPencil,
+} from "react-icons/go";
 
 import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
@@ -52,10 +70,17 @@ export function TableDetail() {
             </motion.span>
           </h2>
 
-          <TableIdentifier
-            className="text-xs sm:text-base"
-            tableIdentifier={table.data.tableIdentifier}
-          />
+          <div className="flex items-center gap-8">
+            <span>
+              <TableIdentifier
+                className="inline text-xs sm:text-base"
+                tableIdentifier={table.data.tableIdentifier}
+              />
+            </span>
+            {table.data.totalVersionCount === 0 ? (
+              <Badge>Unpublished</Badge>
+            ) : null}
+          </div>
 
           {table.data.description ? (
             <p className="mt-12 text-muted-foreground">
@@ -65,10 +90,18 @@ export function TableDetail() {
         </motion.div>
 
         <div className="mb-auto flex grow justify-end gap-8">
-          <Button variant="outline" size="icon">
-            <span className="sr-only">Copy Table</span>
-            <GoCopy />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="outline" size="icon">
+                <span className="sr-only">Copy Table</span>
+                <GoCopy />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              Copy table
+              <TooltipArrow />
+            </TooltipContent>
+          </Tooltip>
 
           {userProfile.userId === table.data.ownerId ? (
             <Button asChild variant="outline" size="icon">
@@ -116,67 +149,82 @@ export function TableDetail() {
         <section>
           <h3 className="mb-8 font-semibold">Versions</h3>
 
-          <ul className="divide-y rounded border bg-background">
-            {table.data.recentVersions.map((version) => {
-              return (
-                <li key={version.id}>
-                  <PrefetchableLink
-                    to={`/t/${username}/${slug}/v/${version.version}`}
-                    className="group flex items-center justify-between p-12 pl-16 transition-colors hover:bg-secondary focus:bg-secondary sm:p-16 sm:pl-20"
-                  >
-                    <div className="flex flex-col gap-4 pr-16">
-                      <div className="flex items-center gap-6 text-base text-muted-foreground">
-                        <strong className="text-xl text-accent-foreground">
-                          v{version.version}
-                        </strong>{" "}
-                        published on{" "}
-                        <span className="text-foreground">
-                          {new Date(version.createdAt).toLocaleDateString()}
-                        </span>
-                      </div>
+          {table.data.recentVersions.length === 0 ? (
+            <Notice>
+              <NoticeIcon>
+                <GoInfo className="size-16" />
+              </NoticeIcon>
 
-                      {version.releaseNotes ? (
-                        <pre
-                          className="my-4 mb-8 line-clamp-2 text-ellipsis whitespace-break-spaces border-l-2 border-muted pl-8 font-sans text-xs text-muted-foreground/70"
-                          title={version.releaseNotes}
-                        >
-                          {version.releaseNotes}
-                        </pre>
-                      ) : null}
-
-                      <div className="flex flex-wrap gap-4">
-                        {version.availableTables
-                          .slice(0, COLLAPSED_AVAILABLE_TABLES_COUNT)
-                          .map((tableId) => (
-                            <code
-                              key={tableId}
-                              className="rounded bg-secondary p-3 px-6 text-xs leading-none text-accent-foreground transition-colors group-hover:bg-background group-focus:bg-background"
-                            >
-                              {tableId}
-                            </code>
-                          ))}
-                        {version.availableTables.length >
-                        COLLAPSED_AVAILABLE_TABLES_COUNT ? (
-                          <span className="text-xs text-foreground">
-                            {`and ${version.availableTables.length - COLLAPSED_AVAILABLE_TABLES_COUNT} more`}
-                          </span>
-                        ) : null}
-                      </div>
-                    </div>
-
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      type="button"
-                      tabIndex={-1}
+              <NoticeContent>
+                This table has no versions yet.{" "}
+                {userProfile.userId === table.data.ownerId
+                  ? "When you publish a new version of this table, it will appear here."
+                  : null}
+              </NoticeContent>
+            </Notice>
+          ) : (
+            <ul className="divide-y rounded border bg-background">
+              {table.data.recentVersions.map((version) => {
+                return (
+                  <li key={version.id}>
+                    <PrefetchableLink
+                      to={`/t/${username}/${slug}/v/${version.version}`}
+                      className="group flex items-center justify-between p-12 pl-16 transition-colors hover:bg-secondary focus:bg-secondary sm:p-16 sm:pl-20"
                     >
-                      <GoArrowRight />
-                    </Button>
-                  </PrefetchableLink>
-                </li>
-              );
-            })}
-          </ul>
+                      <div className="flex flex-col gap-4 pr-16">
+                        <div className="flex items-center gap-6 text-base text-muted-foreground">
+                          <strong className="text-xl text-accent-foreground">
+                            v{version.version}
+                          </strong>{" "}
+                          published on{" "}
+                          <span className="text-foreground">
+                            {new Date(version.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
+
+                        {version.releaseNotes ? (
+                          <pre
+                            className="my-4 mb-8 line-clamp-2 text-ellipsis whitespace-break-spaces border-l-2 border-muted pl-8 font-sans text-xs text-muted-foreground/70"
+                            title={version.releaseNotes}
+                          >
+                            {version.releaseNotes}
+                          </pre>
+                        ) : null}
+
+                        <div className="flex flex-wrap gap-4">
+                          {version.availableTables
+                            .slice(0, COLLAPSED_AVAILABLE_TABLES_COUNT)
+                            .map((tableId) => (
+                              <code
+                                key={tableId}
+                                className="rounded bg-secondary p-3 px-6 text-xs leading-none text-accent-foreground transition-colors group-hover:bg-background group-focus:bg-background"
+                              >
+                                {tableId}
+                              </code>
+                            ))}
+                          {version.availableTables.length >
+                          COLLAPSED_AVAILABLE_TABLES_COUNT ? (
+                            <span className="text-xs text-foreground">
+                              {`and ${version.availableTables.length - COLLAPSED_AVAILABLE_TABLES_COUNT} more`}
+                            </span>
+                          ) : null}
+                        </div>
+                      </div>
+
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        type="button"
+                        tabIndex={-1}
+                      >
+                        <GoArrowRight />
+                      </Button>
+                    </PrefetchableLink>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </section>
       </section>
     </FlexCol>

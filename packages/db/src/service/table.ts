@@ -128,7 +128,9 @@ export async function findTable(input: TableGetInput) {
       >`COALESCE(jsonb_agg("tableVersions") FILTER (WHERE "tableVersions"."id" IS NOT NULL), '[]'::jsonb)`.as(
         "recentVersions",
       ),
-      totalVersionCount: tableVersionsSubQuery.count,
+      totalVersionCount: sql`COALESCE(${tableVersionsSubQuery.count}, 0)`
+        .mapWith(Number)
+        .as("totalVersionCount"),
     })
     .from(schema.tables)
     .leftJoin(
