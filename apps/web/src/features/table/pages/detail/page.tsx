@@ -13,6 +13,8 @@ import { useRouteParams } from "~features/routing/hooks/use-route-params";
 import { tableDetailParams } from "~features/table/pages/detail/params";
 import { trpc } from "~utils/trpc";
 
+const COLLAPSED_AVAILABLE_TABLES_COUNT = 3;
+
 export function TableDetail() {
   const userProfile = useRequiredUserProfile();
   const { username, slug } = useRouteParams(tableDetailParams);
@@ -70,7 +72,10 @@ export function TableDetail() {
 
           {userProfile.userId === table.data.ownerId ? (
             <Button asChild variant="outline" size="icon">
-              <PrefetchableLink to={`/t/${username}/${slug}/edit`}>
+              <PrefetchableLink
+                to={`/t/${username}/${slug}/edit`}
+                state={{ fromTable: true }}
+              >
                 <span className="sr-only">Edit Table</span>
                 <GoPencil />
               </PrefetchableLink>
@@ -99,7 +104,7 @@ export function TableDetail() {
             </dd>
           </dl>
 
-          <h3 className="mb-8 font-semibold">Latest draft</h3>
+          <h3 className="mb-8 font-semibold">Latest definition</h3>
 
           <div className="rounded border bg-background">
             <pre className="max-h-384 overflow-auto px-16 py-12 text-xs leading-tight">
@@ -117,7 +122,7 @@ export function TableDetail() {
                 <li key={version.id}>
                   <PrefetchableLink
                     to={`/t/${username}/${slug}/v/${version.version}`}
-                    className="group flex items-center justify-between p-12 pl-16 sm:p-16 sm:pl-20"
+                    className="group flex items-center justify-between p-12 pl-16 transition-colors hover:bg-secondary focus:bg-secondary sm:p-16 sm:pl-20"
                   >
                     <div className="flex flex-col gap-4 pr-16">
                       <div className="flex items-center gap-6 text-base text-muted-foreground">
@@ -140,17 +145,20 @@ export function TableDetail() {
                       ) : null}
 
                       <div className="flex flex-wrap gap-4">
-                        {version.availableTables.slice(0, 5).map((tableId) => (
-                          <code
-                            key={tableId}
-                            className="rounded bg-secondary p-3 px-6 text-xs leading-none text-accent-foreground"
-                          >
-                            {tableId}
-                          </code>
-                        ))}
-                        {version.availableTables.length > 5 ? (
+                        {version.availableTables
+                          .slice(0, COLLAPSED_AVAILABLE_TABLES_COUNT)
+                          .map((tableId) => (
+                            <code
+                              key={tableId}
+                              className="rounded bg-secondary p-3 px-6 text-xs leading-none text-accent-foreground transition-colors group-hover:bg-background group-focus:bg-background"
+                            >
+                              {tableId}
+                            </code>
+                          ))}
+                        {version.availableTables.length >
+                        COLLAPSED_AVAILABLE_TABLES_COUNT ? (
                           <span className="text-xs text-foreground">
-                            {`and ${version.availableTables.length - 5} more`}
+                            {`and ${version.availableTables.length - COLLAPSED_AVAILABLE_TABLES_COUNT} more`}
                           </span>
                         ) : null}
                       </div>

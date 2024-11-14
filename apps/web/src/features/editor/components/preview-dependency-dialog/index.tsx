@@ -12,7 +12,11 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@manifold/ui/components/ui/drawer";
+import { useCallback } from "react";
 import { GoX } from "react-icons/go";
+import { useBlocker } from "react-router-dom";
+
+import { useRouteChange } from "~features/routing/hooks/use-route-change";
 
 type Props = {
   dependency: RouterOutput["table"]["findDependencies"][number];
@@ -27,6 +31,16 @@ export function PreviewDependencyDialog({
 }: Props) {
   const modal = useModal();
 
+  /**
+   * Prevent navigation when the modal is open
+   */
+  useBlocker(modal.visible);
+
+  /**
+   * Close the modal when a route change would occur
+   */
+  useRouteChange(useCallback(() => modal.hide(), [modal]));
+
   return (
     <Drawer
       open={modal.visible}
@@ -36,7 +50,7 @@ export function PreviewDependencyDialog({
       // eslint-disable-next-line jsx-a11y/no-autofocus
       autoFocus
     >
-      <DrawerContent>
+      <DrawerContent className="top-0">
         <div className="w-full flex-1 overflow-y-auto">
           <div className="mx-auto w-full max-w-xl">
             <DrawerHeader>

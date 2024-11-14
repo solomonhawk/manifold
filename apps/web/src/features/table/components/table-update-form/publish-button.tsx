@@ -9,7 +9,7 @@ import {
 } from "@manifold/ui/components/ui/tooltip";
 import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
 import { useAtomValue } from "jotai";
-import { GoPackageDependents } from "react-icons/go";
+import { GoGitBranch } from "react-icons/go";
 
 import { DialogManager, DIALOGS } from "~features/dialog-manager";
 import { currentAllResolvedDependenciesAtom } from "~features/editor/components/editor/state";
@@ -76,11 +76,7 @@ export function PublishButton({
               })
             }
           >
-            {isPending ? (
-              <LoadingIndicator size="sm" />
-            ) : (
-              <GoPackageDependents />
-            )}
+            {isPending ? <LoadingIndicator size="sm" /> : <GoGitBranch />}
             Publish{recentVersions.length > 0 ? " Version" : null}
           </ReactiveButton>
         </span>

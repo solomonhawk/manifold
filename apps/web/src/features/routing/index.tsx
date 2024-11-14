@@ -11,13 +11,14 @@ import {
   protectedLoaderBuilder,
   routerBuilder,
 } from "~features/routing/router";
-import { routesAtom } from "~features/routing/state";
+import { routerAtom, routesAtom } from "~features/routing/state";
 import { trpc } from "~utils/trpc";
 
 export function Router() {
   const session = useAuth();
   const trpcUtils = trpc.useUtils();
   const setRoutes = useSetAtom(routesAtom);
+  const setRouter = useSetAtom(routerAtom);
 
   const guestLoader = useMemo(() => guestLoaderBuilder(session), [session]);
   const protectedLoader = useMemo(
@@ -38,6 +39,14 @@ export function Router() {
   useEffect(() => {
     setRoutes(routes);
   }, [routes, setRoutes]);
+
+  /**
+   * Make router instance available for descendents (e.g. Drawers/Dialogs) to
+   * listen to route changes
+   */
+  useEffect(() => {
+    setRouter(routerInstance);
+  }, [routerInstance, setRouter]);
 
   return (
     <>

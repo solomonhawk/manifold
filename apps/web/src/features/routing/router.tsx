@@ -106,8 +106,20 @@ export function buildAppRoutes({
                   lazy: loadTableDetailRoute(trpcUtils),
                 },
                 {
+                  id: "table-version-detail",
                   path: "v/:version",
                   lazy: loadTableVersionDetailRoute(trpcUtils),
+                  children: [
+                    {
+                      index: true,
+                      lazy: () =>
+                        import("~features/table-version/pages/detail").then(
+                          (mod) => ({
+                            Component: mod.TableVersionDetail,
+                          }),
+                        ),
+                    },
+                  ],
                 },
                 {
                   path: "edit",

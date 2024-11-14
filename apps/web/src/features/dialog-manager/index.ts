@@ -5,6 +5,7 @@ import { FindDependencyDialog } from "~features/editor/components/find-dependenc
 import { PreviewDependencyDialog } from "~features/editor/components/preview-dependency-dialog";
 import { TableDeleteDialog } from "~features/table/components/table-delete-dialog";
 import { TablePublishDialog } from "~features/table/components/table-publish-dialog";
+import { CompareVersionsDialog } from "~features/table-version/components/compare-versions-dialog";
 
 /**
  * @NOTE: Workaround for TypeScript not being able to infer the correct type of
@@ -50,6 +51,10 @@ export const DIALOGS = {
   PREVIEW_DEPENDENCY: {
     ID: "PREVIEW_DEPENDENCY",
     COMPONENT: NiceModal.create(PreviewDependencyDialog),
+  },
+  COMPARE_VERSIONS: {
+    ID: "COMPARE_VERSIONS",
+    COMPONENT: NiceModal.create(CompareVersionsDialog),
   },
 } as const;
 

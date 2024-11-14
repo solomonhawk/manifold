@@ -1,6 +1,7 @@
 import { isError } from "@tanstack/react-query";
 import { useEffect } from "react";
 import {
+  type Params,
   type UIMatch,
   useMatches,
   useParams,
@@ -18,6 +19,37 @@ const DEFAULT_TITLE = "Manifold | Embrace the chaos";
 const DEFAULT_DESCRIPTION =
   "A tool for curating your collection of random tables.";
 
+type RouteMetaData = { title: string; description: string };
+
+function getRouteMetaData(
+  matchedRoute: UIMatch<unknown, Handle<unknown>>,
+  params: Readonly<Params<string>>,
+) {
+  const { handle, data } = matchedRoute;
+
+  if (handle && data) {
+    return {
+      title: handle.title?.({ params, data }),
+      description: handle.description?.({ params, data }),
+    };
+  }
+
+  return { title: undefined, description: undefined };
+}
+
+function getMostSpecificRouteMetaData(
+  metadata: Partial<RouteMetaData>[],
+): RouteMetaData {
+  return metadata.reduce<RouteMetaData>(
+    (acc, current) => {
+      return {
+        title: current.title || acc.title,
+        description: current.description || acc.description,
+      };
+    },
+    { title: DEFAULT_TITLE, description: DEFAULT_DESCRIPTION },
+  );
+}
 /**
  * When the route changes, updates the document title.
  *
@@ -37,18 +69,14 @@ export function RouteMeta() {
   const params = useParams();
   const matches = useMatches() as UIMatch<unknown, Handle<unknown>>[];
   const error = useRouteError();
-
-  const { handle, data } = matches[matches.length - 1];
-
-  let title = DEFAULT_TITLE;
-  let description = DEFAULT_DESCRIPTION;
+  const allMatchesMeta = matches.map((match) =>
+    getRouteMetaData(match, params),
+  );
+  let { title, description } = getMostSpecificRouteMetaData(allMatchesMeta);
 
   if (error) {
     title = isError(error) ? error.message : "Something went wrong";
     description = "We're not sure what happened, but we're looking into it.";
-  } else if (handle && data) {
-    title = handle.title?.({ params, data }) ?? DEFAULT_TITLE;
-    description = handle.description?.({ params, data }) ?? DEFAULT_DESCRIPTION;
   }
 
   useEffect(() => {
