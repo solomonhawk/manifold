@@ -49,7 +49,13 @@ type NoticeIconProps = {
 const NoticeIcon = React.forwardRef<HTMLDivElement, NoticeIconProps>(
   ({ className, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "div";
-    return <Comp className={cn("", className)} ref={ref} {...props} />;
+    return (
+      <Comp
+        className={cn("size-16 shrink-0", className)}
+        ref={ref}
+        {...props}
+      />
+    );
   },
 );
 NoticeIcon.displayName = "NoticeIcon";

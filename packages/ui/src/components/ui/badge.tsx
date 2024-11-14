@@ -17,7 +17,8 @@ const badgeVariants = cva(
       },
       size: {
         default: "px-10 py-2 text-xs",
-        sm: "px-6 py-1 text-xxs",
+        // @TODO: twMerge thinks `text-xxs` should override text-primary-foreground/etc.
+        sm: "px-6 py-1 text-[10px] leading-normal",
         lg: "px-12 py-3 text-base",
       },
     },
