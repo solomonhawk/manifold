@@ -7,8 +7,8 @@ describe("PaginationParamsModel", () => {
     const subject = new PaginationParamsModel(2, 100);
 
     expect(subject.toQuery()).toStrictEqual({
-      skip: 100,
-      take: 100,
+      offset: 100,
+      limit: 100,
     });
   });
 
