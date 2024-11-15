@@ -9,7 +9,6 @@ import {
   asc,
   desc,
   eq,
-  getTableColumns,
   ilike,
   or,
   type SQL,
@@ -17,6 +16,7 @@ import {
 } from "drizzle-orm";
 
 import { db } from "#db.ts";
+import { getColumns } from "#helpers/get-columns.js";
 
 import * as schema from "../schema";
 
@@ -74,33 +74,46 @@ export async function listTableVersions(input: TableVersionListInput) {
     .groupBy(schema.tableVersions.tableIdentifier)
     .as("countSubQuery");
 
-  const tableVersions = await db
-    .selectDistinctOn([schema.tableVersions.tableIdentifier], {
-      ...getTableColumns(schema.tableVersions),
-      table: schema.tables,
-      count: countSubQuery.totalCount,
-    })
+  const distinctTableVersions = await db
+    .selectDistinctOn([schema.tableVersions.tableIdentifier])
     .from(schema.tableVersions)
     .where(whereFilter)
-    .leftJoin(
-      schema.tables,
-      eq(schema.tables.tableIdentifier, schema.tableVersions.tableIdentifier),
-    )
-    .leftJoin(
-      countSubQuery,
-      eq(countSubQuery.tableIdentifier, schema.tableVersions.tableIdentifier),
-    )
     .orderBy(
       schema.tableVersions.tableIdentifier,
-      tableVersionOrderByMap[input.orderBy ?? "newest"],
+      desc(schema.tableVersions.createdAt),
     )
+    .as("distinctTableVersions");
+
+  const distinctTableVersionOrderByMap = {
+    recently_edited: desc(distinctTableVersions.updatedAt),
+    recently_not_edited: asc(distinctTableVersions.updatedAt),
+    oldest: asc(distinctTableVersions.createdAt),
+    newest: desc(distinctTableVersions.createdAt),
+  } as const satisfies Record<TableListOrderBy, SQL>;
+
+  const tableVersions = await db
+    .select({
+      ...getColumns(distinctTableVersions),
+      table: schema.tables,
+      totalCount: countSubQuery.totalCount,
+    })
+    .from(distinctTableVersions)
+    .leftJoin(
+      countSubQuery,
+      eq(countSubQuery.tableIdentifier, distinctTableVersions.tableIdentifier),
+    )
+    .innerJoin(
+      schema.tables,
+      eq(schema.tables.tableIdentifier, distinctTableVersions.tableIdentifier),
+    )
+    .orderBy(distinctTableVersionOrderByMap[input.orderBy ?? "newest"])
     .limit(limit)
     .offset(offset);
 
   return {
     data: tableVersions,
     pagination: pagination.toMetadata({
-      count: tableVersions.length ? tableVersions[0].count : 0,
+      count: tableVersions.length ? tableVersions[0].totalCount : 0,
     }),
   };
 }
