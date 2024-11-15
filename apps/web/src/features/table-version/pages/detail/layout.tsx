@@ -167,12 +167,20 @@ export function TableVersionLayout() {
           </Tooltip>
 
           {userProfile.userId === tableVersion.data.table.ownerId ? (
-            <Button asChild variant="outline" size="icon">
-              <PrefetchableLink to={`/t/${username}/${slug}/edit`}>
-                <span className="sr-only">Edit Table</span>
-                <GoPencil />
-              </PrefetchableLink>
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button asChild variant="outline" size="icon">
+                  <PrefetchableLink to={`/t/${username}/${slug}/edit`}>
+                    <span className="sr-only">Edit Table</span>
+                    <GoPencil />
+                  </PrefetchableLink>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                Edit table
+                <TooltipArrow />
+              </TooltipContent>
+            </Tooltip>
           ) : null}
         </div>
       </header>
