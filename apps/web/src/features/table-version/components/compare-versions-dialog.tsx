@@ -123,7 +123,7 @@ export function CompareVersionsDialog({
             ) : part.removed ? (
               <span className="text-destructive">{part.value}</span>
             ) : (
-              part.value
+              <span className="text-muted-foreground">{part.value}</span>
             )}
           </Fragment>
         );
@@ -209,7 +209,7 @@ export function CompareVersionsDialog({
                     <h4 className="mb-12 font-bold">
                       Version {sourceVersion.version}
                     </h4>
-                    <pre className="overflow-auto rounded-sm border p-16">
+                    <pre className="overflow-auto rounded-sm border p-16 text-muted-foreground">
                       {sourceVersion.definition}
                     </pre>
                   </div>

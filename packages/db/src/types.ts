@@ -16,6 +16,7 @@ export type TableVersionSummary = {
   tableSlug: string;
   ownerId: string;
   createdAt: string;
+  updatedAt: string;
   definition: string;
   releaseNotes: string;
   availableTables: string[];

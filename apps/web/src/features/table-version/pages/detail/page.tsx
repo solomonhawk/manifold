@@ -143,7 +143,13 @@ export function TableVersionDetail() {
                           .map((tableId) => (
                             <code
                               key={tableId}
-                              className="rounded bg-secondary p-3 px-6 text-xs leading-none text-accent-foreground group-hover:bg-background group-focus:bg-background"
+                              className={cn(
+                                "rounded bg-secondary p-3 px-6 text-xs leading-none text-accent-foreground",
+                                {
+                                  "group-hover:bg-background group-focus:bg-background":
+                                    !isCurrentVersion,
+                                },
+                              )}
                             >
                               {tableId}
                             </code>

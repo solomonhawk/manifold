@@ -236,6 +236,7 @@ function ListItem({
     tableSlug: string;
     title: string;
     tableIdentifier: string;
+    createdAt: Date;
     updatedAt: Date;
     availableTables: string[];
   };
