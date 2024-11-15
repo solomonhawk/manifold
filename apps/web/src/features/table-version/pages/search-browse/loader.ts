@@ -19,7 +19,7 @@ export function loaderBuilder(trpcUtils: TrpcUtils) {
     );
 
     const orderBy =
-      urlParams.orderBy ??
+      urlParams.sort ??
       tableListOrderBy.catch(() => "newest" as const).parse(savedOrderBy);
 
     const tableVersions = await trpcUtils.tableVersion.list.fetch({

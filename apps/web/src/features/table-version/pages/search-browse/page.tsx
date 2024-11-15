@@ -9,17 +9,25 @@ import { Button } from "@manifold/ui/components/ui/button";
 import { FlexCol } from "@manifold/ui/components/ui/flex";
 import { Input, InputAdornment } from "@manifold/ui/components/ui/input";
 import { Pagination } from "@manifold/ui/components/ui/pagination/pagination";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from "@manifold/ui/components/ui/select";
 import { Separator } from "@manifold/ui/components/ui/separator";
 import { usePaginationURLState } from "@manifold/ui/hooks/pagination/use-pagination-url-state";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
+import { tableListOrderByMapping } from "@manifold/validators";
 import { formatRelative } from "date-fns";
 import { LayoutGroup, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { GiMagnifyingGlass } from "react-icons/gi";
 import { GoSearch, GoX } from "react-icons/go";
-import { useLoaderData, useSearchParams } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
 
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
+import { useSearchParams } from "~features/routing/hooks/use-search-params";
 import type { TableVersionsSearchBrowseLoaderData } from "~features/table-version/pages/search-browse/loader";
 import { trpc } from "~utils/trpc";
 
@@ -48,12 +56,20 @@ export function TableVersionsSearchBrowse() {
   }
 
   function handleSearch(value: string) {
-    const params = new URLSearchParams(location.search);
+    setSearchParams((params) => {
+      const copy = new URLSearchParams(params);
+      copy.set("q", value);
+      copy.set("page", "1");
+      return copy;
+    });
+  }
 
-    params.set("q", value);
-    params.set("page", "1");
-
-    setSearchParams(params);
+  function handleSort(value: string) {
+    setSearchParams((params) => {
+      const copy = new URLSearchParams(params);
+      copy.set("sort", value);
+      return copy;
+    });
   }
 
   return (
@@ -65,16 +81,32 @@ export function TableVersionsSearchBrowse() {
               Discover{" "}
               <GiMagnifyingGlass className="size-20 sm:size-24 md:size-28" />
             </h2>
+
             <p className="text-muted-foreground">
               Find the table you’ve been searching for:
             </p>
           </div>
 
-          <div className="flex grow justify-end">
+          <div className="flex grow justify-end gap-8">
             <SearchForm
               onSubmit={handleSearch}
               defaultSearchQuery={searchQuery}
             />
+
+            <Select value={orderBy} onValueChange={handleSort}>
+              <SelectTrigger className="max-w-176">
+                {tableListOrderByMapping[orderBy]}
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectItem value="recently_edited">Recently Edited</SelectItem>
+                <SelectItem value="recently_not_edited">
+                  Recently Not Edited
+                </SelectItem>
+                <SelectItem value="newest">Newest</SelectItem>
+                <SelectItem value="oldest">Oldest</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </header>
 

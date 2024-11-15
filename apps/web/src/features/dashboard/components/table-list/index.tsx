@@ -22,50 +22,39 @@ import { transitionGamma } from "@manifold/ui/lib/animation";
 import { cn } from "@manifold/ui/lib/utils";
 import {
   type TableListOrderBy,
-  tableListOrderBy,
   tableListOrderByMapping,
 } from "@manifold/validators";
 import { formatRelative } from "date-fns";
 import { useCallback, useState } from "react";
 import { GoCircle, GoCircleSlash } from "react-icons/go";
-import { useSearchParams } from "react-router-dom";
 
 import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
+import { useSearchParams } from "~features/routing/hooks/use-search-params";
 import { useListTables } from "~features/table/api/list";
 import { TABLE_LIST_ORDER_BY_STORAGE_KEY } from "~features/table/constants";
 import { log } from "~utils/logger";
 import { storage } from "~utils/storage";
 
-export function TableList({
-  routeOrderBy,
-}: {
-  routeOrderBy: TableListOrderBy;
-}) {
+export function TableList({ orderBy }: { orderBy: TableListOrderBy }) {
   const NOW = new Date();
 
   const userProfile = useRequiredUserProfile();
   const [includeDeleted, setIncludeDeleted] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const orderByFromUrl = tableListOrderBy.safeParse(searchParams.get("sort"));
-  const orderBy = orderByFromUrl.success ? orderByFromUrl.data : routeOrderBy;
+  const [_, setSearchParams] = useSearchParams();
 
   const listQuery = useListTables({ orderBy, includeDeleted });
   const isPending = useStateGuard(listQuery.isRefetching, { min: 200 });
 
-  const handleOrderChange = useCallback(
+  const handleSort = useCallback(
     (nextOrderBy: TableListOrderBy) => {
       storage.setItem(TABLE_LIST_ORDER_BY_STORAGE_KEY, nextOrderBy);
 
-      setSearchParams(
-        (params) => {
-          params.set("sort", nextOrderBy);
-          return params;
-        },
-        {
-          preventScrollReset: true,
-        },
-      );
+      setSearchParams((params) => {
+        const copy = new URLSearchParams(params);
+        copy.set("sort", nextOrderBy);
+        return copy;
+      });
     },
     [setSearchParams],
   );
@@ -85,7 +74,7 @@ export function TableList({
     <Card>
       <CardHeader className="items-center justify-between gap-12 sm:flex-row sm:space-y-0">
         <div>
-          <Select value={orderBy} onValueChange={handleOrderChange}>
+          <Select value={orderBy} onValueChange={handleSort}>
             <SelectTrigger className="min-w-176">
               {tableListOrderByMapping[orderBy]}
             </SelectTrigger>

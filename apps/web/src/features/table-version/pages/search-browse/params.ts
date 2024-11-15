@@ -3,7 +3,7 @@ import { tableListOrderBy, z } from "@manifold/validators";
 
 export const tableVersionSearchBrowseParams = z
   .object({
-    orderBy: tableListOrderBy.optional(),
+    sort: tableListOrderBy.optional(),
     q: z.string().optional(),
   })
   .merge(paginationSchema);
