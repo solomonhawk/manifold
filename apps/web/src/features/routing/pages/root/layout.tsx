@@ -4,7 +4,7 @@ import { Badge } from "@manifold/ui/components/ui/badge";
 import { Button } from "@manifold/ui/components/ui/button";
 import { Separator } from "@manifold/ui/components/ui/separator";
 import { Skeleton } from "@manifold/ui/components/ui/skeleton";
-import { Outlet } from "react-router-dom";
+import { Outlet, ScrollRestoration } from "react-router-dom";
 import { match } from "ts-pattern";
 
 import { useAuth } from "~features/auth/hooks/use-auth";
@@ -19,6 +19,7 @@ export function RootLayout() {
   return (
     <DialogManager.Provider>
       <RouteMeta />
+      <ScrollRestoration />
 
       <div
         className="bg-architect flex h-full flex-col"
