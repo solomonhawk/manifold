@@ -217,7 +217,7 @@ export function TableVersionLayout() {
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                Edit table
+                Edit current draft
                 <TooltipArrow />
               </TooltipContent>
             </Tooltip>

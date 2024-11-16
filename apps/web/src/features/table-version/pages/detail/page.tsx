@@ -49,7 +49,7 @@ export function TableVersionDetail() {
               <dt className="border-b border-r px-10 py-8 font-semibold text-muted-foreground">
                 Release&nbsp;notes
               </dt>
-              <dd className="border-b border-r px-10 py-8">
+              <dd className="whitespace-pre-wrap border-b border-r px-10 py-8">
                 {tableVersion.data.releaseNotes || (
                   <em className="text-muted-foreground">No release notes</em>
                 )}
@@ -67,6 +67,31 @@ export function TableVersionDetail() {
                       {tableId}
                     </code>
                   ),
+                )}
+              </dd>
+
+              <dt className="border-b border-r px-10 py-8 font-semibold text-muted-foreground">
+                Dependencies
+              </dt>
+              <dd className="flex flex-wrap gap-4 border-b border-r px-10 py-8">
+                {tableVersion.data.dependencies.length > 0 ? (
+                  tableVersion.data.dependencies.map((dependency) => {
+                    return (
+                      <PrefetchableLink
+                        key={dependency.id}
+                        to={{
+                          pathname: `/t/${dependency.ownerUsername}/${dependency.tableSlug}/v/${dependency.version}`,
+                        }}
+                        className="inline-flex"
+                      >
+                        <code className="rounded bg-secondary p-3 px-6 text-xs leading-none text-accent-foreground transition-colors group-hover:bg-background group-focus:bg-background">
+                          {dependency.tableIdentifier}
+                        </code>
+                      </PrefetchableLink>
+                    );
+                  })
+                ) : (
+                  <em className="text-muted-foreground">No dependencies</em>
                 )}
               </dd>
             </>

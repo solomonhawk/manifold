@@ -31,26 +31,26 @@ import { DialogManager, DIALOGS } from "~features/dialog-manager";
 import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
 import { useRouteParams } from "~features/routing/hooks/use-route-params";
+import { useGetTable } from "~features/table/api/get";
 import { tableDetailParams } from "~features/table/pages/detail/params";
-import { trpc } from "~utils/trpc";
 
 const COLLAPSED_AVAILABLE_TABLES_COUNT = 3;
 
 export function TableDetail() {
   const userProfile = useRequiredUserProfile();
   const { username, slug } = useRouteParams(tableDetailParams);
-  const table = trpc.table.get.useQuery({
+  const tableQuery = useGetTable({
     tableIdentifier: buildTableIdentifier(username, slug),
   });
 
-  if (table.isLoading) {
+  if (tableQuery.isLoading) {
     // @TODO: better loading state
     return <FullScreenLoader />;
   }
 
-  if (table.isError) {
+  if (tableQuery.isError) {
     // @TODO: better error state
-    return <div>Error: {table.error.message}</div>;
+    return <div>Error: {tableQuery.error.message}</div>;
   }
 
   return (
@@ -58,15 +58,15 @@ export function TableDetail() {
       <header className="my-12 flex gap-12 sm:my-16 md:mb-24 md:mt-36 md:items-center md:justify-between">
         <motion.div
           layout="position"
-          layoutId={`table-title-header-${table.data.id}`}
+          layoutId={`table-title-header-${tableQuery.data.id}`}
           transition={transitionAlpha}
         >
           <h2 className="-mt-4 flex items-center gap-10 text-2xl font-bold sm:text-3xl md:mb-8 md:text-4xl">
-            {table.data.title}
+            {tableQuery.data.title}
 
             <motion.span
               layout
-              layoutId={`table-title-header-${table.data.id}-icon`}
+              layoutId={`table-title-header-${tableQuery.data.id}-icon`}
               transition={transitionAlpha}
             >
               <GoPackage className="size-20 sm:size-24 md:size-28" />
@@ -84,14 +84,14 @@ export function TableDetail() {
                         className="flex items-center gap-4"
                         disabled={copied}
                         onClick={() => {
-                          onCopy(table.data.tableIdentifier);
+                          onCopy(tableQuery.data.tableIdentifier);
                         }}
                       >
                         <span className="sr-only">Copy Table Identifier</span>
 
                         <TableIdentifier
                           className="text-xs sm:text-base"
-                          tableIdentifier={table.data.tableIdentifier}
+                          tableIdentifier={tableQuery.data.tableIdentifier}
                         />
 
                         {copied ? <GoCheck /> : <GoCopy />}
@@ -107,14 +107,14 @@ export function TableDetail() {
               }}
             </ClipboardCopy>
 
-            {table.data.totalVersionCount === 0 ? (
+            {tableQuery.data.totalVersionCount === 0 ? (
               <Badge>Unpublished</Badge>
             ) : null}
           </div>
 
-          {table.data.description ? (
+          {tableQuery.data.description ? (
             <p className="mt-12 text-muted-foreground">
-              {table.data.description}
+              {tableQuery.data.description}
             </p>
           ) : null}
         </motion.div>
@@ -127,7 +127,7 @@ export function TableDetail() {
                 size="icon"
                 onClick={() => {
                   DialogManager.show(DIALOGS.COPY_TABLE.ID, {
-                    table: table.data,
+                    table: tableQuery.data,
                   });
                 }}
               >
@@ -141,16 +141,21 @@ export function TableDetail() {
             </TooltipContent>
           </Tooltip>
 
-          {userProfile.userId === table.data.ownerId ? (
-            <Button asChild variant="outline" size="icon">
-              <PrefetchableLink
-                to={`/t/${username}/${slug}/edit`}
-                state={{ fromTable: true }}
-              >
-                <span className="sr-only">Edit Table</span>
-                <GoPencil />
-              </PrefetchableLink>
-            </Button>
+          {userProfile.userId === tableQuery.data.ownerId ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button asChild variant="outline" size="icon">
+                  <PrefetchableLink to={`/t/${username}/${slug}/edit`}>
+                    <span className="sr-only">Edit Table</span>
+                    <GoPencil />
+                  </PrefetchableLink>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                Edit table
+                <TooltipArrow />
+              </TooltipContent>
+            </Tooltip>
           ) : null}
         </div>
       </header>
@@ -164,14 +169,53 @@ export function TableDetail() {
               Last&nbsp;updated
             </dt>
             <dd className="border-b border-r px-10 py-8">
-              {table.data.updatedAt.toLocaleDateString()}
+              {tableQuery.data.updatedAt.toLocaleDateString()}
             </dd>
 
             <dt className="border-b border-r px-10 py-8 font-semibold text-muted-foreground">
               Total&nbsp;versions
             </dt>
             <dd className="border-b border-r px-10 py-8">
-              {table.data.totalVersionCount}
+              {tableQuery.data.totalVersionCount}
+            </dd>
+
+            <dt className="border-b border-r px-10 py-8 font-semibold text-muted-foreground">
+              Available&nbsp;Tables
+            </dt>
+            <dd className="flex flex-wrap gap-4 border-b border-r px-10 py-8">
+              {tableQuery.data.availableTables.map((tableId) => (
+                <code
+                  key={tableId}
+                  className="rounded bg-secondary p-3 px-6 text-xs leading-none text-accent-foreground"
+                >
+                  {tableId}
+                </code>
+              ))}
+            </dd>
+
+            <dt className="border-b border-r px-10 py-8 font-semibold text-muted-foreground">
+              Dependencies
+            </dt>
+            <dd className="flex flex-wrap gap-4 border-b border-r px-10 py-8">
+              {tableQuery.data.dependencies.length > 0 ? (
+                tableQuery.data.dependencies.map((dependency) => {
+                  return (
+                    <PrefetchableLink
+                      key={dependency.id}
+                      to={{
+                        pathname: `/t/${dependency.ownerUsername}/${dependency.tableSlug}/v/${dependency.version}`,
+                      }}
+                      className="inline-flex"
+                    >
+                      <code className="rounded bg-secondary p-3 px-6 text-xs leading-none text-accent-foreground transition-colors group-hover:bg-background group-focus:bg-background">
+                        {dependency.tableIdentifier}
+                      </code>
+                    </PrefetchableLink>
+                  );
+                })
+              ) : (
+                <em className="text-muted-foreground">No dependencies</em>
+              )}
             </dd>
           </dl>
 
@@ -179,7 +223,7 @@ export function TableDetail() {
 
           <div className="rounded border bg-background">
             <pre className="max-h-384 overflow-auto px-16 py-12 text-xs leading-tight">
-              {table.data.definition}
+              {tableQuery.data.definition}
             </pre>
           </div>
         </section>
@@ -187,7 +231,7 @@ export function TableDetail() {
         <section>
           <h3 className="mb-8 font-semibold">Versions</h3>
 
-          {table.data.recentVersions.length === 0 ? (
+          {tableQuery.data.recentVersions.length === 0 ? (
             <Notice>
               <NoticeIcon>
                 <GoInfo className="size-16" />
@@ -195,14 +239,14 @@ export function TableDetail() {
 
               <NoticeContent>
                 This table has no versions yet.{" "}
-                {userProfile.userId === table.data.ownerId
+                {userProfile.userId === tableQuery.data.ownerId
                   ? "When you publish a new version of this table, it will appear here."
                   : null}
               </NoticeContent>
             </Notice>
           ) : (
             <ul className="divide-y rounded border bg-background">
-              {table.data.recentVersions.map((version) => {
+              {tableQuery.data.recentVersions.map((version) => {
                 return (
                   <li key={version.id}>
                     <PrefetchableLink

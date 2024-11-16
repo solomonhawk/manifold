@@ -1,4 +1,5 @@
-import { tableVersionService } from "@manifold/db";
+import { tableService, tableVersionService } from "@manifold/db";
+import { tableRegistry } from "@manifold/graph";
 import {
   tableVersionGetInput,
   tableVersionListInput,
@@ -18,7 +19,19 @@ export const tableVersionRouter = t.router({
       });
     }
 
-    return tableVersion;
+    const dependencyIdentifiers = await tableRegistry.getAllDependencies({
+      tableIdentifier: tableVersion.tableIdentifier,
+      version: 0,
+    });
+
+    const dependencies = await tableService.listTableVersions(
+      dependencyIdentifiers,
+    );
+
+    return {
+      ...tableVersion,
+      dependencies,
+    };
   }),
 
   list: t.procedure.input(tableVersionListInput).query(async ({ input }) => {
