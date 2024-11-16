@@ -24,7 +24,7 @@ export function TableIdentifier({
   return (
     <code
       className={cn(
-        "rounded bg-secondary p-3 px-6 leading-none text-accent-foreground",
+        "rounded bg-secondary p-3 px-6 !leading-tight text-accent-foreground",
         className,
       )}
     >

@@ -1,4 +1,5 @@
 import { buildTableIdentifier } from "@manifold/lib";
+import { ClipboardCopy } from "@manifold/ui/components/clipboard-copy";
 import { FullScreenLoader } from "@manifold/ui/components/full-screen-loader";
 import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import { Badge } from "@manifold/ui/components/ui/badge";
@@ -19,6 +20,7 @@ import { transitionAlpha } from "@manifold/ui/lib/animation";
 import { motion } from "framer-motion";
 import {
   GoArrowRight,
+  GoCheck,
   GoCopy,
   GoInfo,
   GoPackage,
@@ -72,12 +74,39 @@ export function TableDetail() {
           </h2>
 
           <div className="flex items-center gap-8">
-            <span>
-              <TableIdentifier
-                className="inline text-xs sm:text-base"
-                tableIdentifier={table.data.tableIdentifier}
-              />
-            </span>
+            <ClipboardCopy>
+              {({ copied, onCopy }) => {
+                return (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        type="button"
+                        className="flex items-center gap-4"
+                        disabled={copied}
+                        onClick={() => {
+                          onCopy(table.data.tableIdentifier);
+                        }}
+                      >
+                        <span className="sr-only">Copy Table Identifier</span>
+
+                        <TableIdentifier
+                          className="text-xs sm:text-base"
+                          tableIdentifier={table.data.tableIdentifier}
+                        />
+
+                        {copied ? <GoCheck /> : <GoCopy />}
+                      </button>
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      Copy table identifier
+                      <TooltipArrow />
+                    </TooltipContent>
+                  </Tooltip>
+                );
+              }}
+            </ClipboardCopy>
+
             {table.data.totalVersionCount === 0 ? (
               <Badge>Unpublished</Badge>
             ) : null}

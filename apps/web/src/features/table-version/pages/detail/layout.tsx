@@ -1,5 +1,6 @@
 import { buildTableIdentifier } from "@manifold/lib";
 import type { RouterOutput } from "@manifold/router";
+import { ClipboardCopy } from "@manifold/ui/components/clipboard-copy";
 import { FullScreenLoader } from "@manifold/ui/components/full-screen-loader";
 import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import { Button } from "@manifold/ui/components/ui/button";
@@ -14,6 +15,7 @@ import { transitionAlpha } from "@manifold/ui/lib/animation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   GoArrowLeft,
+  GoCheck,
   GoChevronLeft,
   GoChevronRight,
   GoCopy,
@@ -120,10 +122,40 @@ export function TableVersionLayout() {
             </h2>
 
             <div>
-              <TableIdentifier
-                className="text-xs sm:text-base"
-                tableIdentifier={tableVersion.data.table.tableIdentifier}
-              />
+              <ClipboardCopy>
+                {({ copied, onCopy }) => {
+                  return (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          type="button"
+                          className="flex items-center gap-4"
+                          disabled={copied}
+                          onClick={() => {
+                            onCopy(tableVersion.data.table.tableIdentifier);
+                          }}
+                        >
+                          <span className="sr-only">Copy Table Identifier</span>
+
+                          <TableIdentifier
+                            className="text-xs sm:text-base"
+                            tableIdentifier={
+                              tableVersion.data.table.tableIdentifier
+                            }
+                          />
+
+                          {copied ? <GoCheck /> : <GoCopy />}
+                        </button>
+                      </TooltipTrigger>
+
+                      <TooltipContent>
+                        Copy table identifier
+                        <TooltipArrow />
+                      </TooltipContent>
+                    </Tooltip>
+                  );
+                }}
+              </ClipboardCopy>
             </div>
 
             {tableVersion.data.table.description ? (
