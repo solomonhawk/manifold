@@ -210,33 +210,9 @@ async function addDependencies({
   }
 }
 
-// export type RemoveDependenciesParams = {
-//   userNamespace: string;
-//   tableName: string;
-//   dependencies: {
-//     dependencyUserNamespace: string;
-//     dependencyIdentifier: string;
-//   }[];
-// };
-
-// async function removeDependencies({
-//   userNamespace,
-//   tableName,
-// }: RemoveDependenciesParams) {
-//   const dependencies = await getAllDependencies({ userNamespace, tableName });
-
-//   // @PERF TODO: write as AQL?
-//   await db.withTransaction(tableDependenciesCollection, async (step) => {
-//     for (const { _key } of dependencies) {
-//       await step(() => tableDependenciesCollection.remove({ _key }));
-//     }
-//   });
-// }
-
 export const tableRegistry = {
   createPackage,
   addDependencies,
-  // removeDependencies,
   syncDependencies,
   getAllDependencies,
 };
