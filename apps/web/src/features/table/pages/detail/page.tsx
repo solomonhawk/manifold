@@ -25,6 +25,7 @@ import {
   GoPencil,
 } from "react-icons/go";
 
+import { DialogManager, DIALOGS } from "~features/dialog-manager";
 import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
 import { useRouteParams } from "~features/routing/hooks/use-route-params";
@@ -92,7 +93,15 @@ export function TableDetail() {
         <div className="mb-auto flex grow justify-end gap-8">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="outline" size="icon">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => {
+                  DialogManager.show(DIALOGS.COPY_TABLE.ID, {
+                    table: table.data,
+                  });
+                }}
+              >
                 <span className="sr-only">Copy Table</span>
                 <GoCopy />
               </Button>

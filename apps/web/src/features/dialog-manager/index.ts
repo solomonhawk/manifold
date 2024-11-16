@@ -3,6 +3,7 @@ import type { ComponentProps } from "react";
 
 import { FindDependencyDialog } from "~features/editor/components/find-dependency-dialog";
 import { PreviewDependencyDialog } from "~features/editor/components/preview-dependency-dialog";
+import { CopyTableDialog } from "~features/table/components/table-copy-dialog";
 import { TableDeleteDialog } from "~features/table/components/table-delete-dialog";
 import { TablePublishDialog } from "~features/table/components/table-publish-dialog";
 import { CompareVersionsDialog } from "~features/table-version/components/compare-versions-dialog";
@@ -55,6 +56,10 @@ export const DIALOGS = {
   COMPARE_VERSIONS: {
     ID: "COMPARE_VERSIONS",
     COMPONENT: NiceModal.create(CompareVersionsDialog),
+  },
+  COPY_TABLE: {
+    ID: "COPY_TABLE",
+    COMPONENT: NiceModal.create(CopyTableDialog),
   },
 } as const;
 

@@ -295,6 +295,7 @@ export async function publishVersion(
 }
 
 export async function deleteTable(userId: string, input: TableDeleteInput) {
+  // delete v0 table package?
   return db
     .update(schema.tables)
     .set({ deletedAt: new Date() })

@@ -1,8 +1,15 @@
-import { isUniqueConstraintViolation, tableService } from "@manifold/db";
+import {
+  db,
+  eq,
+  isUniqueConstraintViolation,
+  schema,
+  tableService,
+} from "@manifold/db";
 import { tableRegistry } from "@manifold/graph";
 import { flatten } from "@manifold/lib";
 import {
   isValidationError,
+  tableCopyInput,
   tableCreateInput,
   tableDeleteInput,
   tableFindDependenciesInput,
@@ -51,6 +58,64 @@ export const tableRouter = t.router({
           ctx.user.id,
           ctx.username,
           input,
+        );
+
+        await tableRegistry.createPackage({
+          ownerId: ctx.user.id,
+          ownerUsername: ctx.username,
+          tableId: table.id,
+          tableSlug: table.slug,
+          tableIdentifier: table.tableIdentifier,
+          version: 0,
+        });
+
+        return table;
+      } catch (e) {
+        // @TODO: clean up partial records in case of error?
+        if (isUniqueConstraintViolation(e)) {
+          throw validationError({
+            path: ["slug"],
+            message: "Table with this slug already exists",
+          });
+        }
+
+        if (isValidationError(e)) {
+          throw validationError({
+            cause: e,
+            message:
+              "We couldn’t generate a valid identifier for this table, please specify one explicitly",
+          });
+        }
+
+        throw e;
+      }
+    }),
+
+  copy: onboardedProcedure
+    .input(tableCopyInput)
+    .mutation(async ({ input, ctx }) => {
+      const tableToCopy = await db.query.tables.findFirst({
+        where: eq(schema.tables.id, input.tableId),
+      });
+
+      if (!tableToCopy) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Table not found",
+        });
+      }
+
+      try {
+        const table = await tableService.createTable(
+          ctx.user.id,
+          ctx.username,
+          {
+            title: input.title,
+            description: input.description,
+            slug: input.slug,
+            definition: tableToCopy.definition,
+            availableTables: tableToCopy.availableTables,
+          },
         );
 
         await tableRegistry.createPackage({

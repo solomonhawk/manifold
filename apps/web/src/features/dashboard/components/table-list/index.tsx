@@ -112,7 +112,7 @@ export function TableList({ orderBy }: { orderBy: TableListOrderBy }) {
       </CardHeader>
 
       <CardContent className={cn({ "opacity-50": isPending })}>
-        <AnimatedList className="grid grid-cols-3 gap-12 transition-opacity sm:grid-cols-4 sm:gap-16 md:grid-cols-[repeat(auto-fill,minmax(120px,180px))]">
+        <AnimatedList className="grid grid-cols-3 gap-12 transition-opacity sm:grid-cols-4 sm:gap-16 md:grid-cols-[repeat(auto-fill,minmax(180px,1fr))]">
           {listQuery.data.length === 0 && (
             <AnimatedListItem
               className="col-span-full flex items-center gap-16 text-center text-gray-500"

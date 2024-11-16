@@ -155,7 +155,15 @@ export function TableVersionLayout() {
 
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="outline" size="icon">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => {
+                  DialogManager.show(DIALOGS.COPY_TABLE.ID, {
+                    table: tableVersion.data.table,
+                  });
+                }}
+              >
                 <span className="sr-only">Copy Table</span>
                 <GoCopy />
               </Button>

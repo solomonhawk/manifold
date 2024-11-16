@@ -21,10 +21,25 @@ export const tableCreateInput = z.object({
   }),
   description: z.string().optional(),
   definition: z.string(),
+  availableTables: z.array(z.string()).default([]),
 });
 
 export type TableCreateInputRaw = z.input<typeof tableCreateInput>;
 export type TableCreateInput = z.infer<typeof tableCreateInput>;
+
+export const tableCopyInput = z.object({
+  tableId: z.string(),
+  title: z.string().min(1, { message: "Title can’t be blank" }).max(64, {
+    message: "Title must be 64 characters or less",
+  }),
+  slug: optionalSlug({
+    message: invalidTableSlugMessage,
+  }),
+  description: z.string().optional(),
+});
+
+export type TableCopyInputRaw = z.input<typeof tableCopyInput>;
+export type TableCopyInput = z.infer<typeof tableCopyInput>;
 
 export const tableGetInput = z.object({
   tableIdentifier: z.string(),
