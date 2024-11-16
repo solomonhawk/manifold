@@ -6,6 +6,7 @@ import { PreviewDependencyDialog } from "~features/editor/components/preview-dep
 import { CopyTableDialog } from "~features/table/components/table-copy-dialog";
 import { TableDeleteDialog } from "~features/table/components/table-delete-dialog";
 import { TablePublishDialog } from "~features/table/components/table-publish-dialog";
+import { TableViewDependenciesDialog } from "~features/table/components/table-view-dependencies-dialog";
 import { CompareVersionsDialog } from "~features/table-version/components/compare-versions-dialog";
 
 /**
@@ -60,6 +61,10 @@ export const DIALOGS = {
   COPY_TABLE: {
     ID: "COPY_TABLE",
     COMPONENT: NiceModal.create(CopyTableDialog),
+  },
+  VIEW_TABLE_DEPENDENCIES: {
+    ID: "VIEW_TABLE_DEPENDENCIES",
+    COMPONENT: NiceModal.create(TableViewDependenciesDialog),
   },
 } as const;
 

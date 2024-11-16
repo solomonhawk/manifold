@@ -223,6 +223,7 @@ export function TableUpdateForm({
                       recentVersions={table.recentVersions}
                       totalVersionCount={table.totalVersionCount}
                     />
+
                     <DownloadButton tableId={table.id} />
                   </>,
                   portalRef.current,

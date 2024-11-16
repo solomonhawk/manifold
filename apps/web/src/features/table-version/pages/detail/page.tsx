@@ -101,7 +101,7 @@ export function TableVersionDetail() {
         <h3 className="mb-8 font-semibold">Definition</h3>
 
         <div className="rounded border bg-background">
-          <pre className="max-h-384 overflow-auto px-16 py-12 text-xs leading-tight">
+          <pre className="max-h-384 overflow-auto whitespace-pre-wrap px-16 py-12 text-xs leading-tight">
             {tableVersion.data.definition}
           </pre>
         </div>

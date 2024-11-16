@@ -17,6 +17,7 @@ import { PrefetchableLink } from "~features/routing/components/prefetchable-link
 import { DeleteButton } from "~features/table/components/table-update-form/delete-button";
 import { FavoriteButton } from "~features/table/components/table-update-form/favorite-button";
 import { RestoreButton } from "~features/table/components/table-update-form/restore-button";
+import { ViewDependenciesButton } from "~features/table/components/table-update-form/view-dependencies-button";
 
 export const TABLE_UPDATE_HEADER_PORTAL_ID = "table-update-header-portal";
 
@@ -69,6 +70,14 @@ export function Header({ table }: { table: RouterOutput["table"]["get"] }) {
           />
         ) : (
           <>
+            {table.dependencies.length > 0 ? (
+              <ViewDependenciesButton
+                tableTitle={table.title}
+                tableIdentifier={table.tableIdentifier}
+                dependencies={table.dependencies}
+              />
+            ) : null}
+
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button asChild size="icon" variant="outline">
