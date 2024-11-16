@@ -186,8 +186,27 @@ export const tableRouter = t.router({
    */
   findDependencies: t.procedure
     .input(tableFindDependenciesInput)
-    .query(({ input }) => {
-      return tableService.findDependencies(input);
+    .query(async ({ input }) => {
+      const tableVersions = await tableService.findDependencies(input);
+
+      // get all dependencies for each `tableVersion`
+      // @TODO: better error handling
+      return Promise.all(
+        tableVersions.map(async (tableVersion) => {
+          const dependenciesForThisVersion =
+            await tableRegistry.getAllDependencies({
+              tableIdentifier: tableVersion.tableIdentifier,
+              version: tableVersion.version,
+            });
+
+          return {
+            ...tableVersion,
+            dependencies: await tableService.listTableVersions(
+              dependenciesForThisVersion,
+            ),
+          };
+        }),
+      );
     }),
 
   /**

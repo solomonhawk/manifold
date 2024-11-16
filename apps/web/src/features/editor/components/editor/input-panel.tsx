@@ -252,14 +252,30 @@ export function InputPanel({
   const handleAddDependency = useCallback(
     (dependency: FoundDependency) => {
       let dependencies = currentAllResolvedDependencies;
+      const dependenciesToAdd = [dependency, ...dependency.dependencies];
 
-      // add to currentResolvedDependencies
+      /**
+       * Add the dependency and all of its dependencies to the current list of
+       * resolved dependencies. If nothing was added, don't update the state.
+       */
       setCurrentAllResolvedDependencies((prev) => {
-        if (prev.find((d) => d.id === dependency.id)) {
+        const currentDependenciesMap = new Map(prev.map((d) => [d.id, d]));
+        const next = [...prev];
+
+        let newDependenciesAdded = false;
+
+        for (const d of dependenciesToAdd) {
+          if (!currentDependenciesMap.has(d.id)) {
+            next.push(d);
+            newDependenciesAdded = true;
+          }
+        }
+
+        if (!newDependenciesAdded) {
           return prev;
         }
 
-        dependencies = [...prev, dependency];
+        dependencies = next;
         return dependencies;
       });
 
