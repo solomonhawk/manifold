@@ -5,6 +5,7 @@ import { cn } from "@manifold/ui/lib/utils";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
+import { createPortal } from "react-dom";
 
 import { Router } from "~features/routing";
 import { trpc, trpcClient } from "~utils/trpc";
@@ -29,13 +30,16 @@ export function App() {
             <Router />
           </TooltipProvider>
 
-          <Toaster
-            cn={cn}
-            position="top-center"
-            offset={4}
-            visibleToasts={1}
-            pauseWhenPageIsHidden
-          />
+          {createPortal(
+            <Toaster
+              cn={cn}
+              position="top-center"
+              offset={4}
+              visibleToasts={1}
+              pauseWhenPageIsHidden
+            />,
+            document.body,
+          )}
           <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
         </QueryClientProvider>
       </trpc.Provider>

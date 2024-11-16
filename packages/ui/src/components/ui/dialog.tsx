@@ -40,6 +40,18 @@ const DialogContent = React.forwardRef<
           className,
         )}
         {...props}
+        onInteractOutside={(e) => {
+          const { originalEvent } = e.detail;
+
+          if (
+            originalEvent.target instanceof Element &&
+            originalEvent.target.closest(".group.toast")
+          ) {
+            e.preventDefault();
+          }
+
+          props.onInteractOutside?.(e);
+        }}
       >
         {children}
       </DialogPrimitive.Content>
