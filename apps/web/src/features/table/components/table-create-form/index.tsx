@@ -1,6 +1,6 @@
-import { buildTableIdentifier, slugify } from "@manifold/lib";
 import type { RouterOutput } from "@manifold/router";
-import { TableIdentifier } from "@manifold/ui/components/table-identifier";
+import { TableIdentifierInput } from "@manifold/ui/components/table-identifier-input";
+import { TableIdentifierPreview } from "@manifold/ui/components/table-identifier-preview";
 import {
   Form,
   FormControl,
@@ -21,14 +21,7 @@ import {
 } from "@manifold/ui/components/ui/tooltip";
 import { useZodForm } from "@manifold/ui/hooks/use-zod-form";
 import { tableCreateInput, type z } from "@manifold/validators";
-import { forwardRef } from "react";
-import {
-  type Control,
-  type ControllerRenderProps,
-  type SubmitHandler,
-  useFormContext,
-  useWatch,
-} from "react-hook-form";
+import { type SubmitHandler } from "react-hook-form";
 
 import { useZodFormMutationErrors } from "~features/forms/hooks/use-zod-form-mutation-error";
 import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
@@ -42,6 +35,8 @@ export function TableCreateForm({
 }: {
   onCreate?: (table: RouterOutput["table"]["create"]) => void;
 }) {
+  const userProfile = useRequiredUserProfile();
+
   const form = useZodForm({
     schema: tableCreateInput,
     defaultValues: {
@@ -112,11 +107,19 @@ export function TableCreateForm({
                 </FormLabel>
 
                 <FormControl>
-                  <IdentifierInput control={form.control} {...field} />
+                  <TableIdentifierInput
+                    control={form.control}
+                    {...field}
+                    inputRef={field.ref}
+                  />
                 </FormControl>
 
                 <div>
-                  <TableIdentifierExample />
+                  <TableIdentifierPreview
+                    control={form.control}
+                    getFieldState={form.getFieldState}
+                    username={userProfile.username}
+                  />
 
                   <FormMessage />
                 </div>
@@ -152,58 +155,3 @@ export function TableCreateForm({
     </Form>
   );
 }
-
-function TableIdentifierExample() {
-  const userProfile = useRequiredUserProfile();
-  const { control, getFieldState } = useFormContext<FormData>();
-  const title = useWatch({ control, name: "title" });
-  const slug = useWatch({ control, name: "slug" });
-  const slugFieldState = getFieldState("slug");
-
-  const tableIdentifier = buildTableIdentifier(
-    userProfile.username,
-    slug || slugify(title),
-  );
-
-  if ((title || slug) && !slugFieldState.invalid) {
-    return (
-      <FormDescription>
-        Imported as <TableIdentifier tableIdentifier={tableIdentifier} />
-      </FormDescription>
-    );
-  }
-
-  return (
-    <>
-      <FormDescription>
-        Can only contain only lowercase letters, numbers, and hyphens.
-      </FormDescription>
-
-      <FormDescription>
-        <em>Leave blank to auto-generate.</em>
-      </FormDescription>
-    </>
-  );
-}
-
-type IdentifierInputProps = ControllerRenderProps<
-  z.infer<typeof tableCreateInput>,
-  "slug"
-> & {
-  control: Control<z.infer<typeof tableCreateInput>, unknown>;
-};
-
-const IdentifierInput = forwardRef<HTMLInputElement, IdentifierInputProps>(
-  ({ control, ...field }, ref) => {
-    const title = useWatch({ control, name: "title" });
-    const slug = slugify(title);
-
-    return (
-      <Input
-        ref={ref}
-        inputProps={{ ...field, placeholder: slug ?? "dragons" }}
-      />
-    );
-  },
-);
-IdentifierInput.displayName = "IdentifierInput";
