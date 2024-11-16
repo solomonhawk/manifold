@@ -1,6 +1,7 @@
 import NiceModal, { type NiceModalHocProps } from "@ebay/nice-modal-react";
 import type { ComponentProps } from "react";
 
+import { ConfirmationDialog } from "~features/dialog-manager/components/confirmation-dialog";
 import { FindDependencyDialog } from "~features/editor/components/find-dependency-dialog";
 import { PreviewDependencyDialog } from "~features/editor/components/preview-dependency-dialog";
 import { CopyTableDialog } from "~features/table/components/table-copy-dialog";
@@ -38,6 +39,10 @@ export const DialogManager = {
 };
 
 export const DIALOGS = {
+  CONFIRMATION: {
+    ID: "CONFIRMATION",
+    COMPONENT: NiceModal.create(ConfirmationDialog),
+  },
   DELETE_TABLE: {
     ID: "DELETE_TABLE",
     COMPONENT: NiceModal.create(TableDeleteDialog),

@@ -16,7 +16,9 @@ import { useAtomValue } from "jotai";
 import { type KeyboardEvent, useCallback, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { type SubmitHandler, useFormContext, useWatch } from "react-hook-form";
+import { useBlocker, useNavigate } from "react-router-dom";
 
+import { DialogManager, DIALOGS } from "~features/dialog-manager";
 import { Editor } from "~features/editor";
 import {
   currentTableDependenciesAtom,
@@ -45,6 +47,8 @@ export function TableUpdateForm({
   table: RouterOutput["table"]["get"];
   isDisabled?: boolean;
 }) {
+  const navigate = useNavigate();
+
   const form = useZodForm({
     mode: "onChange",
     reValidateMode: "onChange",
@@ -79,6 +83,42 @@ export function TableUpdateForm({
         }
       }),
     }),
+  });
+
+  const isDirty = !isEmpty(form.formState.dirtyFields);
+  const isSubmitting = form.formState.isSubmitting;
+  const isNavigatingDestructively = useRef(false);
+
+  useBlocker(({ nextLocation }) => {
+    // the user opted to navigate despite a dirty form, so let them
+    if (isNavigatingDestructively.current) {
+      return false;
+    }
+
+    // block if the form is in the process of saving
+    if (isSubmitting) {
+      return true;
+    }
+
+    // if dirty, prompt the user to confirm they want to discard changes
+    if (isDirty) {
+      DialogManager.show(DIALOGS.CONFIRMATION.ID, {
+        title: "Are you sure?",
+        description:
+          "You have unsaved changes. If you leave they will be discarded.",
+        confirmText: "Discard Changes",
+        cancelText: "I want to save my changes",
+        onConfirm: () => {
+          isNavigatingDestructively.current = true;
+          navigate(nextLocation);
+        },
+      });
+
+      return true;
+    }
+
+    // allow navigation otherwise
+    return false;
   });
 
   // @TODO: naughty cross-feature dependency
@@ -190,7 +230,7 @@ export function TableUpdateForm({
         TABLE_UPDATE_HEADER_PORTAL_ID,
       );
     }
-  });
+  }, []);
 
   return (
     <Form {...form}>
