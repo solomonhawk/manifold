@@ -10,7 +10,7 @@ import {
 import { transitionAlpha } from "@manifold/ui/lib/animation";
 import { cn } from "@manifold/ui/lib/utils";
 import { formatRelative } from "date-fns";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { GoArrowLeft, GoEye } from "react-icons/go";
 
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";

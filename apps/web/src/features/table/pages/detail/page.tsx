@@ -17,7 +17,7 @@ import {
   TooltipTrigger,
 } from "@manifold/ui/components/ui/tooltip";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import {
   GoArrowRight,
   GoCheck,
@@ -55,7 +55,7 @@ export function TableDetail() {
 
   return (
     <FlexCol className="container max-w-screen-xl">
-      <header className="my-12 flex gap-12 sm:my-16 md:mb-24 md:mt-36 md:items-center md:justify-between">
+      <header className="my-12 flex flex-col gap-12 sm:my-16 md:mb-24 md:mt-36 md:flex-row md:items-center md:justify-between">
         <motion.div
           layout="position"
           layoutId={`table-title-header-${tableQuery.data.id}`}

@@ -1,5 +1,5 @@
-import type { Transition, Variants } from "framer-motion";
-import { motion } from "framer-motion";
+import type { Transition, Variants } from "motion/react";
+import { motion } from "motion/react";
 import { Fragment } from "react";
 
 const typewriterVariants = {

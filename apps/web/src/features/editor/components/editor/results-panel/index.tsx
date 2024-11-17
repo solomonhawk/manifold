@@ -1,5 +1,5 @@
 import { FlexCol } from "@manifold/ui/components/ui/flex";
-import { LayoutGroup } from "framer-motion";
+import { LayoutGroup } from "motion/react";
 import { type RefObject } from "react";
 
 import { RollResults } from "~features/editor/components/editor/results-panel/results-list";

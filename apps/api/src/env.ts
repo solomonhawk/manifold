@@ -15,8 +15,6 @@ export const getEnv = (c?: Context) =>
       GOOGLE_CLIENT_ID: z.string(),
       GOOGLE_CLIENT_SECRET: z.string(),
     },
-    client: {},
-    clientPrefix: "PUBLIC_",
     runtimeEnv: c ? env(c) : process.env,
     emptyStringAsUndefined: true,
   });

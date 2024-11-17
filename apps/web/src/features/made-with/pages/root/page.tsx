@@ -1,6 +1,6 @@
 import { FlexCol } from "@manifold/ui/components/ui/flex";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
-import { AnimatePresence, motion, type Variants } from "framer-motion";
+import { AnimatePresence, motion, type Variants } from "motion/react";
 import { GiPaintRoller } from "react-icons/gi";
 
 import { Section } from "./components/section";

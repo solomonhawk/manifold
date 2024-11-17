@@ -3,7 +3,7 @@ import {
   motion,
   type MotionProps,
   type Transition,
-} from "framer-motion";
+} from "motion/react";
 import { forwardRef } from "react";
 
 import { transitionAlpha } from "#lib/animation.ts";
@@ -17,7 +17,7 @@ type Props = {
   onLayoutAnimationComplete?: () => void;
   children: React.ReactNode;
   initial?: boolean;
-  // framer-motion doesn't export this union type sadly
+  // motion/react doesn't export this union type sadly
   mode?: "sync" | "popLayout" | "wait";
 };
 
@@ -33,8 +33,9 @@ function AnimatedList({
 }: Props) {
   return (
     <motion.ul
-      layout
-      layoutScroll
+      // layout
+      // layoutRoot
+      // layoutScroll
       ref={listRef}
       className={className}
       transition={transition}

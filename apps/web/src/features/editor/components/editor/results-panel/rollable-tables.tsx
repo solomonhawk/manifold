@@ -6,8 +6,8 @@ import {
   TooltipTrigger,
 } from "@manifold/ui/components/ui/tooltip";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
-import { motion } from "framer-motion";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { motion } from "motion/react";
 import { memo, type RefObject, useCallback } from "react";
 import { GoLinkExternal, GoListUnordered } from "react-icons/go";
 

@@ -20,7 +20,7 @@ import { usePaginationURLState } from "@manifold/ui/hooks/pagination/use-paginat
 import { transitionAlpha } from "@manifold/ui/lib/animation";
 import { tableListOrderByMapping } from "@manifold/validators";
 import { formatRelative } from "date-fns";
-import { LayoutGroup, motion } from "framer-motion";
+import { LayoutGroup, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { GiMagnifyingGlass } from "react-icons/gi";
 import { GoSearch, GoX } from "react-icons/go";
@@ -77,7 +77,7 @@ export function TableVersionsSearchBrowse() {
       <section className="pb-24 sm:pb-32">
         <header className="my-12 flex flex-col gap-12 sm:my-16 md:mb-24 md:mt-36 md:flex-row md:items-center md:justify-between">
           <div>
-            <h2 className="flex items-center gap-10 text-2xl font-bold sm:text-3xl md:mb-8 md:text-4xl">
+            <h2 className="-mt-4 flex items-center gap-10 text-2xl font-bold sm:text-3xl md:mb-8 md:text-4xl">
               Discover{" "}
               <GiMagnifyingGlass className="size-20 sm:size-24 md:size-28" />
             </h2>

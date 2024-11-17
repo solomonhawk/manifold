@@ -1,7 +1,7 @@
 import { Button } from "@manifold/ui/components/ui/button";
 import { Card, CardContent } from "@manifold/ui/components/ui/card";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 
 import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";

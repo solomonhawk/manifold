@@ -106,7 +106,6 @@ export function buildAppRoutes({
                   lazy: loadTableDetailRoute(trpcUtils),
                 },
                 {
-                  id: "table-version-detail",
                   path: "v/:version",
                   lazy: loadTableVersionDetailRoute(trpcUtils),
                   children: [

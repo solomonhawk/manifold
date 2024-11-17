@@ -5,7 +5,7 @@ import {
   CardTitle,
 } from "@manifold/ui/components/ui/card";
 import { Separator } from "@manifold/ui/components/ui/separator";
-import { motion, type Variants } from "framer-motion";
+import { motion, type Variants } from "motion/react";
 
 import type { MadeWithSection } from "~features/made-with/pages/root/page";
 

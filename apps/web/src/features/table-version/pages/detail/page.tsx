@@ -4,7 +4,7 @@ import { Badge } from "@manifold/ui/components/ui/badge";
 import { Button } from "@manifold/ui/components/ui/button";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
 import { cn } from "@manifold/ui/lib/utils";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { GoArrowRight } from "react-icons/go";
 
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
