@@ -6,7 +6,7 @@ import { toastError, toastSuccess } from "~utils/toast";
 import { trpc } from "~utils/trpc";
 
 export function useListTableFavorites() {
-  return trpc.table.favorites.useQuery();
+  return trpc.table.favorites.useSuspenseQuery();
 }
 
 export function useFavoriteTable({

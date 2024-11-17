@@ -13,7 +13,7 @@ import { CircleBackslashIcon, CubeIcon } from "@radix-ui/react-icons";
 import { useAtom } from "jotai";
 import { motion } from "motion/react";
 import { memo, type RefObject, useCallback, useState } from "react";
-import { GoCheck, GoPaste, GoX } from "react-icons/go";
+import { GoCheck, GoCopy, GoX } from "react-icons/go";
 
 import {
   rollHistoryAtom,
@@ -158,7 +158,7 @@ const ListItem = memo(function ({
                     size="icon-sm"
                     onClick={copied ? undefined : () => onCopy(text)}
                   >
-                    {copied ? <GoCheck /> : <GoPaste size={12} />}
+                    {copied ? <GoCheck /> : <GoCopy size={12} />}
                   </Button>
                 );
               }}

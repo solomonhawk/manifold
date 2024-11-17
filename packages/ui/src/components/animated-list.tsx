@@ -1,5 +1,6 @@
 import {
   AnimatePresence,
+  type AnimatePresenceProps,
   motion,
   type MotionProps,
   type Transition,
@@ -13,34 +14,27 @@ type Props = {
   transition?: Transition;
   listRef?: React.RefObject<HTMLUListElement>;
   onScroll?: (e: React.UIEvent<HTMLUListElement>) => void;
-  onLayoutAnimationStart?: () => void;
-  onLayoutAnimationComplete?: () => void;
   children: React.ReactNode;
-  initial?: boolean;
-  // motion/react doesn't export this union type sadly
-  mode?: "sync" | "popLayout" | "wait";
-};
+} & MotionProps &
+  Pick<AnimatePresenceProps, "initial" | "mode">;
 
 function AnimatedList({
-  className,
-  transition = transitionAlpha,
   listRef,
-  onLayoutAnimationStart,
-  onLayoutAnimationComplete,
+  className,
   children,
+  transition = transitionAlpha,
   initial = false,
   mode = "popLayout",
+  ...props
 }: Props) {
   return (
     <motion.ul
-      // layout
-      // layoutRoot
-      // layoutScroll
+      layoutRoot
+      layoutScroll
       ref={listRef}
       className={className}
       transition={transition}
-      onLayoutAnimationStart={onLayoutAnimationStart}
-      onLayoutAnimationComplete={onLayoutAnimationComplete}
+      {...props}
     >
       <AnimatePresence initial={initial} mode={mode}>
         {children}

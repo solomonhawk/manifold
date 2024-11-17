@@ -31,9 +31,8 @@ import { GoCircle, GoCircleSlash } from "react-icons/go";
 import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
 import { useSearchParams } from "~features/routing/hooks/use-search-params";
-import { useListTables } from "~features/table/api/list";
+import { useListPrefetchedTables } from "~features/table/api/list";
 import { TABLE_LIST_ORDER_BY_STORAGE_KEY } from "~features/table/constants";
-import { log } from "~utils/logger";
 import { storage } from "~utils/storage";
 
 export function TableList({ orderBy }: { orderBy: TableListOrderBy }) {
@@ -43,8 +42,11 @@ export function TableList({ orderBy }: { orderBy: TableListOrderBy }) {
   const [includeDeleted, setIncludeDeleted] = useState(false);
   const [_, setSearchParams] = useSearchParams();
 
-  const listQuery = useListTables({ orderBy, includeDeleted });
-  const isPending = useStateGuard(listQuery.isRefetching, { min: 200 });
+  const [tables, tablesListQuery] = useListPrefetchedTables({
+    orderBy,
+    includeDeleted,
+  });
+  const isPending = useStateGuard(tablesListQuery.isRefetching, { min: 200 });
 
   const handleSort = useCallback(
     (nextOrderBy: TableListOrderBy) => {
@@ -58,17 +60,6 @@ export function TableList({ orderBy }: { orderBy: TableListOrderBy }) {
     },
     [setSearchParams],
   );
-
-  // @TODO: error state
-  if (listQuery.isError) {
-    log.error(listQuery.error);
-    return null;
-  }
-
-  // @TODO: loading state
-  if (listQuery.isLoading) {
-    return null;
-  }
 
   return (
     <Card>
@@ -113,7 +104,7 @@ export function TableList({ orderBy }: { orderBy: TableListOrderBy }) {
 
       <CardContent className={cn({ "opacity-50": isPending })}>
         <AnimatedList className="grid grid-cols-3 gap-12 transition-opacity sm:grid-cols-4 sm:gap-16 md:grid-cols-[repeat(auto-fill,minmax(180px,1fr))]">
-          {listQuery.data.length === 0 && (
+          {tables.length === 0 && (
             <AnimatedListItem
               className="col-span-full flex items-center gap-16 text-center text-gray-500"
               initial={{ opacity: 0 }}
@@ -127,7 +118,7 @@ export function TableList({ orderBy }: { orderBy: TableListOrderBy }) {
             </AnimatedListItem>
           )}
 
-          {listQuery.data.map((table) => {
+          {tables.map((table) => {
             return (
               <AnimatedListItem
                 key={table.id}
@@ -143,7 +134,7 @@ export function TableList({ orderBy }: { orderBy: TableListOrderBy }) {
                   >
                     <PrefetchableLink
                       to={
-                        listQuery.isRefetching
+                        tablesListQuery.isRefetching
                           ? "#"
                           : `/t/${userProfile.username}/${table.slug}/edit`
                       }

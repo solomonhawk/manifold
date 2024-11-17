@@ -16,6 +16,7 @@ export function setAuthUser(): MiddlewareHandler {
     } catch (e) {
       if (e instanceof HTTPException && e.status === 401) {
         await next();
+        return;
       }
 
       throw e;

@@ -1,7 +1,5 @@
-import { buildTableIdentifier } from "@manifold/lib";
 import type { RouterOutput } from "@manifold/router";
 import { ClipboardCopy } from "@manifold/ui/components/clipboard-copy";
-import { FullScreenLoader } from "@manifold/ui/components/full-screen-loader";
 import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import { Button } from "@manifold/ui/components/ui/button";
 import { FlexCol } from "@manifold/ui/components/ui/flex";
@@ -25,31 +23,22 @@ import {
 } from "react-icons/go";
 import { Outlet, useLocation } from "react-router-dom";
 
+import { useAuth } from "~features/auth/hooks/use-auth";
 import { DialogManager, DIALOGS } from "~features/dialog-manager";
-import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
 import { useRouteParams } from "~features/routing/hooks/use-route-params";
+import { useGetTableVersion } from "~features/table-version/api/get";
 import { tableVersionDetailParams } from "~features/table-version/pages/detail/params";
-import { trpc } from "~utils/trpc";
 
 export function TableVersionLayout() {
   const location = useLocation();
-  const userProfile = useRequiredUserProfile();
+  const session = useAuth();
   const { username, slug, version } = useRouteParams(tableVersionDetailParams);
-  const tableVersion = trpc.tableVersion.get.useQuery({
-    tableIdentifier: buildTableIdentifier(username, slug),
+  const [tableVersion] = useGetTableVersion({
+    username,
+    slug,
     version,
   });
-
-  if (tableVersion.isLoading) {
-    // @TODO: better loading state
-    return <FullScreenLoader />;
-  }
-
-  if (tableVersion.isError) {
-    // @TODO: better error state
-    return <div>Error: {tableVersion.error.message}</div>;
-  }
 
   const direction =
     location.state?.previousVersion !== undefined
@@ -83,7 +72,7 @@ export function TableVersionLayout() {
         <div className="flex gap-12">
           <Button asChild size="icon" variant="ghost">
             <PrefetchableLink
-              to={`/t/${tableVersion.data.ownerUsername}/${tableVersion.data.tableSlug}`}
+              to={`/t/${tableVersion.ownerUsername}/${tableVersion.tableSlug}`}
             >
               <span className="sr-only">Go back to dashboard</span>
               <GoArrowLeft />
@@ -92,12 +81,12 @@ export function TableVersionLayout() {
 
           <motion.div
             layout="position"
-            layoutId={`table-title-header-${tableVersion.data.table.id}`}
+            layoutId={`table-title-header-${tableVersion.table.id}`}
             transition={transitionAlpha}
             className="flex flex-col justify-center"
           >
             <h2 className="-mt-4 flex items-center gap-10 text-2xl font-bold sm:text-3xl md:mb-8 md:text-4xl">
-              {tableVersion.data.table.title}{" "}
+              {tableVersion.table.title}{" "}
               <AnimatePresence mode="popLayout" custom={direction}>
                 <motion.span
                   key={version}
@@ -114,7 +103,7 @@ export function TableVersionLayout() {
               </AnimatePresence>
               <motion.span
                 layout
-                layoutId={`table-title-header-${tableVersion.data.table.id}-icon`}
+                layoutId={`table-title-header-${tableVersion.table.id}-icon`}
                 transition={transitionAlpha}
               >
                 <GoPackage className="size-20 sm:size-24 md:size-28" />
@@ -132,16 +121,14 @@ export function TableVersionLayout() {
                           className="flex items-center gap-4"
                           disabled={copied}
                           onClick={() => {
-                            onCopy(tableVersion.data.table.tableIdentifier);
+                            onCopy(tableVersion.table.tableIdentifier);
                           }}
                         >
                           <span className="sr-only">Copy Table Identifier</span>
 
                           <TableIdentifier
                             className="text-xs sm:text-base"
-                            tableIdentifier={
-                              tableVersion.data.table.tableIdentifier
-                            }
+                            tableIdentifier={tableVersion.table.tableIdentifier}
                           />
 
                           {copied ? <GoCheck /> : <GoCopy />}
@@ -158,27 +145,27 @@ export function TableVersionLayout() {
               </ClipboardCopy>
             </div>
 
-            {tableVersion.data.table.description ? (
+            {tableVersion.table.description ? (
               <p className="mt-12 text-muted-foreground">
-                {tableVersion.data.table.description}
+                {tableVersion.table.description}
               </p>
             ) : null}
           </motion.div>
         </div>
 
         <div className="mb-auto flex grow justify-end gap-8">
-          <VersionNavigation version={tableVersion.data} />
+          <VersionNavigation version={tableVersion} />
 
           <Button
             variant="outline"
             className="flex items-center gap-6"
-            disabled={tableVersion.data.versions.length < 2}
+            disabled={tableVersion.versions.length < 2}
             onClick={() => {
               DialogManager.show(DIALOGS.COMPARE_VERSIONS.ID, {
                 defaultVisible: false,
-                table: tableVersion.data.table,
-                versions: tableVersion.data.versions,
-                currentVersion: tableVersion.data.version,
+                table: tableVersion.table,
+                versions: tableVersion.versions,
+                currentVersion: tableVersion.version,
               });
             }}
           >
@@ -192,7 +179,7 @@ export function TableVersionLayout() {
                 size="icon"
                 onClick={() => {
                   DialogManager.show(DIALOGS.COPY_TABLE.ID, {
-                    table: tableVersion.data.table,
+                    table: tableVersion.table,
                   });
                 }}
               >
@@ -206,7 +193,7 @@ export function TableVersionLayout() {
             </TooltipContent>
           </Tooltip>
 
-          {userProfile.userId === tableVersion.data.table.ownerId ? (
+          {session.data?.user.id === tableVersion.table.ownerId ? (
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button asChild variant="outline" size="icon">

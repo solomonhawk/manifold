@@ -10,6 +10,7 @@ import {
 
 import { AuthGuard } from "~features/auth/components/auth-guard";
 import { loadDashboardRoute } from "~features/dashboard/pages/root/lazy";
+import { loadLandingRoute } from "~features/landing/pages/root/lazy";
 import { userIsOnboarded } from "~features/onboarding/helpers";
 import { RootError } from "~features/routing/pages/root/error";
 import { RootLayout } from "~features/routing/pages/root/layout";
@@ -38,13 +39,7 @@ export function buildAppRoutes({
       children: [
         {
           index: true,
-          loader: guestLoader,
-          lazy: () => import("~features/landing/pages/root/page"),
-          handle: {
-            title: () => "Manifold | Welcome",
-            description: () =>
-              "A tool for curating your collection of random tables.",
-          } satisfies Handle,
+          lazy: loadLandingRoute(guestLoader, trpcUtils),
         },
         {
           path: "login",
@@ -90,9 +85,7 @@ export function buildAppRoutes({
         },
         {
           path: "t",
-          loader: protectedLoader,
           errorElement: <RootError />,
-          element: <AuthGuard />,
           children: [
             {
               index: true,
@@ -121,12 +114,15 @@ export function buildAppRoutes({
                   ],
                 },
                 {
-                  path: "edit",
-                  lazy: loadTableEditRoute(trpcUtils),
-                },
-                {
-                  index: true,
-                  loader: () => redirect("edit"),
+                  path: "*",
+                  element: <AuthGuard />,
+                  loader: protectedLoader,
+                  children: [
+                    {
+                      path: "edit",
+                      lazy: loadTableEditRoute(trpcUtils),
+                    },
+                  ],
                 },
               ],
             },
@@ -134,21 +130,26 @@ export function buildAppRoutes({
         },
         {
           path: "table",
-          loader: protectedLoader,
           errorElement: <RootError />,
-          element: <AuthGuard />,
           children: [
             {
               index: true,
               element: <Navigate to="/dashboard" replace />,
             },
             {
-              path: "new",
-              lazy: loadTableNewRoute(),
-            },
-            {
               path: "discover",
               lazy: loadTableVersionSearchBrowseRoute(trpcUtils),
+            },
+            {
+              path: "*",
+              element: <AuthGuard />,
+              loader: protectedLoader,
+              children: [
+                {
+                  path: "new",
+                  lazy: loadTableNewRoute(),
+                },
+              ],
             },
           ],
         },

@@ -1,5 +1,3 @@
-import { buildTableIdentifier } from "@manifold/lib";
-import { FullScreenLoader } from "@manifold/ui/components/full-screen-loader";
 import { Badge } from "@manifold/ui/components/ui/badge";
 import { Button } from "@manifold/ui/components/ui/button";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
@@ -9,27 +7,18 @@ import { GoArrowRight } from "react-icons/go";
 
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
 import { useRouteParams } from "~features/routing/hooks/use-route-params";
+import { useGetTableVersion } from "~features/table-version/api/get";
 import { tableVersionDetailParams } from "~features/table-version/pages/detail/params";
-import { trpc } from "~utils/trpc";
 
 const COLLAPSED_AVAILABLE_TABLES_COUNT = 3;
 
 export function TableVersionDetail() {
   const { username, slug, version } = useRouteParams(tableVersionDetailParams);
-  const tableVersion = trpc.tableVersion.get.useQuery({
-    tableIdentifier: buildTableIdentifier(username, slug),
+  const [tableVersion] = useGetTableVersion({
+    username,
+    slug,
     version,
   });
-
-  if (tableVersion.isLoading) {
-    // @TODO: better loading state
-    return <FullScreenLoader />;
-  }
-
-  if (tableVersion.isError) {
-    // @TODO: better error state
-    return <div>Error: {tableVersion.error.message}</div>;
-  }
 
   return (
     <section className="grid grid-cols-1 gap-12 pb-24 sm:gap-16 md:grid-cols-2 md:pb-36">
@@ -41,16 +30,16 @@ export function TableVersionDetail() {
             Published
           </dt>
           <dd className="border-b border-r px-10 py-8">
-            {tableVersion.data.createdAt.toLocaleDateString()}
+            {tableVersion.createdAt.toLocaleDateString()}
           </dd>
 
-          {tableVersion.data.versions.length > 0 ? (
+          {tableVersion.versions.length > 0 ? (
             <>
               <dt className="border-b border-r px-10 py-8 font-semibold text-muted-foreground">
                 Release&nbsp;notes
               </dt>
               <dd className="whitespace-pre-wrap border-b border-r px-10 py-8">
-                {tableVersion.data.releaseNotes || (
+                {tableVersion.releaseNotes || (
                   <em className="text-muted-foreground">No release notes</em>
                 )}
               </dd>
@@ -58,30 +47,26 @@ export function TableVersionDetail() {
                 Available&nbsp;Tables
               </dt>
               <dd className="flex flex-wrap gap-4 border-b border-r px-10 py-8">
-                {tableVersion.data.versions[0].availableTables.map(
-                  (tableId) => (
-                    <code
-                      key={tableId}
-                      className="rounded bg-secondary p-3 px-6 text-xs leading-none text-accent-foreground"
-                    >
-                      {tableId}
-                    </code>
-                  ),
-                )}
+                {tableVersion.versions[0].availableTables.map((tableId) => (
+                  <code
+                    key={tableId}
+                    className="rounded bg-secondary p-3 px-6 text-xs leading-none text-accent-foreground"
+                  >
+                    {tableId}
+                  </code>
+                ))}
               </dd>
 
               <dt className="border-b border-r px-10 py-8 font-semibold text-muted-foreground">
                 Dependencies
               </dt>
               <dd className="flex flex-wrap gap-4 border-b border-r px-10 py-8">
-                {tableVersion.data.dependencies.length > 0 ? (
-                  tableVersion.data.dependencies.map((dependency) => {
+                {tableVersion.dependencies.length > 0 ? (
+                  tableVersion.dependencies.map((dependency) => {
                     return (
                       <PrefetchableLink
                         key={dependency.id}
-                        to={{
-                          pathname: `/t/${dependency.ownerUsername}/${dependency.tableSlug}/v/${dependency.version}`,
-                        }}
+                        to={`/t/${dependency.ownerUsername}/${dependency.tableSlug}/v/${dependency.version}`}
                         className="inline-flex"
                       >
                         <code className="rounded bg-secondary p-3 px-6 text-xs leading-none text-accent-foreground transition-colors group-hover:bg-background group-focus:bg-background">
@@ -102,7 +87,7 @@ export function TableVersionDetail() {
 
         <div className="rounded border bg-background">
           <pre className="max-h-384 overflow-auto whitespace-pre-wrap px-16 py-12 text-xs leading-tight">
-            {tableVersion.data.definition}
+            {tableVersion.definition}
           </pre>
         </div>
       </section>
@@ -111,18 +96,15 @@ export function TableVersionDetail() {
         <h3 className="mb-8 font-semibold">Versions</h3>
 
         <ul className="divide-y overflow-hidden rounded border bg-background">
-          {tableVersion.data.versions.map((version, i) => {
-            const isCurrentVersion =
-              version.version === tableVersion.data.version;
+          {tableVersion.versions.map((version, i) => {
+            const isCurrentVersion = version.version === tableVersion.version;
             const LinkComponent = isCurrentVersion ? "span" : PrefetchableLink;
 
             return (
               <li key={version.id}>
                 <LinkComponent
-                  to={{
-                    pathname: `/t/${username}/${slug}/v/${version.version}`,
-                  }}
-                  state={{ previousVersion: tableVersion.data.version }}
+                  to={`/t/${username}/${slug}/v/${version.version}`}
+                  state={{ previousVersion: tableVersion.version }}
                   className={cn("group relative flex transition-colors", {
                     "border-accent-foreground": isCurrentVersion,
                     "hover:bg-secondary focus:bg-secondary": !isCurrentVersion,

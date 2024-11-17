@@ -51,19 +51,21 @@ export function RootLayout() {
               </Button>
             )}
 
-            <Button asChild size="sm" variant="ghost">
+            <Button
+              asChild
+              size="sm"
+              variant="outline"
+              className="bg-transparent"
+            >
               <PrefetchableLink to="/table/discover">Discover</PrefetchableLink>
+            </Button>
+
+            <Button asChild size="sm" variant="link">
+              <PrefetchableLink to="/tech-stack">Tech</PrefetchableLink>
             </Button>
           </GlobalHeader.Center>
 
           <GlobalHeader.Center>
-            <PrefetchableLink
-              to="/tech-stack"
-              className="text-xs text-muted-foreground hover:text-accent-foreground hover:underline focus:text-accent-foreground focus:underline"
-            >
-              Tech
-            </PrefetchableLink>
-
             {match(session)
               .with({ status: "loading" }, () => (
                 <Skeleton className="size-avatar-sm rounded-full sm:size-avatar" />

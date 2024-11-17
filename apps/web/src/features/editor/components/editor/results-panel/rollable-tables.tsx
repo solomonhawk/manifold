@@ -1,4 +1,5 @@
 import { AnimatedList } from "@manifold/ui/components/animated-list";
+import { ClipboardCopy } from "@manifold/ui/components/clipboard-copy";
 import { Button } from "@manifold/ui/components/ui/button";
 import {
   Tooltip,
@@ -6,10 +7,15 @@ import {
   TooltipTrigger,
 } from "@manifold/ui/components/ui/tooltip";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { motion } from "motion/react";
 import { memo, type RefObject, useCallback } from "react";
-import { GoLinkExternal, GoListUnordered } from "react-icons/go";
+import {
+  GoCheck,
+  GoCopy,
+  GoLinkExternal,
+  GoListUnordered,
+} from "react-icons/go";
 
 import {
   canRollResultAtom,
@@ -37,7 +43,7 @@ export const RollableTables = memo(function AvailableTables({
   const isEnabled = useAtomValue(canRollResultAtom);
   const status = useAtomValue(editorStatusAtom);
   const [showExportedOnly, setShowExportedOnly] = useAtom(exportedOnlyAtom);
-  const setRollResults = useSetAtom(rollHistoryAtom);
+  const [rollResults, setRollResults] = useAtom(rollHistoryAtom);
 
   const handleRoll = useCallback(
     async function handleRoll(e: React.MouseEvent, table: TableMetadata) {
@@ -79,26 +85,53 @@ export const RollableTables = memo(function AvailableTables({
             : displayEditorStatus(status)}
         </span>
 
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              onClick={() => setShowExportedOnly(!showExportedOnly)}
-            >
-              <span className="sr-only">
-                {showExportedOnly ? "Show all tables" : "Show exported only"}
-              </span>
+        <div className="flex gap-8">
+          <ClipboardCopy>
+            {({ copied, onCopy }) => {
+              return (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={() =>
+                        onCopy(rollResults.map((r) => r.text).join("\n\n"))
+                      }
+                    >
+                      <span className="sr-only">Copy all</span>
 
-              {showExportedOnly ? <GoListUnordered /> : <GoLinkExternal />}
-            </Button>
-          </TooltipTrigger>
+                      {copied ? <GoCheck /> : <GoCopy size={12} />}
+                    </Button>
+                  </TooltipTrigger>
 
-          <TooltipContent side="left">
-            {showExportedOnly ? "Show all tables" : "Show exported only"}
-          </TooltipContent>
-        </Tooltip>
+                  <TooltipContent>Copy all rolls</TooltipContent>
+                </Tooltip>
+              );
+            }}
+          </ClipboardCopy>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={() => setShowExportedOnly(!showExportedOnly)}
+              >
+                <span className="sr-only">
+                  {showExportedOnly ? "Show all tables" : "Show exported only"}
+                </span>
+
+                {showExportedOnly ? <GoListUnordered /> : <GoLinkExternal />}
+              </Button>
+            </TooltipTrigger>
+
+            <TooltipContent>
+              {showExportedOnly ? "Show all tables" : "Show exported only"}
+            </TooltipContent>
+          </Tooltip>
+        </div>
       </div>
 
       <AnimatedList

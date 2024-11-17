@@ -42,7 +42,7 @@ export function App() {
               />,
               document.body,
             )}
-            <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
+            <ReactQueryDevtools initialIsOpen={false} position="bottom-left" />
           </QueryClientProvider>
         </trpc.Provider>
       </SessionProvider>

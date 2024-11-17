@@ -1,6 +1,5 @@
 import { buildTableIdentifier } from "@manifold/lib";
 import { ClipboardCopy } from "@manifold/ui/components/clipboard-copy";
-import { FullScreenLoader } from "@manifold/ui/components/full-screen-loader";
 import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import { Badge } from "@manifold/ui/components/ui/badge";
 import { Button } from "@manifold/ui/components/ui/button";
@@ -27,8 +26,8 @@ import {
   GoPencil,
 } from "react-icons/go";
 
+import { useAuth } from "~features/auth/hooks/use-auth";
 import { DialogManager, DIALOGS } from "~features/dialog-manager";
-import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
 import { useRouteParams } from "~features/routing/hooks/use-route-params";
 import { useGetTable } from "~features/table/api/get";
@@ -37,36 +36,26 @@ import { tableDetailParams } from "~features/table/pages/detail/params";
 const COLLAPSED_AVAILABLE_TABLES_COUNT = 3;
 
 export function TableDetail() {
-  const userProfile = useRequiredUserProfile();
+  const session = useAuth();
   const { username, slug } = useRouteParams(tableDetailParams);
-  const tableQuery = useGetTable({
+  const [table] = useGetTable({
     tableIdentifier: buildTableIdentifier(username, slug),
   });
-
-  if (tableQuery.isLoading) {
-    // @TODO: better loading state
-    return <FullScreenLoader />;
-  }
-
-  if (tableQuery.isError) {
-    // @TODO: better error state
-    return <div>Error: {tableQuery.error.message}</div>;
-  }
 
   return (
     <FlexCol className="container max-w-screen-xl">
       <header className="my-12 flex flex-col gap-12 sm:my-16 md:mb-24 md:mt-36 md:flex-row md:items-center md:justify-between">
         <motion.div
           layout="position"
-          layoutId={`table-title-header-${tableQuery.data.id}`}
+          layoutId={`table-title-header-${table.id}`}
           transition={transitionAlpha}
         >
           <h2 className="-mt-4 flex items-center gap-10 text-2xl font-bold sm:text-3xl md:mb-8 md:text-4xl">
-            {tableQuery.data.title}
+            {table.title}
 
             <motion.span
               layout
-              layoutId={`table-title-header-${tableQuery.data.id}-icon`}
+              layoutId={`table-title-header-${table.id}-icon`}
               transition={transitionAlpha}
             >
               <GoPackage className="size-20 sm:size-24 md:size-28" />
@@ -84,14 +73,14 @@ export function TableDetail() {
                         className="flex items-center gap-4"
                         disabled={copied}
                         onClick={() => {
-                          onCopy(tableQuery.data.tableIdentifier);
+                          onCopy(table.tableIdentifier);
                         }}
                       >
                         <span className="sr-only">Copy Table Identifier</span>
 
                         <TableIdentifier
                           className="text-xs sm:text-base"
-                          tableIdentifier={tableQuery.data.tableIdentifier}
+                          tableIdentifier={table.tableIdentifier}
                         />
 
                         {copied ? <GoCheck /> : <GoCopy />}
@@ -107,15 +96,11 @@ export function TableDetail() {
               }}
             </ClipboardCopy>
 
-            {tableQuery.data.totalVersionCount === 0 ? (
-              <Badge>Unpublished</Badge>
-            ) : null}
+            {table.totalVersionCount === 0 ? <Badge>Unpublished</Badge> : null}
           </div>
 
-          {tableQuery.data.description ? (
-            <p className="mt-12 text-muted-foreground">
-              {tableQuery.data.description}
-            </p>
+          {table.description ? (
+            <p className="mt-12 text-muted-foreground">{table.description}</p>
           ) : null}
         </motion.div>
 
@@ -127,7 +112,7 @@ export function TableDetail() {
                 size="icon"
                 onClick={() => {
                   DialogManager.show(DIALOGS.COPY_TABLE.ID, {
-                    table: tableQuery.data,
+                    table: table,
                   });
                 }}
               >
@@ -141,7 +126,7 @@ export function TableDetail() {
             </TooltipContent>
           </Tooltip>
 
-          {userProfile.userId === tableQuery.data.ownerId ? (
+          {session.data?.user.id === table.ownerId ? (
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button asChild variant="outline" size="icon">
@@ -169,21 +154,21 @@ export function TableDetail() {
               Last&nbsp;updated
             </dt>
             <dd className="border-b border-r px-10 py-8">
-              {tableQuery.data.updatedAt.toLocaleDateString()}
+              {table.updatedAt.toLocaleDateString()}
             </dd>
 
             <dt className="border-b border-r px-10 py-8 font-semibold text-muted-foreground">
               Total&nbsp;versions
             </dt>
             <dd className="border-b border-r px-10 py-8">
-              {tableQuery.data.totalVersionCount}
+              {table.totalVersionCount}
             </dd>
 
             <dt className="border-b border-r px-10 py-8 font-semibold text-muted-foreground">
               Available&nbsp;Tables
             </dt>
             <dd className="flex flex-wrap gap-4 border-b border-r px-10 py-8">
-              {tableQuery.data.availableTables.map((tableId) => (
+              {table.availableTables.map((tableId) => (
                 <code
                   key={tableId}
                   className="rounded bg-secondary p-3 px-6 text-xs leading-none text-accent-foreground"
@@ -197,14 +182,12 @@ export function TableDetail() {
               Dependencies
             </dt>
             <dd className="flex flex-wrap gap-4 border-b border-r px-10 py-8">
-              {tableQuery.data.dependencies.length > 0 ? (
-                tableQuery.data.dependencies.map((dependency) => {
+              {table.dependencies.length > 0 ? (
+                table.dependencies.map((dependency) => {
                   return (
                     <PrefetchableLink
                       key={dependency.id}
-                      to={{
-                        pathname: `/t/${dependency.ownerUsername}/${dependency.tableSlug}/v/${dependency.version}`,
-                      }}
+                      to={`/t/${dependency.ownerUsername}/${dependency.tableSlug}/v/${dependency.version}`}
                       className="inline-flex"
                     >
                       <code className="rounded bg-secondary p-3 px-6 text-xs leading-none text-accent-foreground transition-colors group-hover:bg-background group-focus:bg-background">
@@ -223,7 +206,7 @@ export function TableDetail() {
 
           <div className="rounded border bg-background">
             <pre className="max-h-384 overflow-auto whitespace-pre-wrap px-16 py-12 text-xs leading-tight">
-              {tableQuery.data.definition}
+              {table.definition}
             </pre>
           </div>
         </section>
@@ -231,7 +214,7 @@ export function TableDetail() {
         <section>
           <h3 className="mb-8 font-semibold">Versions</h3>
 
-          {tableQuery.data.recentVersions.length === 0 ? (
+          {table.recentVersions.length === 0 ? (
             <Notice>
               <NoticeIcon>
                 <GoInfo className="size-16" />
@@ -239,14 +222,14 @@ export function TableDetail() {
 
               <NoticeContent>
                 This table has no versions yet.{" "}
-                {userProfile.userId === tableQuery.data.ownerId
+                {session.data?.user.id === table.ownerId
                   ? "When you publish a new version of this table, it will appear here."
                   : null}
               </NoticeContent>
             </Notice>
           ) : (
             <ul className="divide-y rounded border bg-background">
-              {tableQuery.data.recentVersions.map((version) => {
+              {table.recentVersions.map((version) => {
                 return (
                   <li key={version.id}>
                     <PrefetchableLink

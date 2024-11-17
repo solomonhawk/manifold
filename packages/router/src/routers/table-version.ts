@@ -8,6 +8,8 @@ import { TRPCError } from "@trpc/server";
 
 import { t } from "#trpc.ts";
 
+const ONE_HOUR_IN_SECONDS = 60 * 60;
+
 export const tableVersionRouter = t.router({
   get: t.procedure.input(tableVersionGetInput).query(async ({ input }) => {
     const tableVersion = await tableVersionService.findTableVersion(input);
@@ -36,5 +38,16 @@ export const tableVersionRouter = t.router({
 
   list: t.procedure.input(tableVersionListInput).query(async ({ input }) => {
     return await tableVersionService.listTableVersions(input);
+  }),
+
+  summary: t.procedure.query(async ({ ctx }) => {
+    const summary = await tableVersionService.getSummary();
+
+    ctx.header(
+      "Cache-Control",
+      `s-maxage=1, stale-while-revalidate=${ONE_HOUR_IN_SECONDS}`,
+    );
+
+    return summary;
   }),
 });

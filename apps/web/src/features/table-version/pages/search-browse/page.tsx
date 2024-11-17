@@ -3,7 +3,6 @@ import {
   AnimatedList,
   AnimatedListItem,
 } from "@manifold/ui/components/animated-list";
-import { FullScreenLoader } from "@manifold/ui/components/full-screen-loader";
 import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import { Button } from "@manifold/ui/components/ui/button";
 import { FlexCol } from "@manifold/ui/components/ui/flex";
@@ -38,22 +37,12 @@ export function TableVersionsSearchBrowse() {
 
   const [paginationState, paginator] = usePaginationURLState(pagination);
 
-  const tableVersions = trpc.tableVersion.list.useQuery({
+  const [tableVersions] = trpc.tableVersion.list.useSuspenseQuery({
     orderBy,
     searchQuery,
     page: paginationState.page,
     perPage: paginationState.perPage,
   });
-
-  if (tableVersions.isLoading) {
-    // @TODO: better loading state
-    return <FullScreenLoader />;
-  }
-
-  if (tableVersions.isError) {
-    // @TODO: better error state
-    return <div>Error: {tableVersions.error.message}</div>;
-  }
 
   function handleSearch(value: string) {
     setSearchParams((params) => {
@@ -83,7 +72,7 @@ export function TableVersionsSearchBrowse() {
             </h2>
 
             <p className="text-muted-foreground">
-              Find the table you’ve been searching for:
+              Search and browse for tables that suit your needs.
             </p>
           </div>
 
@@ -127,7 +116,7 @@ export function TableVersionsSearchBrowse() {
             transition={transitionAlpha}
             initial
           >
-            {tableVersions.data.data.length === 0 ? (
+            {tableVersions.data.length === 0 ? (
               <AnimatedListItem
                 key="empty"
                 transition={transitionAlpha}
@@ -147,7 +136,7 @@ export function TableVersionsSearchBrowse() {
               </AnimatedListItem>
             ) : null}
 
-            {tableVersions.data.data.map((tableVersion) => {
+            {tableVersions.data.map((tableVersion) => {
               return (
                 <AnimatedListItem
                   key={tableVersion.id}
@@ -161,7 +150,7 @@ export function TableVersionsSearchBrowse() {
             })}
           </AnimatedList>
 
-          {tableVersions.data.data.length > 0 ? (
+          {tableVersions.data.length > 0 ? (
             <motion.div layout transition={transitionAlpha}>
               <Pagination.Root paginator={paginator} metadata={pagination}>
                 <Pagination.RootLayout>

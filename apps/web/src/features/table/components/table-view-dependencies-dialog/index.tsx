@@ -78,9 +78,7 @@ export function TableViewDependenciesDialog({
                       className="flex justify-between p-12"
                     >
                       <PrefetchableLink
-                        to={{
-                          pathname: `/t/${dependency.ownerUsername}/${dependency.tableSlug}/v/${dependency.version}`,
-                        }}
+                        to={`/t/${dependency.ownerUsername}/${dependency.tableSlug}/v/${dependency.version}`}
                         target="_blank"
                         className="flex items-center gap-4"
                       >

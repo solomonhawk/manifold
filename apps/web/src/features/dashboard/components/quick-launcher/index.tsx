@@ -6,27 +6,15 @@ import { AnimatePresence, motion } from "motion/react";
 import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
 import { useListTableFavorites } from "~features/table/api/favorite";
-import { log } from "~utils/logger";
 
 export function QuickLauncher() {
   const userProfile = useRequiredUserProfile();
-  const favoritesQuery = useListTableFavorites();
-
-  // @TODO: error state
-  if (favoritesQuery.isError) {
-    log.error(favoritesQuery.error);
-    return null;
-  }
-
-  // @TODO: loading state
-  if (favoritesQuery.isLoading) {
-    return null;
-  }
+  const [favorites] = useListTableFavorites();
 
   return (
     <ul className="flex w-max gap-6 sm:gap-8">
       <AnimatePresence initial={false} mode="popLayout">
-        {favoritesQuery.data.map((table) => {
+        {favorites.map((table) => {
           return (
             <motion.li
               key={table.id}

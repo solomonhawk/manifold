@@ -10,6 +10,7 @@ import {
   desc,
   eq,
   ilike,
+  isNull,
   or,
   type SQL,
   sql,
@@ -26,6 +27,29 @@ export const tableVersionOrderByMap = {
   oldest: asc(schema.tableVersions.createdAt),
   newest: desc(schema.tableVersions.createdAt),
 } as const satisfies Record<TableListOrderBy, SQL>;
+
+export async function getSummary() {
+  const [{ authorCount, tablesCount, tableVersionsCount }] = await db
+    .select({
+      tablesCount: sql`count(distinct ${schema.tableVersions.tableIdentifier})`
+        .mapWith(Number)
+        .as("tablesCount"),
+      tableVersionsCount: sql`count(*)`
+        .mapWith(Number)
+        .as("tableVersionsCount"),
+      authorCount: sql`count(distinct ${schema.tableVersions.ownerId})`
+        .mapWith(Number)
+        .as("authorCount"),
+    })
+    .from(schema.tableVersions)
+    .where(isNull(schema.tableVersions.deletedAt));
+
+  return {
+    authorCount,
+    tablesCount,
+    tableVersionsCount,
+  };
+}
 
 export async function findTableVersion(input: TableVersionGetInput) {
   const tableVersions = await db.query.tableVersions.findMany({

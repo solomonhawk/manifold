@@ -11,6 +11,7 @@ export const trpc = () =>
       return {
         user: authUser?.user,
         session: authUser?.session,
+        header: c.header,
       };
     },
   });
