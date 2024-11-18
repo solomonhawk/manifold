@@ -177,26 +177,28 @@ export function TableVersionLayout() {
               <GoDiff className="-ml-2" /> Compare Versions
             </Button>
 
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => {
-                    DialogManager.show(DIALOGS.COPY_TABLE.ID, {
-                      table: tableVersion.table,
-                    });
-                  }}
-                >
-                  <span className="sr-only">Copy Table</span>
-                  <GoCopy />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                Copy table
-                <TooltipArrow />
-              </TooltipContent>
-            </Tooltip>
+            {session.status === "authenticated" ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => {
+                      DialogManager.show(DIALOGS.COPY_TABLE.ID, {
+                        table: tableVersion.table,
+                      });
+                    }}
+                  >
+                    <span className="sr-only">Copy Table</span>
+                    <GoCopy />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  Copy table
+                  <TooltipArrow />
+                </TooltipContent>
+              </Tooltip>
+            ) : null}
 
             {session.data?.user.id === tableVersion.table.ownerId ? (
               <Tooltip>

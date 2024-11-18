@@ -100,6 +100,7 @@ export function TableVersionDetail() {
 
           <motion.ul
             layout
+            layoutId={`table-versions-list-${tableVersion.table.id}`}
             transition={transitionAlpha}
             className="divide-y overflow-hidden rounded border bg-background"
           >
@@ -114,7 +115,6 @@ export function TableVersionDetail() {
                   key={version.id}
                   layout="preserve-aspect"
                   transition={transitionAlpha}
-                  layoutRoot
                 >
                   <LinkComponent
                     to={`/t/${username}/${slug}/v/${version.version}`}

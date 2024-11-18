@@ -112,26 +112,28 @@ export function TableDetail() {
           </motion.div>
 
           <div className="mb-auto flex grow justify-end gap-8">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => {
-                    DialogManager.show(DIALOGS.COPY_TABLE.ID, {
-                      table: table,
-                    });
-                  }}
-                >
-                  <span className="sr-only">Copy Table</span>
-                  <GoCopy />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                Copy table
-                <TooltipArrow />
-              </TooltipContent>
-            </Tooltip>
+            {session.status === "authenticated" ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => {
+                      DialogManager.show(DIALOGS.COPY_TABLE.ID, {
+                        table: table,
+                      });
+                    }}
+                  >
+                    <span className="sr-only">Copy Table</span>
+                    <GoCopy />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  Copy table
+                  <TooltipArrow />
+                </TooltipContent>
+              </Tooltip>
+            ) : null}
 
             {session.data?.user.id === table.ownerId ? (
               <Tooltip>
@@ -219,6 +221,15 @@ export function TableDetail() {
           </section>
 
           <section>
+            <h3 className="mb-8 font-semibold">Try it out:</h3>
+
+            <RollPreview
+              definition={injectNamespacePragmasWorkaround(
+                table.definition.trim(),
+                table.dependencies,
+              )}
+            />
+
             <h3 className="mb-8 font-semibold">Versions</h3>
 
             {table.recentVersions.length === 0 ? (
@@ -236,7 +247,12 @@ export function TableDetail() {
               </Notice>
             ) : (
               <div className="flex flex-col gap-16">
-                <ul className="divide-y rounded border bg-background">
+                <motion.ul
+                  layout
+                  layoutId={`table-versions-list-${table.id}`}
+                  className="divide-y rounded border bg-background"
+                  transition={transitionAlpha}
+                >
                   {table.recentVersions.map((version) => {
                     return (
                       <li key={version.id}>
@@ -298,14 +314,7 @@ export function TableDetail() {
                       </li>
                     );
                   })}
-                </ul>
-
-                <RollPreview
-                  definition={injectNamespacePragmasWorkaround(
-                    table.definition.trim(),
-                    table.dependencies,
-                  )}
-                />
+                </motion.ul>
               </div>
             )}
           </section>

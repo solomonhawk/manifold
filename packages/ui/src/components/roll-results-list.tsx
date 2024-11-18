@@ -142,7 +142,7 @@ const ListItem = memo(function ({
               {tableName}
             </Badge>
 
-            <span className="text-nowrap text-sm text-slate-400">
+            <span className="text-nowrap text-sm text-muted-foreground">
               {new Date(timestamp).toLocaleTimeString()}
             </span>
           </span>
