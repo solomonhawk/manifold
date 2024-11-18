@@ -67,152 +67,158 @@ export function TableVersionLayout() {
   };
 
   return (
-    <FlexCol className="container max-w-screen-xl">
-      <header className="my-12 flex gap-12 sm:my-16 md:mb-24 md:mt-36 md:items-center md:justify-between">
-        <div className="flex gap-12">
-          <Button asChild size="icon" variant="ghost">
-            <PrefetchableLink
-              to={`/t/${tableVersion.ownerUsername}/${tableVersion.tableSlug}`}
+    <FlexCol className="overflow-auto">
+      <div className="bg-architect container max-w-screen-xl">
+        <header className="my-12 flex gap-12 sm:my-16 md:mb-24 md:mt-36 md:items-center md:justify-between">
+          <div className="flex gap-12">
+            <Button asChild size="icon" variant="ghost">
+              <PrefetchableLink
+                to={`/t/${tableVersion.ownerUsername}/${tableVersion.tableSlug}`}
+              >
+                <span className="sr-only">Go back to dashboard</span>
+                <GoArrowLeft />
+              </PrefetchableLink>
+            </Button>
+
+            <motion.div
+              layout="position"
+              layoutId={`table-title-header-${tableVersion.table.id}`}
+              transition={transitionAlpha}
+              className="flex flex-col justify-center"
             >
-              <span className="sr-only">Go back to dashboard</span>
-              <GoArrowLeft />
-            </PrefetchableLink>
-          </Button>
-
-          <motion.div
-            layout="position"
-            layoutId={`table-title-header-${tableVersion.table.id}`}
-            transition={transitionAlpha}
-            className="flex flex-col justify-center"
-          >
-            <h2 className="-mt-4 flex items-center gap-10 text-2xl font-bold sm:text-3xl md:mb-8 md:text-4xl">
-              {tableVersion.table.title}{" "}
-              <AnimatePresence mode="popLayout" custom={direction}>
+              <h2 className="-mt-4 flex items-center gap-10 text-2xl font-bold sm:text-3xl md:mb-8 md:text-4xl">
+                {tableVersion.table.title}{" "}
+                <AnimatePresence mode="popLayout" custom={direction}>
+                  <motion.span
+                    key={version}
+                    className="text-accent-foreground"
+                    transition={transitionAlpha}
+                    custom={direction}
+                    variants={variants}
+                    initial={direction ? "enter" : false}
+                    animate={{ opacity: 1, x: 0, y: 0 }}
+                    exit={"exit"}
+                  >
+                    v{version}
+                  </motion.span>
+                </AnimatePresence>
                 <motion.span
-                  key={version}
-                  className="text-accent-foreground"
+                  layout
+                  layoutId={`table-title-header-${tableVersion.table.id}-icon`}
                   transition={transitionAlpha}
-                  custom={direction}
-                  variants={variants}
-                  initial={direction ? "enter" : false}
-                  animate={{ opacity: 1, x: 0, y: 0 }}
-                  exit={"exit"}
                 >
-                  v{version}
+                  <GoPackage className="size-20 sm:size-24 md:size-28" />
                 </motion.span>
-              </AnimatePresence>
-              <motion.span
-                layout
-                layoutId={`table-title-header-${tableVersion.table.id}-icon`}
-                transition={transitionAlpha}
-              >
-                <GoPackage className="size-20 sm:size-24 md:size-28" />
-              </motion.span>
-            </h2>
+              </h2>
 
-            <div>
-              <ClipboardCopy>
-                {({ copied, onCopy }) => {
-                  return (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          type="button"
-                          className="flex items-center gap-4"
-                          disabled={copied}
-                          onClick={() => {
-                            onCopy(tableVersion.table.tableIdentifier);
-                          }}
-                        >
-                          <span className="sr-only">Copy Table Identifier</span>
+              <div>
+                <ClipboardCopy>
+                  {({ copied, onCopy }) => {
+                    return (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            type="button"
+                            className="flex items-center gap-4"
+                            disabled={copied}
+                            onClick={() => {
+                              onCopy(tableVersion.table.tableIdentifier);
+                            }}
+                          >
+                            <span className="sr-only">
+                              Copy Table Identifier
+                            </span>
 
-                          <TableIdentifier
-                            className="text-xs sm:text-base"
-                            tableIdentifier={tableVersion.table.tableIdentifier}
-                          />
+                            <TableIdentifier
+                              className="text-xs sm:text-base"
+                              tableIdentifier={
+                                tableVersion.table.tableIdentifier
+                              }
+                            />
 
-                          {copied ? <GoCheck /> : <GoCopy />}
-                        </button>
-                      </TooltipTrigger>
+                            {copied ? <GoCheck /> : <GoCopy />}
+                          </button>
+                        </TooltipTrigger>
 
-                      <TooltipContent>
-                        Copy table identifier
-                        <TooltipArrow />
-                      </TooltipContent>
-                    </Tooltip>
-                  );
-                }}
-              </ClipboardCopy>
-            </div>
+                        <TooltipContent>
+                          Copy table identifier
+                          <TooltipArrow />
+                        </TooltipContent>
+                      </Tooltip>
+                    );
+                  }}
+                </ClipboardCopy>
+              </div>
 
-            {tableVersion.table.description ? (
-              <p className="mt-12 text-muted-foreground">
-                {tableVersion.table.description}
-              </p>
-            ) : null}
-          </motion.div>
-        </div>
+              {tableVersion.table.description ? (
+                <p className="mt-12 text-muted-foreground">
+                  {tableVersion.table.description}
+                </p>
+              ) : null}
+            </motion.div>
+          </div>
 
-        <div className="mb-auto flex grow justify-end gap-8">
-          <VersionNavigation version={tableVersion} />
+          <div className="mb-auto flex grow justify-end gap-8">
+            <VersionNavigation version={tableVersion} />
 
-          <Button
-            variant="outline"
-            className="flex items-center gap-6"
-            disabled={tableVersion.versions.length < 2}
-            onClick={() => {
-              DialogManager.show(DIALOGS.COMPARE_VERSIONS.ID, {
-                defaultVisible: false,
-                table: tableVersion.table,
-                versions: tableVersion.versions,
-                currentVersion: tableVersion.version,
-              });
-            }}
-          >
-            <GoDiff className="-ml-2" /> Compare Versions
-          </Button>
+            <Button
+              variant="outline"
+              className="flex items-center gap-6"
+              disabled={tableVersion.versions.length < 2}
+              onClick={() => {
+                DialogManager.show(DIALOGS.COMPARE_VERSIONS.ID, {
+                  defaultVisible: false,
+                  table: tableVersion.table,
+                  versions: tableVersion.versions,
+                  currentVersion: tableVersion.version,
+                });
+              }}
+            >
+              <GoDiff className="-ml-2" /> Compare Versions
+            </Button>
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => {
-                  DialogManager.show(DIALOGS.COPY_TABLE.ID, {
-                    table: tableVersion.table,
-                  });
-                }}
-              >
-                <span className="sr-only">Copy Table</span>
-                <GoCopy />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              Copy table
-              <TooltipArrow />
-            </TooltipContent>
-          </Tooltip>
-
-          {session.data?.user.id === tableVersion.table.ownerId ? (
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button asChild variant="outline" size="icon">
-                  <PrefetchableLink to={`/t/${username}/${slug}/edit`}>
-                    <span className="sr-only">Edit Table</span>
-                    <GoPencil />
-                  </PrefetchableLink>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => {
+                    DialogManager.show(DIALOGS.COPY_TABLE.ID, {
+                      table: tableVersion.table,
+                    });
+                  }}
+                >
+                  <span className="sr-only">Copy Table</span>
+                  <GoCopy />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                Edit current draft
+                Copy table
                 <TooltipArrow />
               </TooltipContent>
             </Tooltip>
-          ) : null}
-        </div>
-      </header>
 
-      <Outlet />
+            {session.data?.user.id === tableVersion.table.ownerId ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button asChild variant="outline" size="icon">
+                    <PrefetchableLink to={`/t/${username}/${slug}/edit`}>
+                      <span className="sr-only">Edit Table</span>
+                      <GoPencil />
+                    </PrefetchableLink>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  Edit current draft
+                  <TooltipArrow />
+                </TooltipContent>
+              </Tooltip>
+            ) : null}
+          </div>
+        </header>
+
+        <Outlet />
+      </div>
     </FlexCol>
   );
 }

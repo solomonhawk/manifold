@@ -29,7 +29,6 @@ function AnimatedList({
 }: Props) {
   return (
     <motion.ul
-      layoutRoot
       layoutScroll
       ref={listRef}
       className={className}

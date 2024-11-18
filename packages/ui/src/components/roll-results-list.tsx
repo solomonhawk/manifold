@@ -1,65 +1,57 @@
-import {
-  AnimatedList,
-  AnimatedListItem,
-} from "@manifold/ui/components/animated-list";
-import { ClipboardCopy } from "@manifold/ui/components/clipboard-copy";
-import { Typewriter } from "@manifold/ui/components/typewriter";
-import { Badge } from "@manifold/ui/components/ui/badge";
-import { Button } from "@manifold/ui/components/ui/button";
-import { Card, CardContent } from "@manifold/ui/components/ui/card";
-import { transitionAlpha } from "@manifold/ui/lib/animation";
-import { cn } from "@manifold/ui/lib/utils";
+import type { RollResult } from "@manifold/lib/models/roll";
 import { CircleBackslashIcon, CubeIcon } from "@radix-ui/react-icons";
-import { useAtom } from "jotai";
-import { motion } from "motion/react";
-import { memo, type RefObject, useCallback, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { memo, type RefObject, useCallback, useRef, useState } from "react";
 import { GoCheck, GoCopy, GoX } from "react-icons/go";
 
-import {
-  rollHistoryAtom,
-  type RollResult,
-} from "~features/editor/components/editor/state";
+import { AnimatedList, AnimatedListItem } from "#components/animated-list.tsx";
+import { ClipboardCopy } from "#components/clipboard-copy.tsx";
+import { Typewriter } from "#components/typewriter.tsx";
+import { Badge } from "#components/ui/badge.tsx";
+import { Button } from "#components/ui/button.tsx";
+import { Card, CardContent } from "#components/ui/card.tsx";
+import { transitionAlpha } from "#lib/animation.ts";
+import { cn } from "#lib/utils.ts";
 
-export function RollResults({
+type Props = {
+  className?: string;
+  listRef?: RefObject<HTMLUListElement>;
+  rollResults: RollResult[];
+  onRemove?: (timestamp: number) => void;
+  onClear?: () => void;
+};
+
+export function RollResultsList({
+  className,
   listRef,
-}: {
-  listRef: RefObject<HTMLUListElement>;
-}) {
+  rollResults,
+  onRemove,
+  onClear,
+}: Props) {
+  const ref = listRef ?? useRef<HTMLUListElement>(null);
   const [listOverflowing, setListOverflowing] = useState(false);
-  const [rollResults, setRollResults] = useAtom(rollHistoryAtom);
-
-  const handleClearResults = useCallback(
-    function handleClearResults() {
-      setRollResults([]);
-    },
-    [setRollResults],
-  );
 
   const updateListOverflowing = useCallback(() => {
-    if (listRef.current) {
-      setListOverflowing(
-        listRef.current.scrollHeight > listRef.current.clientHeight,
-      );
+    if (ref.current) {
+      setListOverflowing(ref.current.scrollHeight > ref.current.clientHeight);
     }
-  }, [listRef]);
+  }, [ref]);
 
   const handleRemoveResult = useCallback(
     (timestamp: number) => {
-      setRollResults((results) =>
-        results.filter((r) => r.timestamp !== timestamp),
-      );
+      onRemove?.(timestamp);
     },
-    [setRollResults],
+    [onRemove],
   );
 
   return (
-    <>
+    <div className={cn("flex flex-col", className)}>
       <AnimatedList
-        className={cn("flex min-h-0 flex-col gap-8 overflow-auto px-16", {
+        listRef={ref}
+        className={cn("flex min-h-0 flex-col gap-12 overflow-auto", {
           "fade-list-overflowing": listOverflowing,
         })}
         transition={transitionAlpha}
-        listRef={listRef}
         onLayoutAnimationStart={updateListOverflowing}
         onLayoutAnimationComplete={updateListOverflowing}
         layout
@@ -67,16 +59,15 @@ export function RollResults({
         {rollResults.length === 0 ? (
           <AnimatedListItem
             key="empty"
-            initial={{ opacity: 0 }}
-            exit={{ opacity: 0, transition: { duration: 0.05 } }}
+            initial={{ opacity: 0, y: 8 }}
+            exit={{ opacity: 0, y: 8 }}
             transition={transitionAlpha}
-            layout="position"
           >
-            <Card>
-              <CardContent className="!p-16">
-                <div className="flex items-center justify-center gap-8 text-muted-foreground">
-                  <CubeIcon className="size-24" />
-                  Your roll results will show up here.
+            <Card className="mb-16">
+              <CardContent className="!p-12">
+                <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground">
+                  <CubeIcon className="size-16" />
+                  Roll results will show up here.
                 </div>
               </CardContent>
             </Card>
@@ -95,31 +86,38 @@ export function RollResults({
         ))}
       </AnimatedList>
 
-      <motion.div
-        layout
-        transition={transitionAlpha}
-        className={cn("fade-list-mask relative flex justify-end", {
-          "fade-list-mask-visible": listOverflowing,
-        })}
-      >
-        <div
-          className={cn("p-16 duration-500", {
-            "!opacity-0": rollResults.length === 0,
+      {onClear ? (
+        <motion.div
+          layout="position"
+          transition={transitionAlpha}
+          className={cn("fade-list-mask relative flex justify-end", {
+            "fade-list-mask-visible": listOverflowing,
           })}
         >
-          <Button
-            type="button"
-            onClick={handleClearResults}
-            variant="destructive-outline"
-            className="gap-4"
-            disabled={rollResults.length === 0}
-          >
-            <CircleBackslashIcon />
-            Clear Results
-          </Button>
-        </div>
-      </motion.div>
-    </>
+          <AnimatePresence>
+            {rollResults.length > 0 ? (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={transitionAlpha}
+              >
+                <Button
+                  type="button"
+                  onClick={onClear}
+                  variant="destructive-outline"
+                  className="my-16 gap-4"
+                  disabled={rollResults.length === 0}
+                >
+                  <CircleBackslashIcon />
+                  Clear Results
+                </Button>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+        </motion.div>
+      ) : null}
+    </div>
   );
 }
 
@@ -132,7 +130,7 @@ const ListItem = memo(function ({
   onRemove?: (timestamp: number) => void;
 }) {
   return (
-    <Card className="group">
+    <Card className="group/list-item">
       <CardContent className="flex flex-col items-stretch gap-8 !p-16 @md:flex-row">
         <span className="grow">
           <Typewriter transition={transitionAlpha}>{text}</Typewriter>
@@ -149,7 +147,7 @@ const ListItem = memo(function ({
             </span>
           </span>
 
-          <div className="-mb-6 -mr-6 flex items-center gap-8 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100 @md:m-0">
+          <div className="-mb-6 -mr-6 flex items-center gap-8 opacity-0 transition-opacity focus-within:opacity-100 group-hover/list-item:opacity-100 @md:m-0">
             <ClipboardCopy>
               {({ copied, onCopy }) => {
                 return (

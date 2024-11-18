@@ -19,12 +19,12 @@ import { type SubmitHandler, useFormContext, useWatch } from "react-hook-form";
 import { useBlocker, useNavigate } from "react-router-dom";
 
 import { DialogManager, DIALOGS } from "~features/dialog-manager";
-import { Editor } from "~features/editor";
+import { Editor } from "~features/engine";
 import {
   currentTableDependenciesAtom,
   directDependencyVersionsAtom,
   editorStatusAtom,
-} from "~features/editor/components/editor/state";
+} from "~features/engine/components/editor/state";
 import { useResolveDependencies } from "~features/table/api/resolve-dependencies";
 import { useUpdateTable } from "~features/table/api/update";
 import {

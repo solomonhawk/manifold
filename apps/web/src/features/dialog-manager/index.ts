@@ -2,8 +2,8 @@ import NiceModal, { type NiceModalHocProps } from "@ebay/nice-modal-react";
 import type { ComponentProps } from "react";
 
 import { ConfirmationDialog } from "~features/dialog-manager/components/confirmation-dialog";
-import { FindDependencyDialog } from "~features/editor/components/find-dependency-dialog";
-import { PreviewDependencyDialog } from "~features/editor/components/preview-dependency-dialog";
+import { FindDependencyDialog } from "~features/engine/components/find-dependency-dialog";
+import { PreviewDependencyDialog } from "~features/engine/components/preview-dependency-dialog";
 import { CopyTableDialog } from "~features/table/components/table-copy-dialog";
 import { TableDeleteDialog } from "~features/table/components/table-delete-dialog";
 import { TablePublishDialog } from "~features/table/components/table-publish-dialog";

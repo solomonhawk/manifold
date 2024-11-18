@@ -2,9 +2,10 @@ import { Badge } from "@manifold/ui/components/ui/badge";
 import { Button } from "@manifold/ui/components/ui/button";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
 import { cn } from "@manifold/ui/lib/utils";
-import { motion } from "motion/react";
+import { LayoutGroup, motion } from "motion/react";
 import { GoArrowRight } from "react-icons/go";
 
+import RollPreview from "~features/engine/components/roll-preview";
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
 import { useRouteParams } from "~features/routing/hooks/use-route-params";
 import { useGetTableVersion } from "~features/table-version/api/get";
@@ -92,102 +93,133 @@ export function TableVersionDetail() {
         </div>
       </section>
 
-      <section>
-        <h3 className="mb-8 font-semibold">Versions</h3>
+      <LayoutGroup>
+        <section>
+          <h3 className="mb-8 font-semibold">Versions</h3>
 
-        <ul className="divide-y overflow-hidden rounded border bg-background">
-          {tableVersion.versions.map((version, i) => {
-            const isCurrentVersion = version.version === tableVersion.version;
-            const LinkComponent = isCurrentVersion ? "span" : PrefetchableLink;
+          <motion.ul
+            layout
+            transition={transitionAlpha}
+            className="divide-y overflow-hidden rounded border bg-background"
+          >
+            {tableVersion.versions.map((version, i) => {
+              const isCurrentVersion = version.version === tableVersion.version;
+              const LinkComponent = isCurrentVersion
+                ? "span"
+                : PrefetchableLink;
 
-            return (
-              <li key={version.id}>
-                <LinkComponent
-                  to={`/t/${username}/${slug}/v/${version.version}`}
-                  state={{ previousVersion: tableVersion.version }}
-                  className={cn("group relative flex transition-colors", {
-                    "border-accent-foreground": isCurrentVersion,
-                    "hover:bg-secondary focus:bg-secondary": !isCurrentVersion,
-                  })}
+              return (
+                <motion.li
+                  key={version.id}
+                  layout="preserve-aspect"
+                  transition={transitionAlpha}
                 >
-                  {isCurrentVersion ? (
-                    <motion.div
-                      layout
-                      layoutId="table-version-current-indicator"
-                      className="absolute inset-y-0 left-0 w-4 bg-accent-foreground"
-                      transition={transitionAlpha}
-                    />
-                  ) : null}
-
-                  <div className="flex grow items-center justify-between p-12 pl-16 sm:p-16 sm:pl-20">
-                    <div className="flex flex-col gap-4 pr-16">
-                      <div className="flex items-center gap-6 text-base text-muted-foreground">
-                        <strong className="text-xl text-accent-foreground">
-                          v{version.version}
-                        </strong>{" "}
-                        published on{" "}
-                        <span className="text-foreground">
-                          {version.createdAt.toLocaleDateString()}
-                        </span>
-                        {isCurrentVersion ? (
-                          <Badge variant="accent">Current</Badge>
-                        ) : null}
-                        {i === 0 ? <Badge>Latest</Badge> : null}
-                      </div>
-
-                      {version.releaseNotes ? (
-                        <pre
-                          className="my-4 mb-8 line-clamp-2 text-ellipsis whitespace-break-spaces border-l-2 border-muted pl-8 font-sans text-xs text-muted-foreground/70"
-                          title={version.releaseNotes}
-                        >
-                          {version.releaseNotes}
-                        </pre>
-                      ) : null}
-
-                      <div className="flex flex-wrap gap-4">
-                        {version.availableTables
-                          .slice(0, COLLAPSED_AVAILABLE_TABLES_COUNT)
-                          .map((tableId) => (
-                            <code
-                              key={tableId}
-                              className={cn(
-                                "rounded bg-secondary p-3 px-6 text-xs leading-none text-accent-foreground",
-                                {
-                                  "group-hover:bg-background group-focus:bg-background":
-                                    !isCurrentVersion,
-                                },
-                              )}
-                            >
-                              {tableId}
-                            </code>
-                          ))}
-
-                        {version.availableTables.length >
-                        COLLAPSED_AVAILABLE_TABLES_COUNT ? (
-                          <span className="text-xs text-foreground">
-                            {`and ${version.availableTables.length - COLLAPSED_AVAILABLE_TABLES_COUNT} more`}
-                          </span>
-                        ) : null}
-                      </div>
-                    </div>
-
-                    {!isCurrentVersion ? (
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        type="button"
-                        tabIndex={-1}
-                      >
-                        <GoArrowRight />
-                      </Button>
+                  <LinkComponent
+                    to={`/t/${username}/${slug}/v/${version.version}`}
+                    state={{ previousVersion: tableVersion.version }}
+                    className="group relative flex"
+                    preventScrollReset
+                  >
+                    {isCurrentVersion ? (
+                      <motion.div
+                        layout="position"
+                        layoutId="table-version-current-indicator"
+                        className="absolute inset-y-0 left-0 w-4 bg-accent-foreground"
+                        transition={transitionAlpha}
+                      />
                     ) : null}
-                  </div>
-                </LinkComponent>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
+
+                    <div
+                      /**
+                       * @NOTE: the before shenanigans and the ml-4 are here to
+                       * make sure the list item's background doesn't obscure
+                       * the current version left border highlight indicator
+                       */
+                      className={cn(
+                        "ml-4 grow flex-col bg-background transition-colors before:absolute before:inset-y-0 before:left-0 before:w-4 before:transition-colors",
+                        {
+                          "hover:bg-secondary focus:bg-secondary hover:before:bg-secondary focus:before:bg-secondary":
+                            !isCurrentVersion,
+                        },
+                      )}
+                    >
+                      <div className="flex grow items-center justify-between p-12 sm:p-16">
+                        <div className="flex flex-col gap-4 pr-16">
+                          <div className="flex items-center gap-6 text-base text-muted-foreground">
+                            <strong className="text-xl text-accent-foreground">
+                              v{version.version}
+                            </strong>{" "}
+                            published on{" "}
+                            <span className="text-foreground">
+                              {version.createdAt.toLocaleDateString()}
+                            </span>
+                            {isCurrentVersion ? (
+                              <Badge variant="accent">Current</Badge>
+                            ) : null}
+                            {i === 0 ? <Badge>Latest</Badge> : null}
+                          </div>
+
+                          {version.releaseNotes ? (
+                            <pre
+                              className="my-4 mb-8 line-clamp-2 text-ellipsis whitespace-break-spaces border-l-2 border-muted pl-8 font-sans text-xs text-muted-foreground/70"
+                              title={version.releaseNotes}
+                            >
+                              {version.releaseNotes}
+                            </pre>
+                          ) : null}
+
+                          <div className="flex flex-wrap gap-4">
+                            {version.availableTables
+                              .slice(0, COLLAPSED_AVAILABLE_TABLES_COUNT)
+                              .map((tableId) => (
+                                <code
+                                  key={tableId}
+                                  className={cn(
+                                    "rounded bg-secondary p-3 px-6 text-xs leading-none text-accent-foreground",
+                                    {
+                                      "group-hover:bg-background group-focus:bg-background":
+                                        !isCurrentVersion,
+                                    },
+                                  )}
+                                >
+                                  {tableId}
+                                </code>
+                              ))}
+
+                            {version.availableTables.length >
+                            COLLAPSED_AVAILABLE_TABLES_COUNT ? (
+                              <span className="text-xs text-foreground">
+                                {`and ${version.availableTables.length - COLLAPSED_AVAILABLE_TABLES_COUNT} more`}
+                              </span>
+                            ) : null}
+                          </div>
+                        </div>
+
+                        {!isCurrentVersion ? (
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            type="button"
+                            tabIndex={-1}
+                          >
+                            <GoArrowRight />
+                          </Button>
+                        ) : null}
+                      </div>
+
+                      {isCurrentVersion ? (
+                        <div className="pl-20 pr-16">
+                          <RollPreview definition={tableVersion.definition} />
+                        </div>
+                      ) : null}
+                    </div>
+                  </LinkComponent>
+                </motion.li>
+              );
+            })}
+          </motion.ul>
+        </section>
+      </LayoutGroup>
     </section>
   );
 }

@@ -1,20 +1,6 @@
+import type { RollResult, TableMetadata } from "@manifold/lib/models/roll";
 import type { RouterOutput } from "@manifold/router";
 import { atom } from "jotai";
-
-export type RollResult = {
-  id: number;
-  tableName: string;
-  tableId: string;
-  timestamp: number;
-  text: string;
-};
-
-export type TableMetadata = {
-  id: string;
-  title: string;
-  export: boolean;
-  namespace: string | undefined;
-};
 
 export type EditorStatus =
   | "initial"

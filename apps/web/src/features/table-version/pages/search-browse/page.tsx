@@ -62,108 +62,112 @@ export function TableVersionsSearchBrowse() {
   }
 
   return (
-    <FlexCol className="container max-w-screen-xl">
-      <section className="pb-24 sm:pb-32">
-        <header className="my-12 flex flex-col gap-12 sm:my-16 md:mb-24 md:mt-36 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h2 className="-mt-4 flex items-center gap-10 text-2xl font-bold sm:text-3xl md:mb-8 md:text-4xl">
-              Discover{" "}
-              <GiMagnifyingGlass className="size-20 sm:size-24 md:size-28" />
-            </h2>
+    <FlexCol className="overflow-auto">
+      <div className="bg-architect container max-w-screen-xl">
+        <section className="pb-24 sm:pb-32">
+          <header className="my-12 flex flex-col gap-12 sm:my-16 md:mb-24 md:mt-36 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h2 className="-mt-4 flex items-center gap-10 text-2xl font-bold sm:text-3xl md:mb-8 md:text-4xl">
+                Discover{" "}
+                <GiMagnifyingGlass className="size-20 sm:size-24 md:size-28" />
+              </h2>
 
-            <p className="text-muted-foreground">
-              Search and browse for tables that suit your needs.
-            </p>
-          </div>
+              <p className="text-muted-foreground">
+                Search and browse for tables that suit your needs.
+              </p>
+            </div>
 
-          <div className="flex grow justify-end gap-8">
-            <SearchForm
-              onSubmit={handleSearch}
-              defaultSearchQuery={searchQuery}
-            />
+            <div className="flex grow justify-end gap-8">
+              <SearchForm
+                onSubmit={handleSearch}
+                defaultSearchQuery={searchQuery}
+              />
 
-            <Select value={orderBy} onValueChange={handleSort}>
-              <SelectTrigger className="max-w-176">
-                {tableListOrderByMapping[orderBy]}
-              </SelectTrigger>
+              <Select value={orderBy} onValueChange={handleSort}>
+                <SelectTrigger className="max-w-176">
+                  {tableListOrderByMapping[orderBy]}
+                </SelectTrigger>
 
-              <SelectContent>
-                <SelectItem value="recently_edited">Recently Edited</SelectItem>
-                <SelectItem value="recently_not_edited">
-                  Recently Not Edited
-                </SelectItem>
-                <SelectItem value="newest">Newest</SelectItem>
-                <SelectItem value="oldest">Oldest</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </header>
+                <SelectContent>
+                  <SelectItem value="recently_edited">
+                    Recently Edited
+                  </SelectItem>
+                  <SelectItem value="recently_not_edited">
+                    Recently Not Edited
+                  </SelectItem>
+                  <SelectItem value="newest">Newest</SelectItem>
+                  <SelectItem value="oldest">Oldest</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </header>
 
-        <Pagination.Root paginator={paginator} metadata={pagination}>
-          <Pagination.RootLayout className="my-12 sm:my-16">
-            <Pagination.Metadata />
+          <Pagination.Root paginator={paginator} metadata={pagination}>
+            <Pagination.RootLayout className="my-12 sm:my-16">
+              <Pagination.Metadata />
 
-            <Pagination.RightArea>
-              <Pagination.PrevPageLink variant="outline" />
-              <Pagination.NextPageLink variant="outline" />
-            </Pagination.RightArea>
-          </Pagination.RootLayout>
-        </Pagination.Root>
+              <Pagination.RightArea>
+                <Pagination.PrevPageLink variant="outline" />
+                <Pagination.NextPageLink variant="outline" />
+              </Pagination.RightArea>
+            </Pagination.RootLayout>
+          </Pagination.Root>
 
-        <LayoutGroup>
-          <AnimatedList
-            className="relative"
-            transition={transitionAlpha}
-            initial
-          >
-            {tableVersions.data.length === 0 ? (
-              <AnimatedListItem
-                key="empty"
-                transition={transitionAlpha}
-                initial={{ opacity: 0 }}
-              >
-                <div className="flex flex-col items-center gap-8 rounded bg-background p-16 text-center">
-                  <h3 className="text-lg font-bold sm:text-xl">
-                    No tables found for{" "}
-                    <span className="text-accent-foreground">
-                      “{searchQuery}”
-                    </span>
-                  </h3>
-                  <p className="text-muted-foreground">
-                    Try searching for something else.
-                  </p>
-                </div>
-              </AnimatedListItem>
-            ) : null}
-
-            {tableVersions.data.map((tableVersion) => {
-              return (
+          <LayoutGroup>
+            <AnimatedList
+              className="relative"
+              transition={transitionAlpha}
+              initial
+            >
+              {tableVersions.data.length === 0 ? (
                 <AnimatedListItem
-                  key={tableVersion.id}
+                  key="empty"
                   transition={transitionAlpha}
-                  initial={{ opacity: 0, scale: 0.99 }}
-                  className="mb-12 sm:mb-16"
+                  initial={{ opacity: 0 }}
                 >
-                  <ListItem tableVersion={tableVersion} />
+                  <div className="flex flex-col items-center gap-8 rounded bg-background p-16 text-center">
+                    <h3 className="text-lg font-bold sm:text-xl">
+                      No tables found for{" "}
+                      <span className="text-accent-foreground">
+                        “{searchQuery}”
+                      </span>
+                    </h3>
+                    <p className="text-muted-foreground">
+                      Try searching for something else.
+                    </p>
+                  </div>
                 </AnimatedListItem>
-              );
-            })}
-          </AnimatedList>
+              ) : null}
 
-          {tableVersions.data.length > 0 ? (
-            <motion.div layout transition={transitionAlpha}>
-              <Pagination.Root paginator={paginator} metadata={pagination}>
-                <Pagination.RootLayout>
-                  <Pagination.RightArea>
-                    <Pagination.PrevPageLink variant="outline" />
-                    <Pagination.NextPageLink variant="outline" />
-                  </Pagination.RightArea>
-                </Pagination.RootLayout>
-              </Pagination.Root>
-            </motion.div>
-          ) : null}
-        </LayoutGroup>
-      </section>
+              {tableVersions.data.map((tableVersion) => {
+                return (
+                  <AnimatedListItem
+                    key={tableVersion.id}
+                    transition={transitionAlpha}
+                    initial={{ opacity: 0, scale: 0.99 }}
+                    className="mb-12 sm:mb-16"
+                  >
+                    <ListItem tableVersion={tableVersion} />
+                  </AnimatedListItem>
+                );
+              })}
+            </AnimatedList>
+
+            {tableVersions.data.length > 0 ? (
+              <motion.div layout transition={transitionAlpha}>
+                <Pagination.Root paginator={paginator} metadata={pagination}>
+                  <Pagination.RootLayout>
+                    <Pagination.RightArea>
+                      <Pagination.PrevPageLink variant="outline" />
+                      <Pagination.NextPageLink variant="outline" />
+                    </Pagination.RightArea>
+                  </Pagination.RootLayout>
+                </Pagination.Root>
+              </motion.div>
+            ) : null}
+          </LayoutGroup>
+        </section>
+      </div>
     </FlexCol>
   );
 }

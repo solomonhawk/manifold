@@ -1,3 +1,4 @@
+import type { RollResult, TableMetadata } from "@manifold/lib/models/roll";
 import { AnimatedList } from "@manifold/ui/components/animated-list";
 import { ClipboardCopy } from "@manifold/ui/components/clipboard-copy";
 import { Button } from "@manifold/ui/components/ui/button";
@@ -7,9 +8,8 @@ import {
   TooltipTrigger,
 } from "@manifold/ui/components/ui/tooltip";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
-import { useAtom, useAtomValue } from "jotai";
 import { motion } from "motion/react";
-import { memo, type RefObject, useCallback } from "react";
+import { memo, useCallback } from "react";
 import {
   GoCheck,
   GoCopy,
@@ -17,73 +17,41 @@ import {
   GoListUnordered,
 } from "react-icons/go";
 
-import {
-  canRollResultAtom,
-  currentTableHashAtom,
-  type EditorStatus,
-  editorStatusAtom,
-  exportedOnlyAtom,
-  rollHistoryAtom,
-  type TableMetadata,
-  visibleTableMetadataAtom,
-} from "../state";
-import { workerInstance } from "../worker";
+import { cn } from "#lib/utils.js";
 
-let id = 0;
+type Props = {
+  className?: string;
+  label?: string;
+  isEnabled?: boolean;
+  onRoll: (table: TableMetadata) => void;
+  rollResults: RollResult[];
+  tableMetadata: TableMetadata[];
+  showExportedOnly: boolean;
+  setShowExportedOnly: (show: boolean) => void;
+};
 
-export const RollableTables = memo(function AvailableTables({
-  inputRef,
+function RollableTableButtonsComponent({
+  className,
+  label = "Available Tables:",
+  isEnabled = true,
   onRoll,
-}: {
-  inputRef: RefObject<HTMLTextAreaElement>;
-  onRoll?: () => void;
-}) {
-  const tableHash = useAtomValue(currentTableHashAtom);
-  const tableMetadata = useAtomValue(visibleTableMetadataAtom);
-  const isEnabled = useAtomValue(canRollResultAtom);
-  const status = useAtomValue(editorStatusAtom);
-  const [showExportedOnly, setShowExportedOnly] = useAtom(exportedOnlyAtom);
-  const [rollResults, setRollResults] = useAtom(rollHistoryAtom);
-
+  rollResults,
+  tableMetadata,
+  showExportedOnly,
+  setShowExportedOnly,
+}: Props) {
   const handleRoll = useCallback(
     async function handleRoll(e: React.MouseEvent, table: TableMetadata) {
       e.preventDefault();
-
-      if (!tableHash) {
-        throw new Error("Missing table hash!");
-      }
-
-      const result = await workerInstance.gen(
-        tableHash,
-        inputRef.current?.value || "",
-        table.id,
-      );
-
-      setRollResults((results) =>
-        [
-          {
-            id: id++,
-            tableName: table.title,
-            tableId: table.id,
-            timestamp: Date.now(),
-            text: result,
-          },
-        ].concat(results),
-      );
-
-      onRoll?.();
+      onRoll(table);
     },
-    [onRoll, setRollResults, tableHash, inputRef],
+    [onRoll],
   );
 
   return (
-    <div className="flex flex-col gap-16 p-16">
+    <div className={cn("flex flex-col gap-16", className)}>
       <div className="flex items-center">
-        <span className="mr-auto text-sm font-semibold">
-          {status === "valid"
-            ? "Available Tables:"
-            : displayEditorStatus(status)}
-        </span>
+        <span className="mr-auto text-sm font-semibold">{label}</span>
 
         <div className="flex gap-8">
           <ClipboardCopy>
@@ -138,7 +106,7 @@ export const RollableTables = memo(function AvailableTables({
         className="flex flex-wrap gap-8"
         transition={transitionAlpha}
       >
-        {tableHash && tableMetadata.length > 0
+        {tableMetadata.length > 0
           ? tableMetadata.map((table) => {
               return (
                 <motion.li
@@ -165,21 +133,6 @@ export const RollableTables = memo(function AvailableTables({
       </AnimatedList>
     </div>
   );
-});
-
-function displayEditorStatus(status: EditorStatus) {
-  switch (status) {
-    case "initial":
-      return "Loading...";
-    case "parsing":
-      return "Parsing...";
-    case "parse_error":
-      return "Parse Error";
-    case "validation_error":
-      return "Validation Error";
-    case "fetching_dependencies":
-      return "Fetching Dependencies...";
-    default:
-      return "Unknown Status";
-  }
 }
+
+export const RollTableButtons = memo(RollableTableButtonsComponent);

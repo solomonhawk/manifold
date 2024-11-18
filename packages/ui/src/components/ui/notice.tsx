@@ -11,6 +11,7 @@ const noticeVariants = cva(
       variant: {
         default: "text-muted-foreground",
         info: "border-accent-foreground text-accent-foreground",
+        error: "border-destructive text-destructive-foreground",
         loud: "text-primary",
       },
     },
@@ -49,13 +50,7 @@ type NoticeIconProps = {
 const NoticeIcon = React.forwardRef<HTMLDivElement, NoticeIconProps>(
   ({ className, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "div";
-    return (
-      <Comp
-        className={cn("size-16 shrink-0", className)}
-        ref={ref}
-        {...props}
-      />
-    );
+    return <Comp className={cn("shrink-0", className)} ref={ref} {...props} />;
   },
 );
 NoticeIcon.displayName = "NoticeIcon";
@@ -69,7 +64,9 @@ type NoticeContentProps = {
 const NoticeContent = React.forwardRef<HTMLDivElement, NoticeContentProps>(
   ({ className, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "div";
-    return <Comp className={cn("-mt-3", className)} ref={ref} {...props} />;
+    return (
+      <Comp className={cn("-mt-3 w-full", className)} ref={ref} {...props} />
+    );
   },
 );
 NoticeContent.displayName = "NoticeContent";

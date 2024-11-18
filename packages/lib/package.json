@@ -15,6 +15,10 @@
       "types": "./src/utils/array.ts",
       "default": "./src/utils/array.ts"
     },
+    "./utils/object": {
+      "types": "./src/utils/object.ts",
+      "default": "./src/utils/object.ts"
+    },
     "./utils/string": {
       "types": "./src/utils/string.ts",
       "default": "./src/utils/string.ts"
@@ -22,6 +26,10 @@
     "./models/pagination": {
       "types": "./src/models/pagination/index.ts",
       "default": "./src/models/pagination/index.ts"
+    },
+    "./models/roll": {
+      "types": "./src/models/roll/index.ts",
+      "default": "./src/models/roll/index.ts"
     }
   },
   "scripts": {

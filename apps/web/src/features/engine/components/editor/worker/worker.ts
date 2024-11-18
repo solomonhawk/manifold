@@ -1,9 +1,8 @@
 /// <reference lib="webworker" />
 
 import init, { table_hash, TableCollection } from "@manifold/engine";
+import type { TableMetadata } from "@manifold/lib/models/roll";
 import { LRUCache } from "lru-cache";
-
-import type { TableMetadata } from "../state";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 declare const self: DedicatedWorkerGlobalScope;

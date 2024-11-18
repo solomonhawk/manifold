@@ -2,8 +2,8 @@ import { FlexCol } from "@manifold/ui/components/ui/flex";
 import { LayoutGroup } from "motion/react";
 import { type RefObject } from "react";
 
-import { RollResults } from "~features/editor/components/editor/results-panel/results-list";
-import { RollableTables } from "~features/editor/components/editor/results-panel/rollable-tables";
+import { ResultsList } from "~features/engine/components/editor/results-panel/results-list";
+import { RollableTables } from "~features/engine/components/editor/results-panel/rollable-tables";
 
 export function ResultsPanel({
   inputRef,
@@ -15,11 +15,11 @@ export function ResultsPanel({
   onRoll: () => void;
 }) {
   return (
-    <FlexCol className="bg-background/60 @container">
-      <LayoutGroup>
+    <LayoutGroup>
+      <FlexCol className="bg-background/60 @container">
         <RollableTables inputRef={inputRef} onRoll={onRoll} />
-        <RollResults listRef={listRef} />
-      </LayoutGroup>
-    </FlexCol>
+        <ResultsList listRef={listRef} />
+      </FlexCol>
+    </LayoutGroup>
   );
 }

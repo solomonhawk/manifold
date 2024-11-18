@@ -21,10 +21,7 @@ export function RootLayout() {
       <RouteMeta />
       <ScrollRestoration />
 
-      <div
-        className="bg-architect flex h-full flex-col"
-        data-vaul-drawer-wrapper
-      >
+      <div className="flex h-full flex-col" data-vaul-drawer-wrapper>
         <GlobalHeader.Root>
           <GlobalHeader.Center>
             <PrefetchableLink

@@ -12,7 +12,7 @@ import { useAtomValue } from "jotai";
 import { GoGitBranch } from "react-icons/go";
 
 import { DialogManager, DIALOGS } from "~features/dialog-manager";
-import { currentAllResolvedDependenciesAtom } from "~features/editor/components/editor/state";
+import { currentAllResolvedDependenciesAtom } from "~features/engine/components/editor/state";
 import { useIsPublishingTable } from "~features/table/api/publish";
 
 export type PublishButtonProps = {
