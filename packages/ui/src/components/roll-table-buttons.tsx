@@ -1,5 +1,8 @@
 import type { RollResult, TableMetadata } from "@manifold/lib/models/roll";
-import { AnimatedList } from "@manifold/ui/components/animated-list";
+import {
+  AnimatedList,
+  AnimatedListItem,
+} from "@manifold/ui/components/animated-list";
 import { ClipboardCopy } from "@manifold/ui/components/clipboard-copy";
 import { Button } from "@manifold/ui/components/ui/button";
 import {
@@ -48,11 +51,34 @@ function RollableTableButtonsComponent({
 
   return (
     <div className={cn("flex flex-col gap-16", className)}>
-      <div className="flex items-center justify-between gap-8 divide-x">
+      <div className="flex items-start justify-between gap-8 divide-x">
         <AnimatedList
-          className="flex flex-wrap gap-8"
+          className="flex grow flex-wrap gap-8 self-stretch"
           transition={transitionAlpha}
         >
+          {isEnabled && tableMetadata.length === 0 ? (
+            <AnimatedListItem
+              className="self-center whitespace-nowrap text-sm text-muted-foreground"
+              initial={{ opacity: 0 }}
+            >
+              {showExportedOnly ? (
+                <span>
+                  No exported tables.{" "}
+                  <button
+                    type="button"
+                    onClick={() => setShowExportedOnly(false)}
+                    className="inline-block text-accent-foreground hover:underline focus:underline"
+                  >
+                    Show all
+                  </button>
+                  ?
+                </span>
+              ) : (
+                <span>The definition is empty</span>
+              )}
+            </AnimatedListItem>
+          ) : null}
+
           {tableMetadata.length > 0
             ? tableMetadata.map((table) => {
                 return (
