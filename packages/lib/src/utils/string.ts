@@ -8,4 +8,12 @@ export function pluralize(str: string, count: number) {
   return count === 1 ? str : `${str}s`;
 }
 
+export function trimMultiline(str: string) {
+  return str
+    .trim()
+    .split("\n")
+    .map((line) => line.trim())
+    .join("\n");
+}
+
 export { slugify };

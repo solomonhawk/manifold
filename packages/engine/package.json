@@ -5,7 +5,8 @@
     "potion": "cargo run --release -- --definition potion",
     "build": "RUST_LOG=info wasm-pack build --release --target web --out-dir web/dist",
     "build:release": "cargo build --release",
-    "lint": "cargo clippy"
+    "lint": "cargo clippy",
+    "test": "cargo test"
   },
   "exports": {
     ".": {

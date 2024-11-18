@@ -18,7 +18,7 @@ export function parseTableIdentifier(identifier: string): {
   const [namespace, tableSlug] = identifier.split("/");
 
   return {
-    username: namespace.replace(/^@/, ""),
+    username: namespace.slice(1),
     tableSlug,
   };
 }

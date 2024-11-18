@@ -352,8 +352,7 @@ title: Shapes
 1: Rectangle
 1: Pentagon
 1: Hexagon
-1: Octagon
-"
+1: Octagon"
             .into(),
         )
         .expect("Failed to parse");
