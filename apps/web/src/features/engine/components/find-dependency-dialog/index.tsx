@@ -162,86 +162,99 @@ export function FindDependencyDialog({
                 </span>
 
                 <ul className="max-h-396 space-y-4 overflow-auto">
-                  {findDependenciesQuery.data?.map((version) => (
-                    <li
-                      key={version.id}
-                      className="group flex items-center justify-between rounded border p-4 pl-8"
-                    >
-                      <div className="flex items-center gap-6 text-sm">
-                        <TableIdentifier
-                          tableIdentifier={version.tableIdentifier}
-                        />
-                        <CommandShortcut>v{version.version}</CommandShortcut>
-                      </div>
+                  {findDependenciesQuery.data?.map((version) => {
+                    const hasDependencyAlready =
+                      !!currentAllResolvedDependencies.find(
+                        (d) => d.tableIdentifier === version.tableIdentifier,
+                      );
 
-                      <div className="flex shrink-0 gap-6">
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon-sm"
-                              type="button"
-                              className="text-muted-foreground group-hover:text-foreground"
-                              onClick={() =>
-                                DialogManager.show(
-                                  DIALOGS.PREVIEW_DEPENDENCY.ID,
-                                  {
-                                    dependency: version,
-                                    onAddDependency: () =>
-                                      onAddDependency(version),
-                                    canAddDependency:
-                                      !currentAllResolvedDependencies.find(
-                                        (d) =>
-                                          d.tableIdentifier ===
-                                          version.tableIdentifier,
-                                      ),
-                                  },
-                                )
-                              }
-                            >
-                              <span className="sr-only">View details</span>
-                              <GoEye />
-                            </Button>
-                          </TooltipTrigger>
+                    return (
+                      <li
+                        key={version.id}
+                        className="group flex items-center justify-between rounded border p-4 pl-8"
+                      >
+                        <div className="flex items-center gap-6 text-sm">
+                          <TableIdentifier
+                            tableIdentifier={version.tableIdentifier}
+                          />
+                          <CommandShortcut>v{version.version}</CommandShortcut>
+                        </div>
 
-                          <TooltipContent>
-                            Preview table
-                            <TooltipArrow />
-                          </TooltipContent>
-                        </Tooltip>
+                        <div className="flex shrink-0 gap-6">
+                          {hasDependencyAlready ? (
+                            <span className="h-32 p-8 text-xs leading-4 text-muted-foreground">
+                              Already added
+                            </span>
+                          ) : (
+                            <>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon-sm"
+                                    type="button"
+                                    className="text-muted-foreground group-hover:text-foreground"
+                                    onClick={() =>
+                                      DialogManager.show(
+                                        DIALOGS.PREVIEW_DEPENDENCY.ID,
+                                        {
+                                          dependency: version,
+                                          onAddDependency: () =>
+                                            onAddDependency(version),
+                                          canAddDependency:
+                                            !currentAllResolvedDependencies.find(
+                                              (d) =>
+                                                d.tableIdentifier ===
+                                                version.tableIdentifier,
+                                            ),
+                                        },
+                                      )
+                                    }
+                                  >
+                                    <span className="sr-only">
+                                      View details
+                                    </span>
+                                    <GoEye />
+                                  </Button>
+                                </TooltipTrigger>
 
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon-sm"
-                              type="button"
-                              className="text-muted-foreground group-hover:text-foreground"
-                              onClick={(e: MouseEvent) => {
-                                e.preventDefault();
-                                onAddDependency(version);
-                              }}
-                              disabled={
-                                !!currentAllResolvedDependencies.find(
-                                  (d) =>
-                                    d.tableIdentifier ===
-                                    version.tableIdentifier,
-                                )
-                              }
-                            >
-                              <span className="sr-only">Add dependency</span>
-                              <GoPlus />
-                            </Button>
-                          </TooltipTrigger>
+                                <TooltipContent>
+                                  Preview table
+                                  <TooltipArrow />
+                                </TooltipContent>
+                              </Tooltip>
 
-                          <TooltipContent>
-                            Add dependency
-                            <TooltipArrow />
-                          </TooltipContent>
-                        </Tooltip>
-                      </div>
-                    </li>
-                  ))}
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon-sm"
+                                    type="button"
+                                    className="text-muted-foreground group-hover:text-foreground"
+                                    onClick={(e: MouseEvent) => {
+                                      e.preventDefault();
+                                      onAddDependency(version);
+                                    }}
+                                    disabled={hasDependencyAlready}
+                                  >
+                                    <span className="sr-only">
+                                      Add dependency
+                                    </span>
+                                    <GoPlus />
+                                  </Button>
+                                </TooltipTrigger>
+
+                                <TooltipContent>
+                                  Add dependency
+                                  <TooltipArrow />
+                                </TooltipContent>
+                              </Tooltip>
+                            </>
+                          )}
+                        </div>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             ) : null}
