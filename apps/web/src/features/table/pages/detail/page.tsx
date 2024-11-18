@@ -1,4 +1,7 @@
-import { buildTableIdentifier } from "@manifold/lib";
+import {
+  buildTableIdentifier,
+  injectNamespacePragmasWorkaround,
+} from "@manifold/lib";
 import { ClipboardCopy } from "@manifold/ui/components/clipboard-copy";
 import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import { Badge } from "@manifold/ui/components/ui/badge";
@@ -44,8 +47,8 @@ export function TableDetail() {
   });
 
   return (
-    <FlexCol className="overflow-auto">
-      <div className="bg-architect container max-w-screen-xl">
+    <FlexCol className="bg-architect overflow-auto bg-local">
+      <div className="container max-w-screen-xl">
         <header className="my-12 flex flex-col gap-12 sm:my-16 md:mb-24 md:mt-36 md:flex-row md:items-center md:justify-between">
           <motion.div
             layout="position"
@@ -89,7 +92,7 @@ export function TableDetail() {
                         </button>
                       </TooltipTrigger>
 
-                      <TooltipContent>
+                      <TooltipContent side="right">
                         Copy table identifier
                         <TooltipArrow />
                       </TooltipContent>
@@ -297,7 +300,12 @@ export function TableDetail() {
                   })}
                 </ul>
 
-                <RollPreview definition={table.definition} />
+                <RollPreview
+                  definition={injectNamespacePragmasWorkaround(
+                    table.definition.trim(),
+                    table.dependencies,
+                  )}
+                />
               </div>
             )}
           </section>

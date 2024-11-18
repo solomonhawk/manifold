@@ -8,20 +8,23 @@ import {
   NoticeIcon,
 } from "@manifold/ui/components/ui/notice";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
-import { motion } from "motion/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { motion, type MotionProps } from "motion/react";
+import { useCallback, useLayoutEffect, useMemo, useState } from "react";
 import { GoAlert } from "react-icons/go";
 import { v4 as uuid } from "uuid";
 
 import { workerInstance } from "~features/engine/components/editor/worker";
 import { log } from "~utils/logger";
 
-function RollPreview({ definition }: { definition: string }) {
+function RollPreview({
+  definition,
+  ...props
+}: { definition: string } & MotionProps) {
   const [error, setError] = useState<string | null>(null);
   const [tableHash, setTableHash] = useState<string | null>(null);
   const [results, setResults] = useState<RollResult[]>([]);
   const [metadata, setMetadata] = useState<TableMetadata[]>([]);
-  const [showExportedOnly, setShowExportedOnly] = useState(false);
+  const [showExportedOnly, setShowExportedOnly] = useState(true);
 
   const handleRemoveResult = useCallback((timestamp: number) => {
     setResults((results) => results.filter((r) => r.timestamp !== timestamp));
@@ -70,23 +73,21 @@ function RollPreview({ definition }: { definition: string }) {
     return metadata;
   }, [metadata, showExportedOnly]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     async function prepareTableCollection() {
       try {
         const { hash, metadata } = await workerInstance.parse(definition);
 
         setTableHash(hash);
-        setMetadata(metadata);
+        setMetadata(metadata.filter((m) => !m.namespace));
       } catch (e) {
         log.error(e);
-        setError(
-          "Something went wrong unexpectedly while parsing the table definition.",
-        );
+        setError("Sorry! Something went wrong parsing the table definition.");
       }
     }
 
     prepareTableCollection();
-  }, [definition]);
+  }, [definition, error]);
 
   if (error) {
     return (
@@ -95,7 +96,7 @@ function RollPreview({ definition }: { definition: string }) {
           <GoAlert className="size-16" />
         </NoticeIcon>
 
-        <NoticeContent className="mt-0 flex items-center justify-between">
+        <NoticeContent className="mt-0 flex items-center justify-between gap-6">
           {error}
           <Button
             className="ml-auto"
@@ -113,11 +114,12 @@ function RollPreview({ definition }: { definition: string }) {
   return (
     <motion.section
       layout="preserve-aspect"
-      className="flex flex-col gap-16"
+      className="relative flex flex-col gap-16 overflow-hidden"
       transition={transitionAlpha}
+      {...props}
     >
       <RollTableButtons
-        isEnabled
+        isEnabled={!!tableHash}
         onRoll={handleRoll}
         rollResults={results}
         showExportedOnly={showExportedOnly}

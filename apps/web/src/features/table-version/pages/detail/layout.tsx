@@ -67,8 +67,8 @@ export function TableVersionLayout() {
   };
 
   return (
-    <FlexCol className="overflow-auto">
-      <div className="bg-architect container max-w-screen-xl">
+    <FlexCol className="bg-architect overflow-auto bg-local">
+      <div className="container max-w-screen-xl">
         <header className="my-12 flex gap-12 sm:my-16 md:mb-24 md:mt-36 md:items-center md:justify-between">
           <div className="flex gap-12">
             <Button asChild size="icon" variant="ghost">
@@ -84,7 +84,7 @@ export function TableVersionLayout() {
               layout="position"
               layoutId={`table-title-header-${tableVersion.table.id}`}
               transition={transitionAlpha}
-              className="flex flex-col justify-center"
+              className="relative flex flex-col justify-center"
             >
               <h2 className="-mt-4 flex items-center gap-10 text-2xl font-bold sm:text-3xl md:mb-8 md:text-4xl">
                 {tableVersion.table.title}{" "}
@@ -140,7 +140,7 @@ export function TableVersionLayout() {
                           </button>
                         </TooltipTrigger>
 
-                        <TooltipContent>
+                        <TooltipContent side="right">
                           Copy table identifier
                           <TooltipArrow />
                         </TooltipContent>

@@ -62,8 +62,8 @@ export function TableVersionsSearchBrowse() {
   }
 
   return (
-    <FlexCol className="overflow-auto">
-      <div className="bg-architect container max-w-screen-xl">
+    <FlexCol className="bg-architect overflow-auto bg-local">
+      <div className="container max-w-screen-xl">
         <section className="pb-24 sm:pb-32">
           <header className="my-12 flex flex-col gap-12 sm:my-16 md:mb-24 md:mt-36 md:flex-row md:items-center md:justify-between">
             <div>

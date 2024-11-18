@@ -22,7 +22,7 @@ const variants = {
 export function Section({ title, config }: Props) {
   return (
     <motion.div variants={variants}>
-      <Card className="-mx-12 border-none sm:-mx-20">
+      <Card className="-mx-12 border-none bg-transparent sm:-mx-20">
         <CardHeader className="-mt-4 !pb-0">
           <CardTitle className="text-lg font-semibold sm:text-xl">
             {title}

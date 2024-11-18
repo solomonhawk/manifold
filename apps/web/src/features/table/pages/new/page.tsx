@@ -15,8 +15,8 @@ export function TableNew() {
   const navigate = useNavigate();
 
   return (
-    <FlexCol className="items-center justify-around overflow-auto p-12 sm:p-16">
-      <Card className="mx-auto w-full max-w-md">
+    <FlexCol className="bg-architect items-center justify-around overflow-auto p-12 sm:p-16">
+      <Card className="mx-auto w-full max-w-md drop-shadow-2xl">
         <CardHeader>
           <CardTitle className="text-xl">New Table</CardTitle>
         </CardHeader>

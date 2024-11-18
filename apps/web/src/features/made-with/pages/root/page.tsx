@@ -226,28 +226,33 @@ const variants = {
 
 function MadeWith() {
   return (
-    <FlexCol className="container max-w-screen-xl">
-      <header className="my-12 sm:my-16 md:mb-24 md:mt-36">
-        <h2 className="-mt-4 flex items-center gap-10 text-2xl font-bold sm:text-3xl md:mb-8 md:text-4xl">
-          Made With <GiPaintRoller className="size-20 sm:size-24 md:size-28" />
-        </h2>
-        <p className="text-muted-foreground">Tools and technologies we love:</p>
-      </header>
+    <FlexCol className="bg-architect overflow-auto bg-local">
+      <div className="container max-w-screen-xl">
+        <header className="my-12 sm:my-16 md:mb-24 md:mt-36">
+          <h2 className="-mt-4 flex items-center gap-10 text-2xl font-bold sm:text-3xl md:mb-8 md:text-4xl">
+            Made With{" "}
+            <GiPaintRoller className="size-20 sm:size-24 md:size-28" />
+          </h2>
+          <p className="text-muted-foreground">
+            Tools and technologies we love:
+          </p>
+        </header>
 
-      <AnimatePresence>
-        <motion.section
-          className="grid w-full grid-flow-row-dense grid-cols-[repeat(auto-fill,_minmax(200px,_1fr))] gap-12 pb-32 sm:gap-16"
-          variants={variants}
-          initial="hidden"
-          animate="visible"
-        >
-          <Section title="Core Technologies" config={CORE_TECHNOLOGIES} />
-          <Section title="Server" config={SERVER} />
-          <Section title="Client" config={CLIENT} />
-          <Section title="Engine" config={ENGINE} />
-          <Section title="Utilities" config={UTILITY} />
-        </motion.section>
-      </AnimatePresence>
+        <AnimatePresence>
+          <motion.section
+            className="grid w-full grid-flow-row-dense grid-cols-[repeat(auto-fill,_minmax(200px,_1fr))] gap-12 pb-32 sm:gap-16"
+            variants={variants}
+            initial="hidden"
+            animate="visible"
+          >
+            <Section title="Core Technologies" config={CORE_TECHNOLOGIES} />
+            <Section title="Server" config={SERVER} />
+            <Section title="Client" config={CLIENT} />
+            <Section title="Engine" config={ENGINE} />
+            <Section title="Utilities" config={UTILITY} />
+          </motion.section>
+        </AnimatePresence>
+      </div>
     </FlexCol>
   );
 }

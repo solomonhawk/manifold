@@ -1,4 +1,5 @@
 import { useModal } from "@ebay/nice-modal-react";
+import { injectNamespacePragmasWorkaround } from "@manifold/lib";
 import type { RouterOutput } from "@manifold/router";
 import { ReactiveButton } from "@manifold/ui/components/reactive-button";
 import { TableIdentifier } from "@manifold/ui/components/table-identifier";
@@ -16,6 +17,7 @@ import { useCallback } from "react";
 import { GoX } from "react-icons/go";
 import { useBlocker } from "react-router-dom";
 
+import RollPreview from "~features/engine/components/roll-preview";
 import { useRouteChange } from "~features/routing/hooks/use-route-change";
 
 type Props = {
@@ -118,6 +120,16 @@ export function PreviewDependencyDialog({
                   {dependency.definition}
                 </pre>
               </div>
+            </section>
+
+            <section className="p-16">
+              <RollPreview
+                layoutRoot
+                definition={injectNamespacePragmasWorkaround(
+                  dependency.definition,
+                  dependency.dependencies,
+                )}
+              />
             </section>
 
             <DrawerFooter>

@@ -1,3 +1,4 @@
+import { injectNamespacePragmasWorkaround } from "@manifold/lib";
 import { Badge } from "@manifold/ui/components/ui/badge";
 import { Button } from "@manifold/ui/components/ui/button";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
@@ -113,6 +114,7 @@ export function TableVersionDetail() {
                   key={version.id}
                   layout="preserve-aspect"
                   transition={transitionAlpha}
+                  layoutRoot
                 >
                   <LinkComponent
                     to={`/t/${username}/${slug}/v/${version.version}`}
@@ -159,7 +161,7 @@ export function TableVersionDetail() {
                             {i === 0 ? <Badge>Latest</Badge> : null}
                           </div>
 
-                          {version.releaseNotes ? (
+                          {!isCurrentVersion && version.releaseNotes ? (
                             <pre
                               className="my-4 mb-8 line-clamp-2 text-ellipsis whitespace-break-spaces border-l-2 border-muted pl-8 font-sans text-xs text-muted-foreground/70"
                               title={version.releaseNotes}
@@ -168,31 +170,33 @@ export function TableVersionDetail() {
                             </pre>
                           ) : null}
 
-                          <div className="flex flex-wrap gap-4">
-                            {version.availableTables
-                              .slice(0, COLLAPSED_AVAILABLE_TABLES_COUNT)
-                              .map((tableId) => (
-                                <code
-                                  key={tableId}
-                                  className={cn(
-                                    "rounded bg-secondary p-3 px-6 text-xs leading-none text-accent-foreground",
-                                    {
-                                      "group-hover:bg-background group-focus:bg-background":
-                                        !isCurrentVersion,
-                                    },
-                                  )}
-                                >
-                                  {tableId}
-                                </code>
-                              ))}
+                          {!isCurrentVersion && (
+                            <div className="flex flex-wrap gap-4">
+                              {version.availableTables
+                                .slice(0, COLLAPSED_AVAILABLE_TABLES_COUNT)
+                                .map((tableId) => (
+                                  <code
+                                    key={tableId}
+                                    className={cn(
+                                      "rounded bg-secondary p-3 px-6 text-xs leading-none text-accent-foreground",
+                                      {
+                                        "group-hover:bg-background group-focus:bg-background":
+                                          !isCurrentVersion,
+                                      },
+                                    )}
+                                  >
+                                    {tableId}
+                                  </code>
+                                ))}
 
-                            {version.availableTables.length >
-                            COLLAPSED_AVAILABLE_TABLES_COUNT ? (
-                              <span className="text-xs text-foreground">
-                                {`and ${version.availableTables.length - COLLAPSED_AVAILABLE_TABLES_COUNT} more`}
-                              </span>
-                            ) : null}
-                          </div>
+                              {version.availableTables.length >
+                              COLLAPSED_AVAILABLE_TABLES_COUNT ? (
+                                <span className="text-xs text-foreground">
+                                  {`and ${version.availableTables.length - COLLAPSED_AVAILABLE_TABLES_COUNT} more`}
+                                </span>
+                              ) : null}
+                            </div>
+                          )}
                         </div>
 
                         {!isCurrentVersion ? (
@@ -209,7 +213,12 @@ export function TableVersionDetail() {
 
                       {isCurrentVersion ? (
                         <div className="pl-20 pr-16">
-                          <RollPreview definition={tableVersion.definition} />
+                          <RollPreview
+                            definition={injectNamespacePragmasWorkaround(
+                              tableVersion.definition.trim(),
+                              tableVersion.dependencies,
+                            )}
+                          />
                         </div>
                       ) : null}
                     </div>
