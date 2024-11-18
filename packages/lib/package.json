@@ -15,6 +15,10 @@
       "types": "./src/utils/array.ts",
       "default": "./src/utils/array.ts"
     },
+    "./utils/enum": {
+      "types": "./src/utils/enum.ts",
+      "default": "./src/utils/enum.ts"
+    },
     "./utils/object": {
       "types": "./src/utils/object.ts",
       "default": "./src/utils/object.ts"

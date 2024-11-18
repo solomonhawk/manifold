@@ -122,7 +122,7 @@ export function TableVersionDetail() {
                   >
                     {isCurrentVersion ? (
                       <motion.div
-                        layout="position"
+                        layout
                         layoutId="table-version-current-indicator"
                         className="absolute inset-y-0 left-0 w-4 bg-accent-foreground"
                         transition={transitionAlpha}

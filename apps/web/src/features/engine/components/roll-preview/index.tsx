@@ -21,7 +21,7 @@ function RollPreview({ definition }: { definition: string }) {
   const [tableHash, setTableHash] = useState<string | null>(null);
   const [results, setResults] = useState<RollResult[]>([]);
   const [metadata, setMetadata] = useState<TableMetadata[]>([]);
-  const [showExportedOnly, setShowExportedOnly] = useState(true);
+  const [showExportedOnly, setShowExportedOnly] = useState(false);
 
   const handleRemoveResult = useCallback((timestamp: number) => {
     setResults((results) => results.filter((r) => r.timestamp !== timestamp));
@@ -117,7 +117,6 @@ function RollPreview({ definition }: { definition: string }) {
       transition={transitionAlpha}
     >
       <RollTableButtons
-        label="Try it out:"
         isEnabled
         onRoll={handleRoll}
         rollResults={results}

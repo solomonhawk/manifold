@@ -21,7 +21,6 @@ import { cn } from "#lib/utils.js";
 
 type Props = {
   className?: string;
-  label?: string;
   isEnabled?: boolean;
   onRoll: (table: TableMetadata) => void;
   rollResults: RollResult[];
@@ -32,7 +31,6 @@ type Props = {
 
 function RollableTableButtonsComponent({
   className,
-  label = "Available Tables:",
   isEnabled = true,
   onRoll,
   rollResults,
@@ -50,10 +48,38 @@ function RollableTableButtonsComponent({
 
   return (
     <div className={cn("flex flex-col gap-16", className)}>
-      <div className="flex items-center">
-        <span className="mr-auto text-sm font-semibold">{label}</span>
+      <div className="flex items-center justify-between gap-8 divide-x">
+        <AnimatedList
+          className="flex flex-wrap gap-8"
+          transition={transitionAlpha}
+        >
+          {tableMetadata.length > 0
+            ? tableMetadata.map((table) => {
+                return (
+                  <motion.li
+                    key={table.id}
+                    layout="position"
+                    transition={transitionAlpha}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                  >
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={(e) => handleRoll(e, table)}
+                      className={table.export ? "font-semibold" : undefined}
+                      disabled={!isEnabled}
+                    >
+                      {table.title}
+                    </Button>
+                  </motion.li>
+                );
+              })
+            : null}
+        </AnimatedList>
 
-        <div className="flex gap-8">
+        <div className="flex gap-8 pl-8">
           <ClipboardCopy>
             {({ copied, onCopy }) => {
               return (
@@ -66,6 +92,7 @@ function RollableTableButtonsComponent({
                       onClick={() =>
                         onCopy(rollResults.map((r) => r.text).join("\n\n"))
                       }
+                      disabled={rollResults.length === 0}
                     >
                       <span className="sr-only">Copy all</span>
 
@@ -101,36 +128,6 @@ function RollableTableButtonsComponent({
           </Tooltip>
         </div>
       </div>
-
-      <AnimatedList
-        className="flex flex-wrap gap-8"
-        transition={transitionAlpha}
-      >
-        {tableMetadata.length > 0
-          ? tableMetadata.map((table) => {
-              return (
-                <motion.li
-                  key={table.id}
-                  layout="position"
-                  transition={transitionAlpha}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                >
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={(e) => handleRoll(e, table)}
-                    className={table.export ? "font-semibold" : undefined}
-                    disabled={!isEnabled}
-                  >
-                    {table.title}
-                  </Button>
-                </motion.li>
-              );
-            })
-          : null}
-      </AnimatedList>
     </div>
   );
 }
