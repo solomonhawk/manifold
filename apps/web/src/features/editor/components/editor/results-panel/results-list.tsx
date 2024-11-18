@@ -62,6 +62,7 @@ export function RollResults({
         listRef={listRef}
         onLayoutAnimationStart={updateListOverflowing}
         onLayoutAnimationComplete={updateListOverflowing}
+        layout
       >
         {rollResults.length === 0 ? (
           <AnimatedListItem
