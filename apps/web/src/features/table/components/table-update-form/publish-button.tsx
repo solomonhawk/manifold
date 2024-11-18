@@ -19,7 +19,7 @@ export type PublishButtonProps = {
   tableId: string;
   tableSlug: string;
   tableIdentifier: string;
-  isEnabled: boolean;
+  isEnabled?: boolean;
   // @TODO: fix this type
   recentVersions: TableVersionSummary[];
   totalVersionCount: number;
@@ -29,7 +29,7 @@ export function PublishButton({
   tableId,
   tableSlug,
   tableIdentifier,
-  isEnabled,
+  isEnabled = true,
   recentVersions,
   totalVersionCount,
 }: PublishButtonProps) {

@@ -77,6 +77,7 @@ export const tableUpdateInput = z.object({
   id: z.string(),
   title: z.string().min(1).optional(),
   definition: z.string().optional(),
+  description: z.string().optional(),
   favorited: z.boolean().optional(),
   availableTables: z.array(z.string()).default([]),
   dependencies: z

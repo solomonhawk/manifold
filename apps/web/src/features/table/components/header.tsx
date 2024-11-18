@@ -1,6 +1,17 @@
-import { capitalize } from "@manifold/lib";
+import { capitalize, isEmpty } from "@manifold/lib";
 import type { RouterOutput } from "@manifold/router";
 import { Button } from "@manifold/ui/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItemNaked,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@manifold/ui/components/ui/dropdown-menu";
+import {
+  FormSubmitButton,
+  FormSubmitStatus,
+} from "@manifold/ui/components/ui/form";
 import {
   Tooltip,
   TooltipArrow,
@@ -8,22 +19,37 @@ import {
   TooltipTrigger,
 } from "@manifold/ui/components/ui/tooltip";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
-import { cn } from "@manifold/ui/lib/utils";
 import { formatRelative } from "date-fns";
+import { useAtomValue } from "jotai";
 import { motion } from "motion/react";
-import { GoArrowLeft, GoEye } from "react-icons/go";
+import { useFormContext, useWatch } from "react-hook-form";
+import { GoArrowLeft, GoEye, GoGear } from "react-icons/go";
 
+import {
+  currentTableDependenciesAtom,
+  editorStatusAtom,
+} from "~features/engine/components/editor/state";
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
+import { useResolveDependencies } from "~features/table/api/resolve-dependencies";
+import type { FormData } from "~features/table/components/table-update-form";
 import { DeleteButton } from "~features/table/components/table-update-form/delete-button";
+import { DownloadButton } from "~features/table/components/table-update-form/download-button";
+import { EditButton } from "~features/table/components/table-update-form/edit-button";
 import { FavoriteButton } from "~features/table/components/table-update-form/favorite-button";
+import {
+  PublishButton,
+  type PublishButtonProps,
+} from "~features/table/components/table-update-form/publish-button";
 import { RestoreButton } from "~features/table/components/table-update-form/restore-button";
 import { ViewDependenciesButton } from "~features/table/components/table-update-form/view-dependencies-button";
 
 export const TABLE_UPDATE_HEADER_PORTAL_ID = "table-update-header-portal";
+export const TABLE_UPDATE_HEADER_DROPDOWN_PORTAL_ID =
+  "table-update-header-dropdown-portal";
 
 export function Header({ table }: { table: RouterOutput["table"]["get"] }) {
   const NOW = new Date();
-
+  console.log(table);
   return (
     <header className="flex items-center justify-between">
       <motion.div
@@ -55,13 +81,6 @@ export function Header({ table }: { table: RouterOutput["table"]["get"] }) {
       </motion.div>
 
       <div className="flex items-center gap-8">
-        <div
-          id={TABLE_UPDATE_HEADER_PORTAL_ID}
-          className={cn("flex items-center gap-8", {
-            hidden: table.deletedAt !== null,
-          })}
-        />
-
         {table.deletedAt ? (
           <RestoreButton
             title={table.title}
@@ -70,6 +89,18 @@ export function Header({ table }: { table: RouterOutput["table"]["get"] }) {
           />
         ) : (
           <>
+            <FormSubmitStatus className="mr-8 text-xs text-muted-foreground/80" />
+
+            <FormPrimaryActionButton />
+
+            <FormPublishButton
+              tableId={table.id}
+              tableSlug={table.slug}
+              tableIdentifier={table.tableIdentifier}
+              recentVersions={table.recentVersions}
+              totalVersionCount={table.totalVersionCount}
+            />
+
             {table.dependencies.length > 0 ? (
               <ViewDependenciesButton
                 tableTitle={table.title}
@@ -101,14 +132,103 @@ export function Header({ table }: { table: RouterOutput["table"]["get"] }) {
               tableIdentifier={table.tableIdentifier}
               isFavorite={table.favorited ?? false}
             />
-            <DeleteButton
-              title={table.title}
-              tableId={table.id}
-              tableIdentifier={table.tableIdentifier}
-            />
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <GoGear />
+                </Button>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent align="end" forceMount>
+                <DropdownMenuItemNaked>
+                  <EditButton
+                    tableId={table.id}
+                    tableIdentifier={table.tableIdentifier}
+                    title={table.title}
+                    description={table.description}
+                  />
+                </DropdownMenuItemNaked>
+
+                <DropdownMenuItemNaked>
+                  <DownloadButton tableId={table.id} />
+                </DropdownMenuItemNaked>
+
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItemNaked>
+                  <DeleteButton
+                    title={table.title}
+                    tableId={table.id}
+                    tableIdentifier={table.tableIdentifier}
+                  />
+                </DropdownMenuItemNaked>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </>
         )}
       </div>
     </header>
   );
+}
+
+function FormPrimaryActionButton() {
+  // @TODO: naughty cross-feature dependency
+  const status = useAtomValue(editorStatusAtom);
+  const dependencies = useAtomValue(currentTableDependenciesAtom);
+
+  const resolveDependenciesQuery = useResolveDependencies({
+    dependencies,
+  });
+
+  function handleResolveDependencies() {
+    resolveDependenciesQuery.refetch();
+  }
+
+  if (status === "validation_error") {
+    return (
+      <FormSubmitButton
+        type="button"
+        isPending={resolveDependenciesQuery.isInitialLoading}
+        onClick={handleResolveDependencies}
+      >
+        Resolve Dependencies
+      </FormSubmitButton>
+    );
+  }
+
+  return (
+    <FormSubmitButton disabled={status !== "valid"}>
+      Save Changes
+    </FormSubmitButton>
+  );
+}
+
+function FormPublishButton(props: PublishButtonProps) {
+  const { recentVersions } = props;
+  const { control, formState } = useFormContext<FormData>();
+
+  const definition = useWatch({ control, name: "definition" });
+
+  const isEmptyDefinition = definition?.trim() === "";
+  const noPreviousVersions = recentVersions.length === 0;
+  const isDifferentFromLastVersion =
+    recentVersions[0]?.definition.trim() !== definition?.trim();
+
+  /**
+   * The publish button is enabled when:
+   * - The form is clean (no dirty fields)
+   * - The form is valid
+   * - The form is not submitting
+   * - The definition is not empty
+   * - There are no previous versions or the definition is different from the last version
+   */
+  const isEnabled =
+    isEmpty(formState.dirtyFields) &&
+    formState.isValid &&
+    !formState.isSubmitting &&
+    !isEmptyDefinition &&
+    (noPreviousVersions || isDifferentFromLastVersion);
+
+  return <PublishButton {...props} isEnabled={isEnabled} />;
 }

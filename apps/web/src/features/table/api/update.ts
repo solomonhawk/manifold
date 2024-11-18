@@ -1,5 +1,7 @@
 import type { RouterOutput } from "@manifold/router";
 import { useSingletonToast } from "@manifold/ui/hooks/use-singleton-toast";
+import { useIsMutating } from "@tanstack/react-query";
+import { getQueryKey } from "@trpc/react-query";
 
 import { toastError, toastSuccess } from "~utils/toast";
 import { trpc } from "~utils/trpc";
@@ -61,4 +63,12 @@ export function useUpdateTable({
       );
     },
   });
+}
+
+export function useIsUpdatingTable() {
+  return (
+    useIsMutating({
+      mutationKey: getQueryKey(trpc.table.update),
+    }) > 0
+  );
 }

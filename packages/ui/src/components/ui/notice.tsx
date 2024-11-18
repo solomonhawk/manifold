@@ -11,7 +11,7 @@ const noticeVariants = cva(
       variant: {
         default: "text-muted-foreground",
         info: "border-accent-foreground text-accent-foreground",
-        error: "border-destructive text-destructive-foreground",
+        error: "border-destructive text-destructive-accent",
         loud: "text-primary",
       },
     },

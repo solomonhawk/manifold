@@ -1,38 +1,25 @@
-import NiceModal, { type NiceModalHocProps } from "@ebay/nice-modal-react";
-import type { ComponentProps } from "react";
+import NiceModal from "@ebay/nice-modal-react";
 
 import { ConfirmationDialog } from "~features/dialog-manager/components/confirmation-dialog";
+import type {
+  DialogProps,
+  IdToComponent,
+} from "~features/dialog-manager/types";
 import { FindDependencyDialog } from "~features/engine/components/find-dependency-dialog";
 import { PreviewDependencyDialog } from "~features/engine/components/preview-dependency-dialog";
 import { CopyTableDialog } from "~features/table/components/table-copy-dialog";
 import { TableDeleteDialog } from "~features/table/components/table-delete-dialog";
+import { TableEditMetadataDialog } from "~features/table/components/table-edit-metadata-dialog";
 import { TablePublishDialog } from "~features/table/components/table-publish-dialog";
 import { TableViewDependenciesDialog } from "~features/table/components/table-view-dependencies-dialog";
 import { CompareVersionsDialog } from "~features/table-version/components/compare-versions-dialog";
-
-/**
- * @NOTE: Workaround for TypeScript not being able to infer the correct type of
- * the component props when using `NiceModal.show` directly.
- *
- * @ref https://github.com/eBay/nice-modal-react/issues/134
- */
-type IdToComponent<Id extends string> = Id extends keyof typeof DIALOGS
-  ? (typeof DIALOGS)[Id]["COMPONENT"]
-  : never;
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Props<C extends React.FC<any>> = Omit<
-  ComponentProps<C>,
-  keyof NiceModalHocProps
-> &
-  Partial<NiceModalHocProps>;
 
 export const DialogManager = {
   ...NiceModal,
 
   show<Id extends string, C extends IdToComponent<Id> = IdToComponent<Id>>(
     id: Id,
-    props: Props<C>,
+    props: DialogProps<C>,
   ) {
     return NiceModal.show(id, props);
   },
@@ -42,6 +29,10 @@ export const DIALOGS = {
   CONFIRMATION: {
     ID: "CONFIRMATION",
     COMPONENT: NiceModal.create(ConfirmationDialog),
+  },
+  EDIT_TABLE_METADATA: {
+    ID: "EDIT_TABLE_METADATA",
+    COMPONENT: NiceModal.create(TableEditMetadataDialog),
   },
   DELETE_TABLE: {
     ID: "DELETE_TABLE",

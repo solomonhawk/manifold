@@ -264,6 +264,10 @@ function ListItem({
     createdAt: Date;
     updatedAt: Date;
     availableTables: string[];
+    table: {
+      title: string;
+      description: string | null;
+    };
   };
 }) {
   const NOW = new Date();
@@ -274,10 +278,10 @@ function ListItem({
     <section className="group relative flex flex-col justify-between rounded border bg-background ring-0 ring-transparent ring-offset-2 ring-offset-background transition-all focus-within:bg-secondary focus-within:ring-2 focus-within:ring-ring hover:bg-secondary sm:flex-row sm:gap-16 sm:p-16">
       <PrefetchableLink
         to={`/t/${tableVersion.ownerUsername}/${tableVersion.tableSlug}`}
-        className="flex flex-col p-16 after:absolute after:inset-0 focus:outline-none sm:p-0"
+        className="flex flex-col space-y-4 p-16 after:absolute after:inset-0 focus:outline-none sm:space-y-6 sm:p-0 md:space-y-8"
       >
-        <h3 className="-mt-3 mb-4 text-xl font-bold leading-tight sm:mb-6 md:mb-8">
-          {tableVersion.title}
+        <h3 className="-mt-3 text-xl font-bold leading-tight">
+          {tableVersion.table.title}
         </h3>
 
         <span>
@@ -286,6 +290,12 @@ function ListItem({
             tableIdentifier={tableVersion.tableIdentifier}
           />
         </span>
+
+        {tableVersion.table.description ? (
+          <p className="text-sm text-muted-foreground">
+            {tableVersion.table.description}
+          </p>
+        ) : null}
       </PrefetchableLink>
 
       <Separator className="sm:hidden" orientation="horizontal" />

@@ -1,40 +1,43 @@
 import { LoadingIndicator } from "@manifold/ui/components/loading-indicator";
 import { Button } from "@manifold/ui/components/ui/button";
 import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
-import { GoTrash } from "react-icons/go";
+import { GoPencil } from "react-icons/go";
 
 import { DialogManager, DIALOGS } from "~features/dialog-manager";
-import { useIsDeletingTable } from "~features/table/api/delete";
+import { useIsUpdatingTable } from "~features/table/api/update";
 
-export function DeleteButton({
-  title,
+export function EditButton({
   tableId,
   tableIdentifier,
+  title,
+  description,
 }: {
-  title: string;
   tableId: string;
   tableIdentifier: string;
+  title: string;
+  description: string | null;
 }) {
-  const isDeleting = useIsDeletingTable();
-  const isPending = useStateGuard(isDeleting, { min: 250 });
+  const isUpdating = useIsUpdatingTable();
+  const isPending = useStateGuard(isUpdating, { min: 250 });
 
   return (
     <Button
       type="button"
       size="sm"
-      variant="destructive-outline"
+      variant="ghost"
       disabled={isPending}
       onClick={() =>
-        DialogManager.show(DIALOGS.DELETE_TABLE.ID, {
+        DialogManager.show(DIALOGS.EDIT_TABLE_METADATA.ID, {
           tableId,
-          title,
           tableIdentifier,
+          title,
+          description,
         })
       }
       className="w-full justify-start"
     >
-      {isPending ? <LoadingIndicator size="sm" /> : <GoTrash />}
-      Delete table
+      {isPending ? <LoadingIndicator size="sm" /> : <GoPencil />}
+      Edit metadata
     </Button>
   );
 }

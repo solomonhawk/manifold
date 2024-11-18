@@ -51,7 +51,8 @@ export function TableIdentifierPreview<
       </FormDescription>
 
       <FormDescription>
-        <em>Leave blank to auto-generate.</em>
+        <em>Leave blank to auto-generate. </em>
+        <strong>Cannot be changed later!</strong>
       </FormDescription>
     </>
   );

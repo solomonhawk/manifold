@@ -47,7 +47,8 @@
     --accent: 240 3.7% 15.9%;
     --accent-foreground: 141.71 76.64% 73.14%;
     --destructive: 351 97% 67%;
-    --destructive-foreground: 351 97% 92%;
+    --destructive-foreground: 240 10% 3.9%;
+    --destructive-accent: 351 97% 92%;
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 160 60% 45%;

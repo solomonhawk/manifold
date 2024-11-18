@@ -7,38 +7,27 @@ import {
   FormField,
   FormItem,
   FormMessage,
-  FormSubmitButton,
-  FormSubmitStatus,
 } from "@manifold/ui/components/ui/form";
 import { useZodForm } from "@manifold/ui/hooks/use-zod-form";
 import { tableUpdateInput, z } from "@manifold/validators";
 import { useAtomValue } from "jotai";
 import { type KeyboardEvent, useCallback, useEffect, useRef } from "react";
-import { createPortal } from "react-dom";
-import { type SubmitHandler, useFormContext, useWatch } from "react-hook-form";
+import { type SubmitHandler } from "react-hook-form";
 import { useBlocker, useNavigate } from "react-router-dom";
 
 import { DialogManager, DIALOGS } from "~features/dialog-manager";
 import { Editor } from "~features/engine";
-import {
-  currentTableDependenciesAtom,
-  directDependencyVersionsAtom,
-  editorStatusAtom,
-} from "~features/engine/components/editor/state";
-import { useResolveDependencies } from "~features/table/api/resolve-dependencies";
+import { directDependencyVersionsAtom } from "~features/engine/components/editor/state";
 import { useUpdateTable } from "~features/table/api/update";
-import {
-  PublishButton,
-  type PublishButtonProps,
-} from "~features/table/components/table-update-form/publish-button";
 import { log } from "~utils/logger";
 
-import { TABLE_UPDATE_HEADER_PORTAL_ID } from "../header";
-import { DownloadButton } from "./download-button";
+import {
+  Header,
+  TABLE_UPDATE_HEADER_DROPDOWN_PORTAL_ID,
+  TABLE_UPDATE_HEADER_PORTAL_ID,
+} from "../header";
 
-type FormData = z.infer<typeof tableUpdateInput>;
-
-const TABLE_UPDATE_FORM_ID = "table-update-form";
+export type FormData = z.infer<typeof tableUpdateInput>;
 
 export function TableUpdateForm({
   table,
@@ -222,53 +211,34 @@ export function TableUpdateForm({
     [form, handleSubmit],
   );
 
-  const portalRef = useRef<HTMLElement | null>(null);
+  const headerNavBarPortalRef = useRef<HTMLElement | null>(null);
+  const headerDropdownPortalRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    if (!portalRef.current) {
-      portalRef.current = document.getElementById(
+    if (!headerNavBarPortalRef.current) {
+      headerNavBarPortalRef.current = document.getElementById(
         TABLE_UPDATE_HEADER_PORTAL_ID,
+      );
+    }
+
+    if (!headerDropdownPortalRef.current) {
+      headerDropdownPortalRef.current = document.getElementById(
+        TABLE_UPDATE_HEADER_DROPDOWN_PORTAL_ID,
       );
     }
   }, []);
 
   return (
     <Form {...form}>
+      <Header table={table} />
+
       <FlexCol asChild>
-        <form
-          id={TABLE_UPDATE_FORM_ID}
-          onSubmit={form.handleSubmit(handleSubmit)}
-        >
+        <form onSubmit={form.handleSubmit(handleSubmit)}>
           <FlexCol asChild role="presentation" onKeyDown={handleKeyDown}>
             <fieldset
               disabled={form.formState.isSubmitting || isDisabled}
               className="space-y-12 sm:space-y-16"
             >
-              {portalRef.current &&
-                createPortal(
-                  <>
-                    <FormSubmitStatus className="mr-8 text-xs text-muted-foreground/80" />
-
-                    <FormPrimaryActionButton />
-
-                    <FormPublishButton
-                      tableId={table.id}
-                      tableSlug={table.slug}
-                      tableIdentifier={table.tableIdentifier}
-                      isEnabled={
-                        isEmpty(form.formState.dirtyFields) &&
-                        form.formState.isValid &&
-                        !form.formState.isSubmitting
-                      }
-                      recentVersions={table.recentVersions}
-                      totalVersionCount={table.totalVersionCount}
-                    />
-
-                    <DownloadButton tableId={table.id} />
-                  </>,
-                  portalRef.current,
-                )}
-
               <FormField
                 control={form.control}
                 name="definition"
@@ -299,60 +269,5 @@ export function TableUpdateForm({
         </form>
       </FlexCol>
     </Form>
-  );
-}
-
-function FormPrimaryActionButton() {
-  // @TODO: naughty cross-feature dependency
-  const status = useAtomValue(editorStatusAtom);
-  const dependencies = useAtomValue(currentTableDependenciesAtom);
-
-  const resolveDependenciesQuery = useResolveDependencies({
-    dependencies,
-  });
-
-  function handleResolveDependencies() {
-    resolveDependenciesQuery.refetch();
-  }
-
-  if (status === "validation_error") {
-    return (
-      <FormSubmitButton
-        type="button"
-        isPending={resolveDependenciesQuery.isInitialLoading}
-        onClick={handleResolveDependencies}
-      >
-        Resolve Dependencies
-      </FormSubmitButton>
-    );
-  }
-
-  return (
-    <FormSubmitButton form={TABLE_UPDATE_FORM_ID} disabled={status !== "valid"}>
-      Save Changes
-    </FormSubmitButton>
-  );
-}
-
-function FormPublishButton(props: PublishButtonProps) {
-  const { isEnabled, recentVersions } = props;
-  const { control } = useFormContext<FormData>();
-
-  const definition = useWatch({ control, name: "definition" });
-
-  const isEmptyDefinition = definition?.trim() === "";
-  const noPreviousVersions = recentVersions.length === 0;
-  const isDifferentFromLastVersion =
-    recentVersions[0]?.definition.trim() !== definition?.trim();
-
-  return (
-    <PublishButton
-      {...props}
-      isEnabled={
-        isEnabled &&
-        !isEmptyDefinition &&
-        (noPreviousVersions || isDifferentFromLastVersion)
-      }
-    />
   );
 }

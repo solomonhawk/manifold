@@ -5,6 +5,7 @@ import {
   CardTitle,
 } from "@manifold/ui/components/ui/card";
 import { FlexCol } from "@manifold/ui/components/ui/flex";
+import { GoPackage } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
 
 import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
@@ -18,7 +19,10 @@ export function TableNew() {
     <FlexCol className="bg-architect items-center justify-around overflow-auto p-12 sm:p-16">
       <Card className="mx-auto w-full max-w-md drop-shadow-2xl">
         <CardHeader>
-          <CardTitle className="text-xl">New Table</CardTitle>
+          <CardTitle className="flex items-center gap-8 text-xl">
+            <GoPackage />
+            <span>New Table</span>
+          </CardTitle>
         </CardHeader>
 
         <CardContent>

@@ -3,7 +3,6 @@ import { FlexCol } from "@manifold/ui/components/ui/flex";
 
 import { useRouteParams } from "~features/routing/hooks/use-route-params";
 import { useGetTable } from "~features/table/api/get";
-import { Header } from "~features/table/components/header";
 import { TableUpdateForm } from "~features/table/components/table-update-form";
 import { tableEditParams } from "~features/table/pages/edit/params";
 
@@ -15,7 +14,6 @@ export function TableEdit() {
 
   return (
     <FlexCol className="space-y-16 p-12 sm:p-16">
-      <Header table={table} />
       <TableUpdateForm
         table={table}
         isDisabled={tableQuery.isPlaceholderData}

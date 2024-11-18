@@ -79,6 +79,7 @@ const config = {
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
+          accent: "hsl(var(--destructive-accent))",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
