@@ -353,7 +353,7 @@ title: Shapes
 1: Pentagon
 1: Hexagon
 1: Octagon"
-            .into(),
+                .into(),
         )
         .expect("Failed to parse");
 
@@ -437,6 +437,106 @@ title: Shapes
             assert_eq!(ns.as_str(), "@hello/there");
             assert_eq!(id.as_str(), "friend");
             assert_eq!(nsid.as_str(), "@hello/there/friend");
+        }
+    }
+
+    #[test]
+    fn rule_line_literal_test() {
+        let result: Result<Rule, ErrorTree<Span>> = final_parser(rule_line)("1: literal".into());
+
+        assert!(result.is_ok());
+        let rule = result.unwrap();
+
+        assert_eq!(rule.weight, 1.0);
+        assert_eq!(&rule.parts.len(), &1);
+        assert!(matches!(&rule.parts[0], RuleInst::Literal(..)));
+
+        if let RuleInst::Literal(lit) = &rule.parts[0] {
+            assert_eq!(lit.as_str(), "literal");
+        }
+    }
+
+    #[test]
+    fn rule_line_dice_roll_test() {
+        let result: Result<Rule, ErrorTree<Span>> = final_parser(rule_line)("1: {3d6}".into());
+
+        assert!(result.is_ok());
+        let rule = result.unwrap();
+
+        assert_eq!(rule.weight, 1.0);
+        assert_eq!(&rule.parts.len(), &1);
+        assert!(matches!(&rule.parts[0], RuleInst::DiceRoll(..)));
+
+        if let RuleInst::DiceRoll(dice_count, dice_size) = &rule.parts[0] {
+            assert_eq!(*dice_count, 3);
+            assert_eq!(*dice_size, 6);
+        }
+    }
+
+    #[test]
+    fn rule_line_interpolation_test() {
+        let result: Result<Rule, ErrorTree<Span>> = final_parser(rule_line)("1: {table}".into());
+
+        assert!(result.is_ok());
+        let rule = result.unwrap();
+
+        assert_eq!(rule.weight, 1.0);
+        assert_eq!(&rule.parts.len(), &1);
+        assert!(matches!(&rule.parts[0], RuleInst::Interpolation(..)));
+
+        if let RuleInst::Interpolation(table_id, filters) = &rule.parts[0] {
+            assert_eq!(table_id, &String::from("table"));
+            assert_eq!(filters.len(), 0);
+        }
+    }
+
+    #[test]
+    fn rule_line_external_interpolation_test() {
+        let result: Result<Rule, ErrorTree<Span>> =
+            final_parser(rule_line)("1: {@user/collection/table}".into());
+
+        assert!(result.is_ok());
+        let rule = result.unwrap();
+
+        assert_eq!(rule.weight, 1.0);
+        assert_eq!(&rule.parts.len(), &1);
+        assert!(matches!(
+            &rule.parts[0],
+            RuleInst::ExternalInterpolation(..)
+        ));
+
+        if let RuleInst::ExternalInterpolation(namespace, table_id, namespaced_id, filters) =
+            &rule.parts[0]
+        {
+            assert_eq!(namespace, &String::from("@user/collection"));
+            assert_eq!(table_id, &String::from("table"));
+            assert_eq!(namespaced_id, &String::from("@user/collection/table"));
+            assert_eq!(filters.len(), 0);
+        }
+    }
+
+    #[test]
+    fn rule_line_filters_test() {
+        let result: Result<Rule, ErrorTree<Span>> =
+            final_parser(rule_line)("1: {table|definite|indefinite|capitalize}".into());
+
+        assert!(result.is_ok());
+        let rule = result.unwrap();
+
+        assert_eq!(rule.weight, 1.0);
+        assert_eq!(&rule.parts.len(), &1);
+        assert!(matches!(&rule.parts[0], RuleInst::Interpolation(..)));
+
+        if let RuleInst::Interpolation(_table_id, filters) = &rule.parts[0] {
+            assert_eq!(filters.len(), 3);
+            assert!(matches!(
+                filters.as_slice(),
+                [
+                    FilterOp::DefiniteArticle,
+                    FilterOp::IndefiniteArticle,
+                    FilterOp::Capitalize
+                ]
+            ));
         }
     }
 }
