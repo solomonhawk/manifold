@@ -117,7 +117,6 @@ export function Headline() {
   useEffect(() => {
     if (isAnimating && !intervalRef.current) {
       const interval = setInterval(cycleHeadline, HEADLINE_INTERVAL);
-
       intervalRef.current = interval;
 
       return () => {
@@ -133,21 +132,36 @@ export function Headline() {
     setRendered(true);
   }, []);
 
+  useEffect(() => {
+    function onVisibilityChange() {
+      setIsAnimating(!document.hidden);
+    }
+
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+  }, []);
+
   const variants = {
     initial: {
       opacity: 0,
       y: 12,
       transition: transitionBeta,
+      color: "hsl(var(--accent-foreground))",
     },
     enter: {
       opacity: 1,
       y: 0,
       transition: { delay: rendered ? 0.3 : 0, ...transitionAlpha },
+      color: "hsl(var(--foreground))",
     },
     exit: {
       opacity: 0,
       y: -12,
       transition: transitionBeta,
+      color: "hsl(var(--accent-foreground))",
     },
   };
 
@@ -181,7 +195,7 @@ export function Headline() {
 
         <motion.h3
           layout
-          className="text-balance text-center text-base sm:text-lg md:text-xl"
+          className="mb-36 text-balance text-center text-base sm:text-lg md:mb-48 md:text-xl"
         >
           <Typewriter transition={transitionAlpha}>
             Catalogue contains{" "}
