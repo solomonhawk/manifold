@@ -217,7 +217,7 @@ export function TableDetail() {
           </section>
 
           <section>
-            <h3 className="mb-8 font-semibold">Try it out:</h3>
+            <h3 className="mb-8 font-semibold">Try it out</h3>
 
             <RollPreview
               definition={injectNamespacePragmasWorkaround(

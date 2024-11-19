@@ -135,7 +135,20 @@ export async function listTableVersions(input: TableVersionListInput) {
     .offset(offset);
 
   return {
-    data: tableVersions,
+    data: tableVersions.map((tableVersion) => ({
+      id: tableVersion.id,
+      title: tableVersion.title,
+      tableSlug: tableVersion.tableSlug,
+      tableIdentifier: tableVersion.tableIdentifier,
+      ownerUsername: tableVersion.ownerUsername,
+      availableTables: tableVersion.availableTables,
+      createdAt: tableVersion.createdAt,
+      updatedAt: tableVersion.updatedAt,
+      table: {
+        title: tableVersion.table.title,
+        description: tableVersion.table.description,
+      },
+    })),
     pagination: pagination.toMetadata({
       count: tableVersions.length ? tableVersions[0].totalCount : 0,
     }),
