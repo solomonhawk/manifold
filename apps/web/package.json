@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --clearScreen false --force --open",
+    "dev": "vite --clearScreen false --force",
+    "dev:open": "vite --clearScreen false --force --open",
     "prebuild": "tsc",
     "build": "vite build",
     "preview": "vite preview",

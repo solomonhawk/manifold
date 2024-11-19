@@ -165,14 +165,12 @@ export function TableVersionLayout() {
               variant="outline"
               className="flex items-center gap-6"
               disabled={tableVersion.versions.length < 2}
-              onClick={() => {
-                DialogManager.show(DIALOGS.COMPARE_VERSIONS.ID, {
-                  defaultVisible: false,
-                  table: tableVersion.table,
-                  versions: tableVersion.versions,
-                  currentVersion: tableVersion.version,
-                });
-              }}
+              {...DialogManager.dialogButtonProps(DIALOGS.COMPARE_VERSIONS.ID, {
+                defaultVisible: false,
+                table: tableVersion.table,
+                versions: tableVersion.versions,
+                currentVersion: tableVersion.version,
+              })}
             >
               <GoDiff className="-ml-2" /> Compare Versions
             </Button>
@@ -181,13 +179,11 @@ export function TableVersionLayout() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
-                    variant="outline"
                     size="icon"
-                    onClick={() => {
-                      DialogManager.show(DIALOGS.COPY_TABLE.ID, {
-                        table: tableVersion.table,
-                      });
-                    }}
+                    variant="outline"
+                    {...DialogManager.dialogButtonProps(DIALOGS.COPY_TABLE.ID, {
+                      table: tableVersion.table,
+                    })}
                   >
                     <span className="sr-only">Copy Table</span>
                     <GoCopy />

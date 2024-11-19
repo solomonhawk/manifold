@@ -6,7 +6,7 @@ import {
   tableService,
 } from "@manifold/db";
 import { tableRegistry } from "@manifold/graph";
-import { flatten } from "@manifold/lib";
+import { flatten } from "@manifold/lib/utils/array";
 import {
   isValidationError,
   tableCopyInput,

@@ -1,4 +1,4 @@
-import { buildTableIdentifier } from "@manifold/lib";
+import { buildTableIdentifier } from "@manifold/lib/utils/table-identifier";
 import type { RouterOutput } from "@manifold/router";
 import { useSingletonToast } from "@manifold/ui/hooks/use-singleton-toast";
 import { useIsMutating } from "@tanstack/react-query";

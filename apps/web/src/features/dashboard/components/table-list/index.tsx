@@ -1,4 +1,4 @@
-import { capitalize } from "@manifold/lib";
+import { capitalize } from "@manifold/lib/utils/string";
 import {
   AnimatedList,
   AnimatedListItem,

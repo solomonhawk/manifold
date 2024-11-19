@@ -2,6 +2,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import * as React from "react";
 
+import { LoadingIndicator } from "#components/loading-indicator.tsx";
 import { cn } from "#lib/utils.ts";
 
 const Dialog = DialogPrimitive.Root;
@@ -27,6 +28,9 @@ const DialogOverlay = React.forwardRef<
 ));
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
+export const dialogContentClassName =
+  "z-50 grid w-full max-w-lg gap-16 rounded border bg-background p-16 shadow-lg sm:rounded-lg sm:p-24";
+
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
@@ -36,7 +40,8 @@ const DialogContent = React.forwardRef<
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          "z-50 grid w-full max-w-lg gap-16 rounded border bg-background p-16 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:rounded-lg sm:p-24",
+          dialogContentClassName,
+          "duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:rounded-lg",
           className,
         )}
         {...props}
@@ -119,6 +124,27 @@ const DialogDescription = React.forwardRef<
 ));
 DialogDescription.displayName = DialogPrimitive.Description.displayName;
 
+function DialogLoader({
+  title,
+  description,
+}: {
+  title?: string;
+  description?: string;
+}) {
+  return (
+    <>
+      <DialogHeader className="sr-only">
+        <DialogTitle>{title || "Loading dialog"}</DialogTitle>
+        <DialogDescription>
+          {description || "Stand by while we gather the bits and bobs"}
+        </DialogDescription>
+      </DialogHeader>
+
+      <LoadingIndicator />
+    </>
+  );
+}
+
 export {
   Dialog,
   DialogClose,
@@ -126,6 +152,7 @@ export {
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogLoader,
   DialogOverlay,
   DialogPortal,
   DialogTitle,

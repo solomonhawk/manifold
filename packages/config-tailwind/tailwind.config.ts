@@ -3,6 +3,8 @@ import { rem, remPair } from "@viget/tailwindcss-plugins/utilities/fns";
 import type { Config } from "tailwindcss";
 import tailwindcssAnimatePlugin from "tailwindcss-animate";
 
+import { highlightedPlugin } from "./plugins/highlighted";
+
 const config = {
   darkMode: ["class"],
   content: [],
@@ -24,6 +26,9 @@ const config = {
       px: "1px",
       "avatar-sm": rem(20),
       avatar: rem(24),
+      "dialog-sm": rem(416),
+      "dialog-base": rem(480),
+      "dialog-lg": rem(640),
       ...remPair(1),
       ...remPair(2),
       ...remPair(3),
@@ -135,7 +140,11 @@ const config = {
       },
     },
   },
-  plugins: [tailwindcssAnimatePlugin, containerQueriesPlugin],
+  plugins: [
+    tailwindcssAnimatePlugin,
+    containerQueriesPlugin,
+    highlightedPlugin,
+  ],
 } satisfies Config;
 
 export default config;

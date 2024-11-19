@@ -1,4 +1,4 @@
-import { UnreachableCaseError } from "@manifold/lib";
+import { UnreachableCaseError } from "@manifold/lib/utils/enum";
 import { useAtomValue } from "jotai";
 
 import {

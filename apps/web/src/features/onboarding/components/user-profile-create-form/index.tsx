@@ -1,4 +1,4 @@
-import { getRandomElement } from "@manifold/lib";
+import { getRandomElement } from "@manifold/lib/utils/array";
 import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import {
   Form,

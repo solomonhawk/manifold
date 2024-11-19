@@ -1,4 +1,4 @@
-import { buildTableIdentifier } from "@manifold/lib";
+import { buildTableIdentifier } from "@manifold/lib/utils/table-identifier";
 
 import { trpc } from "~utils/trpc";
 

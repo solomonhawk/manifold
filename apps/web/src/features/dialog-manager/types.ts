@@ -1,4 +1,4 @@
-import { type NiceModalHocProps } from "@ebay/nice-modal-react";
+import { type NiceModalHocProps, type useModal } from "@ebay/nice-modal-react";
 import type { ComponentProps } from "react";
 
 import type { DIALOGS } from "~features/dialog-manager";
@@ -19,3 +19,7 @@ export type DialogProps<C extends React.FC<any>> = Omit<
   keyof NiceModalHocProps
 > &
   Partial<NiceModalHocProps>;
+
+export type WithDialog<T> = T & {
+  dialog: ReturnType<typeof useModal>;
+};

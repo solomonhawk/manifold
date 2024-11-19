@@ -2,6 +2,7 @@ import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 import type { VariantProps } from "class-variance-authority";
 import * as React from "react";
 
+import { LoadingIndicator } from "#components/loading-indicator.tsx";
 import { buttonVariants } from "#components/ui/button.tsx";
 import { cn } from "#lib/utils.ts";
 
@@ -124,6 +125,27 @@ const AlertDialogCancel = React.forwardRef<
 ));
 AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName;
 
+function AlertDialogLoader({
+  title,
+  description,
+}: {
+  title?: string;
+  description?: string;
+}) {
+  return (
+    <>
+      <AlertDialogHeader className="sr-only">
+        <AlertDialogTitle>{title || "Loading dialog"}</AlertDialogTitle>
+        <AlertDialogDescription>
+          {description || "Stand by while we gather the bits and bobs"}
+        </AlertDialogDescription>
+      </AlertDialogHeader>
+
+      <LoadingIndicator />
+    </>
+  );
+}
+
 export {
   AlertDialog,
   AlertDialogAction,
@@ -132,6 +154,7 @@ export {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogLoader,
   AlertDialogOverlay,
   AlertDialogPortal,
   AlertDialogTitle,

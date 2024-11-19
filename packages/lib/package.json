@@ -23,9 +23,21 @@
       "types": "./src/utils/object.ts",
       "default": "./src/utils/object.ts"
     },
+    "./utils/fn": {
+      "types": "./src/utils/fn.ts",
+      "default": "./src/utils/fn.ts"
+    },
     "./utils/string": {
       "types": "./src/utils/string.ts",
       "default": "./src/utils/string.ts"
+    },
+    "./utils/engine": {
+      "types": "./src/utils/engine.ts",
+      "default": "./src/utils/engine.ts"
+    },
+    "./utils/table-identifier": {
+      "types": "./src/utils/table-identifier.ts",
+      "default": "./src/utils/table-identifier.ts"
     },
     "./models/pagination": {
       "types": "./src/models/pagination/index.ts",

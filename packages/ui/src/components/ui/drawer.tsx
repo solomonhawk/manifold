@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Drawer as DrawerPrimitive } from "vaul";
 
+import { LoadingIndicator } from "#components/loading-indicator.js";
 import { cn } from "#lib/utils.ts";
 
 const Drawer = ({
@@ -102,6 +103,26 @@ const DrawerDescription = React.forwardRef<
 ));
 DrawerDescription.displayName = DrawerPrimitive.Description.displayName;
 
+function DrawerLoader({
+  title,
+  description,
+}: {
+  title?: string;
+  description?: string;
+}) {
+  return (
+    <>
+      <DrawerHeader className="sr-only">
+        <DrawerTitle>{title || "Loading Drawer"}</DrawerTitle>
+        <DrawerDescription>
+          {description || "Stand by while we gather the bits and bobs"}
+        </DrawerDescription>
+      </DrawerHeader>
+
+      <LoadingIndicator className="m-auto" />
+    </>
+  );
+}
 export {
   Drawer,
   DrawerClose,
@@ -109,6 +130,7 @@ export {
   DrawerDescription,
   DrawerFooter,
   DrawerHeader,
+  DrawerLoader,
   DrawerOverlay,
   DrawerPortal,
   DrawerTitle,

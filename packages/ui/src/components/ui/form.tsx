@@ -1,4 +1,4 @@
-import { isEmpty } from "@manifold/lib";
+import { isEmpty } from "@manifold/lib/utils/object";
 import * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";

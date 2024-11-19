@@ -86,7 +86,7 @@ const DropdownMenuItem = React.forwardRef<
   <DropdownMenuPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex cursor-default select-none items-center gap-8 rounded-sm px-8 py-6 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&>svg]:size-16 [&>svg]:shrink-0",
+      "relative flex select-none items-center gap-8 rounded-sm px-8 py-6 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&>svg]:size-16 [&>svg]:shrink-0",
       inset && "pl-32",
       className,
     )}
@@ -104,7 +104,7 @@ const DropdownMenuItemNaked = React.forwardRef<
   <DropdownMenuPrimitive.Item
     ref={ref}
     className={cn(
-      "relative cursor-default select-none outline-none",
+      "relative select-none outline-none",
       inset && "pl-32",
       className,
     )}

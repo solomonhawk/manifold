@@ -24,14 +24,15 @@ export function ViewDependenciesButton({
       <TooltipTrigger asChild>
         <Button
           size="icon"
-          onClick={() => {
-            DialogManager.show(DIALOGS.VIEW_TABLE_DEPENDENCIES.ID, {
+          variant="outline"
+          {...DialogManager.dialogButtonProps(
+            DIALOGS.VIEW_TABLE_DEPENDENCIES.ID,
+            {
               tableTitle,
               tableIdentifier,
               dependencies,
-            });
-          }}
-          variant="outline"
+            },
+          )}
         >
           <span className="sr-only">View dependencies</span>
 

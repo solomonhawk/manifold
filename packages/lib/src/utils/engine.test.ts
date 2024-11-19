@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { injectNamespacePragmasWorkaround } from "#utils/parser-dependency-injection.ts";
+import { injectNamespacePragmasWorkaround } from "#utils/engine.ts";
 import { trimMultiline } from "#utils/string.ts";
 
 describe("injectNamespacePragmasWorkaround", () => {

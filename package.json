@@ -3,11 +3,13 @@
   "private": true,
   "scripts": {
     "work": "docker-compose up -d && turbo dev lint",
+    "work:open": "docker-compose up -d && turbo dev:open lint",
     "work:engine": "docker-compose up -d && turbo dev dev:engine lint",
     "work:test": "docker-compose up -d && turbo dev lint test:watch",
     "build": "turbo build",
     "preview": "turbo preview",
     "dev": "turbo dev",
+    "dev:open": "turbo dev",
     "gen": "turbo gen",
     "lint": "turbo lint",
     "lint:fix": "turbo lint:fix",

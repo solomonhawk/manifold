@@ -10,17 +10,18 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow hover:bg-primary/90",
+          "bg-primary text-primary-foreground shadow hover:bg-primary/90 highlighted:bg-primary/90",
         destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 highlighted:bg-destructive/90",
         "destructive-outline":
-          "border border-destructive/30 text-destructive shadow-sm hover:bg-destructive/90 hover:text-destructive-foreground",
+          "border border-destructive/30 text-destructive shadow-sm hover:bg-destructive/90 hover:text-destructive-foreground highlighted:bg-destructive/90 highlighted:text-destructive-foreground",
         outline:
-          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground highlighted:bg-accent highlighted:text-accent-foreground",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary decoration-current decoration-from-font underline-offset-2 hover:underline",
+          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 highlighted:bg-secondary/80",
+        ghost:
+          "hover:bg-accent hover:text-accent-foreground highlighted:bg-accent highlighted:text-accent-foreground",
+        link: "text-primary decoration-current decoration-from-font underline-offset-2 hover:underline highlighted:underline",
       },
       size: {
         default: "h-36 px-16 py-8",

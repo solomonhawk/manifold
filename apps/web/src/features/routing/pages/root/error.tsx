@@ -55,7 +55,12 @@ export function RootError() {
           <CardContent className="space-y-16 sm:space-y-20 md:space-y-24">
             <Accordion type="single" collapsible className="-mt-12 w-full">
               <AccordionItem value="error">
-                <AccordionTrigger>What happened?</AccordionTrigger>
+                <AccordionTrigger>
+                  What happened?{" "}
+                  <span className="text-sm text-muted-foreground">
+                    (here be dragons…)
+                  </span>
+                </AccordionTrigger>
 
                 <AccordionContent>
                   <code

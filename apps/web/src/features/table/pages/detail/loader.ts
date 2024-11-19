@@ -1,4 +1,4 @@
-import { buildTableIdentifier } from "@manifold/lib";
+import { buildTableIdentifier } from "@manifold/lib/utils/table-identifier";
 import { z } from "@manifold/validators";
 import { type LoaderFunctionArgs } from "react-router-dom";
 

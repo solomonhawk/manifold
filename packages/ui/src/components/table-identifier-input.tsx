@@ -1,4 +1,4 @@
-import { slugify } from "@manifold/lib";
+import { slugify } from "@manifold/lib/utils/string";
 import { type Ref } from "react";
 import {
   type Control,

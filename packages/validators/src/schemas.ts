@@ -1,4 +1,4 @@
-import { slugify } from "@manifold/lib";
+import { slugify } from "@manifold/lib/utils/string";
 import { z } from "zod";
 
 export function slug({ message }: { message: string }) {

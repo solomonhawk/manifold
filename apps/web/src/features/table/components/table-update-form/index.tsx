@@ -1,4 +1,4 @@
-import { isEmpty } from "@manifold/lib";
+import { isEmpty } from "@manifold/lib/utils/object";
 import type { RouterOutput } from "@manifold/router";
 import { FlexCol } from "@manifold/ui/components/ui/flex";
 import {

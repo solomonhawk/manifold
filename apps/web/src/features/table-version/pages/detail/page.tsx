@@ -1,4 +1,4 @@
-import { injectNamespacePragmasWorkaround } from "@manifold/lib";
+import { injectNamespacePragmasWorkaround } from "@manifold/lib/utils/engine";
 import { Badge } from "@manifold/ui/components/ui/badge";
 import { Button } from "@manifold/ui/components/ui/button";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
@@ -110,6 +110,13 @@ export function TableVersionDetail() {
                 ? "span"
                 : PrefetchableLink;
 
+              const linkProps = isCurrentVersion
+                ? undefined
+                : {
+                    state: { previousVersion: tableVersion.version },
+                    preventScrollReset: true,
+                  };
+
               return (
                 <motion.li
                   key={version.id}
@@ -118,9 +125,8 @@ export function TableVersionDetail() {
                 >
                   <LinkComponent
                     to={`/t/${username}/${slug}/v/${version.version}`}
-                    state={{ previousVersion: tableVersion.version }}
                     className="group relative flex"
-                    preventScrollReset
+                    {...linkProps}
                   >
                     {isCurrentVersion ? (
                       <motion.div

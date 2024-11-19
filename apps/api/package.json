@@ -6,6 +6,7 @@
   },
   "scripts": {
     "dev": "tsx watch --inspect src/index.ts",
+    "dev:open": "npm run dev",
     "check-types": "tsc --noEmit",
     "start": "tsx src/index.ts",
     "lint": "eslint --cache \"**/*.{ts,tsx}\"",

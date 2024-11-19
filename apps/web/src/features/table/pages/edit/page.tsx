@@ -1,4 +1,4 @@
-import { buildTableIdentifier } from "@manifold/lib";
+import { buildTableIdentifier } from "@manifold/lib/utils/table-identifier";
 import { FlexCol } from "@manifold/ui/components/ui/flex";
 
 import { useRouteParams } from "~features/routing/hooks/use-route-params";

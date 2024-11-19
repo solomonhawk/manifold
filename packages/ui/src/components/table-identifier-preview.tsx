@@ -1,4 +1,5 @@
-import { buildTableIdentifier, slugify } from "@manifold/lib";
+import { slugify } from "@manifold/lib/utils/string";
+import { buildTableIdentifier } from "@manifold/lib/utils/table-identifier";
 import {
   type Control,
   type FieldValues,

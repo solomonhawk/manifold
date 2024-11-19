@@ -1,4 +1,4 @@
-import { capitalize } from "@manifold/lib";
+import { capitalize } from "@manifold/lib/utils/string";
 import {
   AnimatedList,
   AnimatedListItem,
@@ -298,7 +298,10 @@ function ListItem({
         ) : null}
       </PrefetchableLink>
 
-      <Separator className="sm:hidden" orientation="horizontal" />
+      <Separator
+        className="group-hover:bg-background/50 sm:hidden"
+        orientation="horizontal"
+      />
 
       <div className="flex shrink flex-col justify-center gap-8 p-16 sm:items-end sm:p-0">
         <div className="order-2 text-sm text-muted-foreground sm:order-1">

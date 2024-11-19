@@ -1,4 +1,5 @@
-import { capitalize, isEmpty } from "@manifold/lib";
+import { isEmpty } from "@manifold/lib/utils/object";
+import { capitalize } from "@manifold/lib/utils/string";
 import type { RouterOutput } from "@manifold/router";
 import { Button } from "@manifold/ui/components/ui/button";
 import {
@@ -49,7 +50,7 @@ export const TABLE_UPDATE_HEADER_DROPDOWN_PORTAL_ID =
 
 export function Header({ table }: { table: RouterOutput["table"]["get"] }) {
   const NOW = new Date();
-  console.log(table);
+
   return (
     <header className="flex items-center justify-between">
       <motion.div
@@ -140,8 +141,8 @@ export function Header({ table }: { table: RouterOutput["table"]["get"] }) {
                 </Button>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent align="end" forceMount>
-                <DropdownMenuItemNaked>
+              <DropdownMenuContent align="end" className="flex flex-col">
+                <DropdownMenuItemNaked asChild>
                   <EditButton
                     tableId={table.id}
                     tableIdentifier={table.tableIdentifier}
@@ -150,13 +151,13 @@ export function Header({ table }: { table: RouterOutput["table"]["get"] }) {
                   />
                 </DropdownMenuItemNaked>
 
-                <DropdownMenuItemNaked>
+                <DropdownMenuItemNaked asChild>
                   <DownloadButton tableId={table.id} />
                 </DropdownMenuItemNaked>
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuItemNaked>
+                <DropdownMenuItemNaked asChild>
                   <DeleteButton
                     title={table.title}
                     tableId={table.id}

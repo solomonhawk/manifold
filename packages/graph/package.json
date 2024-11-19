@@ -10,7 +10,7 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "dev": "open -a 'Arc' http://localhost:8529",
+    "dev:open": "open -a 'Arc' http://localhost:8529",
     "repl": "docker exec -it manifold-arango-1 arangosh",
     "lint": "eslint --cache \"**/*.{ts,tsx}\"",
     "lint:fix": "eslint --cache --fix \"**/*.{ts,tsx}\" --max-warnings 0",

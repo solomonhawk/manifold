@@ -1,103 +1,47 @@
 import { useModal } from "@ebay/nice-modal-react";
-import { LoadingIndicator } from "@manifold/ui/components/loading-indicator";
-import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialogLoader,
 } from "@manifold/ui/components/ui/alert-dialog";
-import {
-  Notice,
-  NoticeContent,
-  NoticeIcon,
-} from "@manifold/ui/components/ui/notice";
 import { useReturnFocus } from "@manifold/ui/hooks/use-return-focus";
-import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
-import { type MouseEvent } from "react";
-import { GoInfo } from "react-icons/go";
+import { Suspense } from "react";
 
-import { useDeleteTable } from "~features/table/api/delete";
+import type { TableDeleteDialogProps } from "~features/table/components/table-delete-dialog/types";
+import lazyPreload from "~utils/lazy-preload";
 
-type Props = {
-  title: string;
-  tableId: string;
-  tableIdentifier: string;
-};
+const TableDeleteDialogComponent = lazyPreload(
+  () => import("./table-delete-dialog"),
+);
 
-export function TableDeleteDialog({ title, tableId, tableIdentifier }: Props) {
-  const modal = useModal();
-  const returnFocus = useReturnFocus(modal.visible);
-  const mutation = useDeleteTable({
-    title,
-    tableIdentifier,
-    onSuccess: () => {
-      mutation.reset();
-      modal.hide();
-    },
-  });
-
-  const isPending = useStateGuard(mutation.isLoading, { min: 250 });
-
-  function handleConfirmDelete(e: MouseEvent) {
-    e.preventDefault();
-    mutation.mutate({ id: tableId });
-  }
+export function TableDeleteDialog(props: TableDeleteDialogProps) {
+  const dialog = useModal();
+  const returnFocus = useReturnFocus(dialog.visible);
 
   return (
     <AlertDialog
-      open={modal.visible}
+      open={dialog.visible}
       onOpenChange={(isOpen) => {
         if (!isOpen) {
-          modal.hide();
+          dialog.hide();
           returnFocus();
         }
       }}
     >
       <AlertDialogContent
-        className="gap-24"
+        className="w-auto max-w-full"
         onAnimationEnd={() => {
-          if (!modal.visible) {
-            modal.remove();
+          if (!dialog.visible) {
+            dialog.remove();
           }
         }}
       >
-        <AlertDialogHeader>
-          <AlertDialogTitle>Delete “{title}”?</AlertDialogTitle>
-          <AlertDialogDescription>
-            Fear not, deleted tables can be recovered at any time.
-          </AlertDialogDescription>
-
-          <Notice variant="loud" className="!mt-24">
-            <NoticeIcon>
-              <GoInfo className="size-18" />
-            </NoticeIcon>
-
-            <NoticeContent className="space-y-12 leading-snug">
-              Any published versions of{" "}
-              <TableIdentifier tableIdentifier={tableIdentifier} /> will remain
-              publicly available.
-            </NoticeContent>
-          </Notice>
-        </AlertDialogHeader>
-
-        <AlertDialogFooter>
-          <AlertDialogCancel>Nevermind</AlertDialogCancel>
-          <AlertDialogAction
-            variant="destructive"
-            onClick={handleConfirmDelete}
-            className="flex items-center gap-6"
-            disabled={isPending}
-          >
-            {isPending && <LoadingIndicator size="sm" className="-ml-4" />}{" "}
-            Delete Table
-          </AlertDialogAction>
-        </AlertDialogFooter>
+        <Suspense fallback={<AlertDialogLoader />}>
+          <TableDeleteDialogComponent {...props} dialog={dialog} />
+        </Suspense>
       </AlertDialogContent>
     </AlertDialog>
   );
 }
+
+TableDeleteDialog.preload = TableDeleteDialogComponent.preload;

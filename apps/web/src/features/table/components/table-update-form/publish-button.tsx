@@ -62,19 +62,17 @@ export function PublishButton({
           <ReactiveButton
             className="flex items-center gap-8"
             disabled={!canPublish}
-            onClick={() =>
-              DialogManager.show(DIALOGS.PUBLISH_TABLE.ID, {
-                tableId,
-                tableSlug,
-                tableIdentifier,
-                recentVersions,
-                totalVersionCount,
-                dependencies: currentResolvedDependencies.map((d) => ({
-                  dependencyIdentifier: d.tableIdentifier,
-                  dependencyVersion: d.version,
-                })),
-              })
-            }
+            {...DialogManager.dialogButtonProps(DIALOGS.PUBLISH_TABLE.ID, {
+              tableId,
+              tableSlug,
+              tableIdentifier,
+              recentVersions,
+              totalVersionCount,
+              dependencies: currentResolvedDependencies.map((d) => ({
+                dependencyIdentifier: d.tableIdentifier,
+                dependencyVersion: d.version,
+              })),
+            })}
           >
             {isPending ? <LoadingIndicator size="sm" /> : <GoGitBranch />}
             Publish{recentVersions.length > 0 ? " Version" : null}

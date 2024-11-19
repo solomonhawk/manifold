@@ -1,4 +1,4 @@
-import { injectNamespacePragmasWorkaround } from "@manifold/lib";
+import { injectNamespacePragmasWorkaround } from "@manifold/lib/utils/engine";
 import type { RouterOutput } from "@manifold/router";
 import {
   Command,
@@ -487,6 +487,14 @@ function InlineEditorCommandPalette({
   onCreateNewSubtable: () => void;
   onAddDependency: (version: FoundDependency) => void;
 }) {
+  const { onClick, onFocus, onMouseEnter } = DialogManager.dialogButtonProps(
+    DIALOGS.FIND_DEPENDENCY.ID,
+    {
+      tableIdentifier,
+      onAddDependency,
+    },
+  );
+
   return (
     <Command className="border shadow-lg drop-shadow-lg">
       {/* eslint-disable-next-line jsx-a11y/no-autofocus */}
@@ -499,12 +507,9 @@ function InlineEditorCommandPalette({
             <span>Create a new subtable</span>
           </CommandItem>
           <CommandItem
-            onSelect={() =>
-              DialogManager.show(DIALOGS.FIND_DEPENDENCY.ID, {
-                tableIdentifier,
-                onAddDependency,
-              })
-            }
+            onFocus={onFocus}
+            onMouseEnter={onMouseEnter}
+            onSelect={onClick}
           >
             <GoPackageDependencies className="mr-6 text-accent-foreground" />
             <span>Find a dependency</span>
