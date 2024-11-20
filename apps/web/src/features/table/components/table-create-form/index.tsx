@@ -88,43 +88,47 @@ export function TableCreateForm({
           <FormField
             control={form.control}
             name="slug"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel isRequired>
-                  <Tooltip>
-                    <TooltipTrigger
-                      className="underline decoration-muted-foreground decoration-dotted"
-                      asChild
-                    >
-                      <button type="button">Identifier</button>
-                    </TooltipTrigger>
-                    <TooltipContent side="right">
-                      This is the name you or other people will use to import
-                      this table.
-                      <TooltipArrow />
-                    </TooltipContent>
-                  </Tooltip>
-                </FormLabel>
+            render={({ field }) => {
+              const { ref, ...props } = field;
 
-                <FormControl>
-                  <TableIdentifierInput
-                    control={form.control}
-                    {...field}
-                    inputRef={field.ref}
-                  />
-                </FormControl>
+              return (
+                <FormItem>
+                  <FormLabel isRequired>
+                    <Tooltip>
+                      <TooltipTrigger
+                        className="underline decoration-muted-foreground decoration-dotted"
+                        asChild
+                      >
+                        <button type="button">Identifier</button>
+                      </TooltipTrigger>
+                      <TooltipContent side="right">
+                        This is the name you or other people will use to import
+                        this table.
+                        <TooltipArrow />
+                      </TooltipContent>
+                    </Tooltip>
+                  </FormLabel>
 
-                <div>
-                  <TableIdentifierPreview
-                    control={form.control}
-                    getFieldState={form.getFieldState}
-                    username={userProfile.username}
-                  />
+                  <FormControl>
+                    <TableIdentifierInput
+                      control={form.control}
+                      {...props}
+                      inputRef={ref}
+                    />
+                  </FormControl>
 
-                  <FormMessage />
-                </div>
-              </FormItem>
-            )}
+                  <div>
+                    <TableIdentifierPreview
+                      control={form.control}
+                      getFieldState={form.getFieldState}
+                      username={userProfile.username}
+                    />
+
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              );
+            }}
           />
 
           <FormField
@@ -135,7 +139,7 @@ export function TableCreateForm({
                 <FormLabel>Description</FormLabel>
 
                 <FormControl>
-                  <Textarea rows={3} {...field} />
+                  <Textarea autoSize rows={3} {...field} />
                 </FormControl>
 
                 <FormMessage />

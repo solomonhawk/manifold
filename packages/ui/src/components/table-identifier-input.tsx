@@ -16,7 +16,7 @@ interface RequiredFieldValues extends FieldValues {
 }
 
 interface Props<T extends FieldValues = RequiredFieldValues>
-  extends ControllerRenderProps<T> {
+  extends Omit<ControllerRenderProps<T>, "ref"> {
   control: Control<T, unknown>;
   inputRef: Ref<HTMLInputElement>;
 }
