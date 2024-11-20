@@ -1,3 +1,4 @@
+#![warn(unused_extern_crates)]
 use sha2::{Digest, Sha256};
 use utils::set_panic_hook;
 use wasm_bindgen::prelude::*;
@@ -6,8 +7,6 @@ use web_sys::js_sys::JsString;
 mod nom_parser;
 pub mod table_collection;
 mod utils;
-
-extern crate wee_alloc;
 
 // Use `wee_alloc` as the global allocator.
 #[global_allocator]

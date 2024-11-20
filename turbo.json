@@ -16,6 +16,12 @@
       "inputs": [".env"],
       "env": ["DEV", "PORT", "DATABASE_URL", "NODE_ENV"]
     },
+    "dev:engine": {
+      "cache": false,
+      "persistent": true,
+      "inputs": [".env"],
+      "env": ["DEV", "PORT", "DATABASE_URL", "NODE_ENV"]
+    },
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],

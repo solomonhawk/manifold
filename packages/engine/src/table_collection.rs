@@ -3,9 +3,12 @@ use rand::distributions::{Uniform, WeightedIndex};
 use rand::prelude::*;
 use serde::Serialize;
 use std::collections::HashMap;
+use std::str::FromStr;
 use thiserror::Error;
 use wasm_bindgen::prelude::*;
 use web_sys::console;
+
+static UNIQUE_GEN_LIMIT: usize = 20;
 
 #[derive(Debug, Clone, Error)]
 pub enum TableError {
@@ -68,6 +71,10 @@ impl TableCollection {
                             TableError::MissingDependencyError(_, id) => {
                                 missing_identifiers.push(id);
                             }
+                            // @TODO: ignore other failures?
+                            // This will cause `unique(N)` to fail if it can't generate a unique result
+                            // which is kind of unexpected when simply authoring a rule. It makes sense
+                            // when attempting to generate a result, but not when authoring.
                             e => {
                                 return Err(TableError::InvalidDefinition(format!(
                                     "in table \"{}\" for rule \"{}\". Original error: \"{}\"",
@@ -208,28 +215,75 @@ impl Rule {
             .map(|part| match part {
                 RuleInst::DiceRoll(count, sides) => Ok(roll_dice(*count, *sides).to_string()),
                 RuleInst::Literal(str) => Ok(str.to_string()),
-                RuleInst::Interpolation(id, opts) => {
-                    let mut resolved = tables._gen(id, false)?;
-
-                    for opt in opts {
-                        opt.apply(&mut resolved);
-                    }
-
-                    Ok(resolved)
+                RuleInst::Interpolation(id, filters) => {
+                    self.resolve_interpolation(id, filters, tables)
                 }
-                RuleInst::ExternalInterpolation(_ns, _id, nsid, opts) => {
-                    let mut resolved = tables._gen(nsid, true)?;
-
-                    for opt in opts {
-                        opt.apply(&mut resolved);
-                    }
-
-                    Ok(resolved)
+                RuleInst::ExternalInterpolation(_ns, _id, nsid, filters) => {
+                    self.resolve_interpolation(nsid, filters, tables)
                 }
             })
             .collect();
 
         Ok(resolved?.join(""))
+    }
+
+    /**
+     * Resolves an interpolation rule by generating a result from the table. If
+     * the rule involves a `unique(N)` filter, it will attempt to generate N
+     * unique results and concatenate them according to a `join(S)` filter (or
+     * fall back to an empty string).
+     */
+    fn resolve_interpolation(
+        &self,
+        id: &str,
+        filters: &Vec<FilterOp>,
+        tables: &TableCollection,
+    ) -> Result<String, TableError> {
+        // if `opts` contains a `FilterOp::unique(N)`, set count to N
+        let count = filters
+            .iter()
+            .find_map(|o| match o {
+                FilterOp::Unique(n) => Some(*n),
+                _ => None,
+            })
+            // if count is None, set to 1
+            .unwrap_or(1);
+
+        // if `opts` contains a `FilterOp::join(S)`, set separator to S
+        let separator = filters
+            .iter()
+            .find_map(|o| match o {
+                FilterOp::Join(s) => Some(s.clone()),
+                _ => None,
+            })
+            // if separator is None, set to empty string
+            .unwrap_or("".to_string());
+
+        let mut results = vec![];
+        let mut failed_attempts = 0;
+
+        while results.len() < count {
+            let mut result = tables._gen(id, true)?;
+
+            for opt in filters {
+                opt.apply(&mut result);
+            }
+
+            if !results.contains(&result) {
+                results.push(result);
+            } else {
+                failed_attempts += 1;
+            }
+
+            if failed_attempts > UNIQUE_GEN_LIMIT {
+                return Err(TableError::CallError(format!(
+                    "Failed to generate unique result for rule {} after 20 attempts",
+                    self.raw
+                )));
+            }
+        }
+
+        Ok(results.join(separator.as_str()))
     }
 
     pub fn external_identifiers(&self) -> Vec<String> {
@@ -258,6 +312,10 @@ pub enum FilterOp {
     DefiniteArticle,
     IndefiniteArticle,
     Capitalize,
+    // (count)
+    Unique(usize),
+    // (separator)
+    Join(String),
 }
 
 impl FilterOp {
@@ -284,6 +342,24 @@ impl FilterOp {
                     *value = format!("{}{}", first.to_uppercase(), chars.as_str());
                 }
             }
+            FilterOp::Unique(_count) => {}
+            FilterOp::Join(_separator) => {}
+        }
+    }
+}
+
+impl FromStr for FilterOp {
+    type Err = TableError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "definite" => Ok(FilterOp::DefiniteArticle),
+            "indefinite" => Ok(FilterOp::IndefiniteArticle),
+            "capitalize" => Ok(FilterOp::Capitalize),
+            _ => Err(TableError::ParseError(format!(
+                "Invalid filter operation: {}",
+                s
+            ))),
         }
     }
 }
@@ -344,6 +420,234 @@ mod tests {
             let roll = roll_dice(5, 10);
             assert!(roll >= 5);
             assert!(roll <= 50);
+        }
+    }
+
+    #[test]
+    fn test_rule_resolve_simple_interpolation() {
+        let mut table_map = HashMap::new();
+
+        table_map.insert(
+            "parent".to_string(),
+            TableDefinition::new(
+                "parent".to_string(),
+                None,
+                "Parent".to_string(),
+                false,
+                vec![Rule {
+                    raw: "parent {child}".to_string(),
+                    weight: 1.0,
+                    parts: vec![
+                        RuleInst::Literal("parent ".to_string()),
+                        RuleInst::Interpolation("child".to_string(), vec![]),
+                    ],
+                }],
+            ),
+        );
+
+        table_map.insert(
+            "child".to_string(),
+            TableDefinition::new(
+                "child".to_string(),
+                None,
+                "Child".to_string(),
+                false,
+                vec![Rule {
+                    raw: "child text".to_string(),
+                    weight: 1.0,
+                    parts: vec![RuleInst::Literal("child text".to_string())],
+                }],
+            ),
+        );
+
+        let collection = TableCollection {
+            table_map,
+            external_identifiers: vec![],
+        };
+
+        let result = collection._gen("parent", false);
+
+        assert!(result.is_ok());
+
+        if let Ok(text) = result {
+            assert_eq!(text, "parent child text");
+        }
+    }
+
+    #[test]
+    fn test_rule_resolve_unique_interpolation() {
+        let mut table_map = HashMap::new();
+
+        table_map.insert(
+            "parent".to_string(),
+            TableDefinition::new(
+                "parent".to_string(),
+                None,
+                "Parent".to_string(),
+                false,
+                vec![Rule {
+                    raw: "parent {child|unique(2)}".to_string(),
+                    weight: 1.0,
+                    parts: vec![
+                        RuleInst::Literal("parent ".to_string()),
+                        RuleInst::Interpolation("child".to_string(), vec![FilterOp::Unique(2)]),
+                    ],
+                }],
+            ),
+        );
+
+        table_map.insert(
+            "child".to_string(),
+            TableDefinition::new(
+                "child".to_string(),
+                None,
+                "Child".to_string(),
+                false,
+                vec![
+                    Rule {
+                        raw: "child 1".to_string(),
+                        weight: 1.0,
+                        parts: vec![RuleInst::Literal("child 1".to_string())],
+                    },
+                    Rule {
+                        raw: "child 2".to_string(),
+                        weight: 1.0,
+                        parts: vec![RuleInst::Literal("child 2".to_string())],
+                    },
+                ],
+            ),
+        );
+
+        let collection = TableCollection {
+            table_map,
+            external_identifiers: vec![],
+        };
+
+        let result = collection._gen("parent", false);
+
+        assert!(result.is_ok());
+
+        if let Ok(text) = result {
+            assert!(text == "parent child 1child 2" || text == "parent child 2child 1");
+        }
+    }
+
+    #[test]
+    fn test_rule_resolve_unique_interpolation_failure() {
+        let mut table_map = HashMap::new();
+
+        table_map.insert(
+            "parent".to_string(),
+            TableDefinition::new(
+                "parent".to_string(),
+                None,
+                "Parent".to_string(),
+                false,
+                vec![Rule {
+                    raw: "parent {child|unique(2)}".to_string(),
+                    weight: 1.0,
+                    parts: vec![
+                        RuleInst::Literal("parent ".to_string()),
+                        RuleInst::Interpolation("child".to_string(), vec![FilterOp::Unique(2)]),
+                    ],
+                }],
+            ),
+        );
+
+        table_map.insert(
+            "child".to_string(),
+            TableDefinition::new(
+                "child".to_string(),
+                None,
+                "Child".to_string(),
+                false,
+                vec![Rule {
+                    raw: "child 1".to_string(),
+                    weight: 1.0,
+                    parts: vec![RuleInst::Literal("child 1".to_string())],
+                }],
+            ),
+        );
+
+        let collection = TableCollection {
+            table_map,
+            external_identifiers: vec![],
+        };
+
+        let result = collection._gen("parent", false);
+
+        assert!(result.is_err());
+
+        if let Err(TableError::CallError(msg)) = result {
+            assert_eq!(msg, "Failed to generate unique result for rule parent {child|unique(2)} after 20 attempts");
+        } else {
+            panic!("Unexpected result: {:?}", result);
+        }
+    }
+
+    #[test]
+    fn test_rule_resolve_unique_interpolation_with_filters_and_join() {
+        let mut table_map = HashMap::new();
+
+        table_map.insert(
+            "parent".to_string(),
+            TableDefinition::new(
+                "parent".to_string(),
+                None,
+                "Parent".to_string(),
+                false,
+                vec![Rule {
+                    raw: "parent {child|indefinite|capitalize|unique(2)|join(', ')}".to_string(),
+                    weight: 1.0,
+                    parts: vec![
+                        RuleInst::Literal("parent ".to_string()),
+                        RuleInst::Interpolation(
+                            "child".to_string(),
+                            vec![
+                                FilterOp::IndefiniteArticle,
+                                FilterOp::Capitalize,
+                                FilterOp::Unique(2),
+                                FilterOp::Join(", ".to_string()),
+                            ],
+                        ),
+                    ],
+                }],
+            ),
+        );
+
+        table_map.insert(
+            "child".to_string(),
+            TableDefinition::new(
+                "child".to_string(),
+                None,
+                "Child".to_string(),
+                false,
+                vec![
+                    Rule {
+                        raw: "child 1".to_string(),
+                        weight: 1.0,
+                        parts: vec![RuleInst::Literal("child 1".to_string())],
+                    },
+                    Rule {
+                        raw: "child 2".to_string(),
+                        weight: 1.0,
+                        parts: vec![RuleInst::Literal("child 2".to_string())],
+                    },
+                ],
+            ),
+        );
+
+        let collection = TableCollection {
+            table_map,
+            external_identifiers: vec![],
+        };
+
+        let result = collection._gen("parent", false);
+
+        assert!(result.is_ok());
+
+        if let Ok(text) = result {
+            assert!(text == "parent A child 1, A child 2" || text == "parent A child 2, A child 1");
         }
     }
 }

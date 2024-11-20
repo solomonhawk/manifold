@@ -62,7 +62,7 @@ fn namespace_pragma(input: Span) -> ParserResult<Option<&str>> {
     opt(namespace
         .preceded_by(tag("@@PRAGMA namespace="))
         .terminated(line_ending))
-    .map_res(|s| Ok::<Option<&str>, ErrorTree<Span>>(s.map(|s| *s.fragment())))
+    .map_res(|s| Ok::<Option<&str>, ErrorTree<Span>>(s.map(|s| *s)))
     .parse(input)
 }
 
@@ -156,18 +156,16 @@ fn export_attr(input: Span) -> ParserResult<(Span, AttrValue)> {
     separated_pair(
         tag("export").context("Table attributes can only contain alphanumeric characters"),
         tag(": ").context("Missing table attribute separator, expected `:`"),
-        tag("true").or(tag("false")).map_res(|b: Span| {
-            Ok::<AttrValue, ErrorTree<Span>>(AttrValue::Bool(b.fragment() == &"true"))
-        }),
+        tag("true")
+            .or(tag("false"))
+            .map_res(|b: Span| Ok::<AttrValue, ErrorTree<Span>>(AttrValue::Bool(*b == "true"))),
     )
     .parse(input)
 }
 
 // --------- Rules ---------
 fn rules(input: Span) -> ParserResult<Vec<Rule>> {
-    separated_list1(line_ending, rule_line)
-        // .terminated(multispace0)
-        .parse(input)
+    separated_list1(line_ending, rule_line).parse(input)
 }
 
 fn rule_line(input: Span) -> ParserResult<Rule> {
@@ -200,13 +198,13 @@ pub fn rule(input: Span) -> ParserResult<(Span, Vec<RuleInst>)> {
 
 fn rule_dice_roll(input: Span) -> ParserResult<RuleInst> {
     tuple((
-        digit1.map_res(|span: Span| span.fragment().parse::<usize>()),
+        digit1.map_res(|s: Span| s.parse::<usize>()),
         digit1
-            .map_res(|span: Span| span.fragment().parse::<usize>())
+            .map_res(|s: Span| s.parse::<usize>())
             .preceded_by(tag("d")),
     ))
     .or(digit1
-        .map_res(|span: Span| span.fragment().parse::<usize>())
+        .map_res(|s: Span| s.parse::<usize>())
         .preceded_by(tag("d"))
         .map(|sides| (1, sides)))
     .preceded_by(tag("{"))
@@ -263,19 +261,38 @@ fn pipeline(input: Span) -> ParserResult<(Span, Vec<FilterOp>)> {
 }
 
 fn filters(input: Span) -> ParserResult<Vec<FilterOp>> {
-    many0(ident.preceded_by(tag("|")))
-        .map(|filters| {
-            filters
-                .iter()
-                .map(|&filter| match *filter {
-                    "definite" => FilterOp::DefiniteArticle,
-                    "indefinite" => FilterOp::IndefiniteArticle,
-                    "capitalize" => FilterOp::Capitalize,
-                    // better way to return error from `map` parser?
-                    _ => panic!("unknown filter: {}", filter),
-                })
-                .collect()
-        })
+    many0(
+        transform_filter
+            .or(unique_filter)
+            .or(join_filter)
+            .preceded_by(tag("|")),
+    )
+    .parse(input)
+}
+
+fn transform_filter(input: Span) -> ParserResult<FilterOp> {
+    ident
+        .map_res(|s| s.parse())
+        .context("Invalid filter")
+        .parse(input)
+}
+
+fn unique_filter(input: Span) -> ParserResult<FilterOp> {
+    digit1
+        .preceded_by(tag("unique("))
+        .terminated(tag(")"))
+        .context("Invalid unique filter")
+        .map_res(|s: Span| s.parse::<usize>())
+        .map(FilterOp::Unique)
+        .parse(input)
+}
+
+fn join_filter(input: Span) -> ParserResult<FilterOp> {
+    take_until("')")
+        .preceded_by(tag("join('"))
+        .terminated(tag("')"))
+        .context("Invalid join filter")
+        .map(|s: Span| FilterOp::Join(s.to_string()))
         .parse(input)
 }
 
@@ -537,6 +554,35 @@ title: Shapes
                     FilterOp::Capitalize
                 ]
             ));
+        }
+    }
+
+    #[test]
+    fn rule_line_filters_unique_join_test() {
+        let result: Result<Rule, ErrorTree<Span>> =
+            final_parser(rule_line)("1: {table|unique(3)|join(', ')}".into());
+
+        if let Err(e) = &result {
+            println!("{}", e);
+        }
+
+        assert!(result.is_ok());
+        let rule = result.unwrap();
+
+        assert_eq!(rule.weight, 1.0);
+        assert_eq!(&rule.parts.len(), &1);
+        assert!(matches!(&rule.parts[0], RuleInst::Interpolation(..)));
+
+        if let RuleInst::Interpolation(_table_id, filters) = &rule.parts[0] {
+            assert_eq!(filters.len(), 2);
+            assert!(matches!(
+                filters.as_slice(),
+                [FilterOp::Unique(3), FilterOp::Join(..),]
+            ));
+
+            if let FilterOp::Join(sep) = &filters[1] {
+                assert_eq!(sep, ", ");
+            }
         }
     }
 }

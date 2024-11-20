@@ -1,5 +1,4 @@
-extern crate pretty_env_logger;
-
+#![warn(unused_extern_crates)]
 #[macro_use]
 extern crate log;
 
