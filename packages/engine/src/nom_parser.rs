@@ -2,7 +2,7 @@ use nom::{
     bytes::complete::{take_until, take_while, take_while1},
     character::complete::{char, digit1, line_ending, not_line_ending},
     combinator::{map_parser, opt},
-    error::make_error,
+    error::{make_error, ParseError},
     multi::{fold_many1, many0, many1, separated_list1},
     number::complete::float,
     sequence::{pair, separated_pair, tuple},
@@ -44,7 +44,7 @@ pub(crate) fn parse_tables(input: Span) -> Result<Vec<TableDefinition>, ErrorTre
  *
  */
 fn table(input: Span) -> ParserResult<TableDefinition> {
-    tuple((namespace_pragma, frontmatter, rules))
+    tuple((namespace_pragma.opt(), frontmatter, rules))
         .context("Invalid table definition")
         .map(|(namespace, frontmatter, rules)| {
             TableDefinition::new(
@@ -58,12 +58,11 @@ fn table(input: Span) -> ParserResult<TableDefinition> {
         .parse(input)
 }
 
-fn namespace_pragma(input: Span) -> ParserResult<Option<&str>> {
-    opt(namespace
+fn namespace_pragma(input: Span) -> ParserResult<Span> {
+    namespace
         .preceded_by(tag("@@PRAGMA namespace="))
-        .terminated(line_ending))
-    .map_res(|s| Ok::<Option<&str>, ErrorTree<Span>>(s.map(|s| *s)))
-    .parse(input)
+        .terminated(line_ending)
+        .parse(input)
 }
 
 struct Frontmatter<'a> {
@@ -190,10 +189,27 @@ fn rule_line(input: Span) -> ParserResult<Rule> {
 
 // --------- Rule ---------
 pub fn rule(input: Span) -> ParserResult<(Span, Vec<RuleInst>)> {
-    many1(rule_dice_roll.or(imported_rule_interpolation).or(rule_interpolation).or(rule_literal))
+    // Can't use `complete()` here because `many1` doesn't return `Incomplete`
+    // for us to transform into `Error`. It happily returns partial results
+    // when it encounters an error. Cut _should_ work but doesn't.
+    let (input, parsed) = many1(
+            rule_dice_roll
+            .or(rule_literal)
+            .or(imported_rule_interpolation)
+            .or(rule_interpolation)
+          )
         .context("Invalid rule text, expected a dice roll (`2d4`), an interpolation (`{other}`) or a literal")
         .with_recognized()
-        .parse(input)
+        .parse(input)?;
+
+    if !input.is_empty() {
+        return Err(nom::Err::Failure(make_error(
+            input,
+            nom::error::ErrorKind::Fail,
+        )));
+    }
+
+    Ok((input, parsed))
 }
 
 fn rule_dice_roll(input: Span) -> ParserResult<RuleInst> {
@@ -219,7 +235,7 @@ fn rule_literal(input: Span) -> ParserResult<RuleInst> {
     // successfully parse "" which causes many1 to fail
     map_parser(take_until("{").or(not_line_ending), literal)
         .context("rule literal")
-        .map(|x| RuleInst::Literal((*x).to_string()))
+        .map(|x| RuleInst::Literal(x.to_string()))
         .parse(input)
 }
 
@@ -261,19 +277,30 @@ fn pipeline(input: Span) -> ParserResult<(Span, Vec<FilterOp>)> {
 }
 
 fn filters(input: Span) -> ParserResult<Vec<FilterOp>> {
-    many0(
-        transform_filter
-            .or(unique_filter)
-            .or(join_filter)
-            .preceded_by(tag("|")),
-    )
+    tuple((
+        many0(transform_filter.preceded_by(tag("|"))),
+        opt(unique_filter.preceded_by(tag("|"))),
+        opt(join_filter.preceded_by(tag("|"))),
+    ))
+    .map(|(transforms, unique, join)| {
+        let mut filters = transforms;
+        if let Some(u) = unique {
+            filters.push(u);
+        }
+        if let Some(j) = join {
+            filters.push(j);
+        }
+        filters
+    })
     .parse(input)
 }
 
 // `definite` or `indefinite` or `capitalize`
 fn transform_filter(input: Span) -> ParserResult<FilterOp> {
-    ident
-        .map_res(|s| s.parse())
+    tag("definite")
+        .or(tag("indefinite"))
+        .or(tag("capitalize"))
+        .map_res(|s: Span| s.parse())
         .context("Invalid filter")
         .parse(input)
 }
@@ -285,7 +312,17 @@ fn unique_filter(input: Span) -> ParserResult<FilterOp> {
         .terminated(tag(")"))
         .context("Invalid unique filter")
         .map_res(|s: Span| s.parse::<usize>())
-        .map(FilterOp::Unique)
+        .map_res(|n| {
+            if n <= 1 {
+                Err(ErrorTree::from_error_kind(
+                    "Idk what to write here",
+                    nom::error::ErrorKind::Digit,
+                ))
+            } else {
+                Ok(FilterOp::Unique(n))
+            }
+        })
+        .context("Unique must be passed a number greater than 1")
         .parse(input)
 }
 
@@ -412,15 +449,14 @@ title: Shapes
 
     #[test]
     fn namespace_pragma_test() {
-        let result: Result<Option<&str>, ErrorTree<Span>> =
+        let result: Result<Span, ErrorTree<Span>> =
             final_parser(namespace_pragma)("@@PRAGMA namespace=@hello/there\n".into());
 
         assert!(result.is_ok());
 
-        let namespace_opt = result.unwrap();
-
-        assert!(namespace_opt.is_some());
-        assert_eq!(namespace_opt.unwrap(), "@hello/there");
+        if let Ok(ns) = result {
+            assert_eq!(*ns, "@hello/there");
+        }
     }
 
     #[test]
@@ -595,13 +631,57 @@ title: Shapes
     }
 
     #[test]
+    fn rule_line_filters_invalid_join_before_unique_test() {
+        // invalid `unique(3)` after `join(', ')`
+        let result: Result<Rule, ErrorTree<Span>> =
+            final_parser(rule_line)("1: {table|join(', ')|unique(3)}".into());
+
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn rule_line_filters_invalid_capitalize_after_unique_test() {
+        // invalid `capitalize` after `unique(3)`
+        let result: Result<Rule, ErrorTree<Span>> =
+            final_parser(rule_line)("1: {table|unique(3)|capitalize}".into());
+
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn rule_line_filters_invalid_capitalize_after_join_test() {
+        // invalid `capitalize` after `join(', ')`
+        let result: Result<Rule, ErrorTree<Span>> =
+            final_parser(rule_line)("1: {table|join(', ')|capitalize}".into());
+
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn rule_line_filters_invalid_garbage_filter_test() {
+        let result: Result<Rule, ErrorTree<Span>> =
+            final_parser(rule_line)("1: literal {table|garbage}".into());
+
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn rule_test() {
+        let result: Result<(Span, Vec<RuleInst>), ErrorTree<Span>> =
+            final_parser(rule)("{table|unique(3)}".into());
+
+        assert!(result.is_ok());
+
+        let result: Result<(Span, Vec<RuleInst>), ErrorTree<Span>> =
+            final_parser(rule)("literal {table|}".into());
+
+        assert!(result.is_err());
+    }
+
+    #[test]
     fn join_filter_test() {
         let result: Result<FilterOp, ErrorTree<Span>> =
             final_parser(join_filter)("join(', ')".into());
-
-        if let Err(e) = &result {
-            println!("{}", e);
-        }
 
         assert!(result.is_ok());
         let filter = result.unwrap();
@@ -619,10 +699,6 @@ title: Shapes
         let result: Result<FilterOp, ErrorTree<Span>> =
             final_parser(join_filter)("join(', ', ' or ')".into());
 
-        if let Err(e) = &result {
-            println!("{}", e);
-        }
-
         assert!(result.is_ok());
         let filter = result.unwrap();
 
@@ -636,5 +712,18 @@ title: Shapes
                 assert_eq!(conj, " or ");
             }
         }
+    }
+
+    #[test]
+    fn filters_invalid_test() {
+        // pipe with no filter keyword after
+        let result: Result<Vec<FilterOp>, ErrorTree<Span>> = final_parser(filters)("|".into());
+
+        assert!(result.is_err());
+
+        // pipe with invalid filter keyword after
+        let result: Result<Vec<FilterOp>, ErrorTree<Span>> = final_parser(filters)("|derp".into());
+
+        assert!(result.is_err());
     }
 }
