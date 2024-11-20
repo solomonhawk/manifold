@@ -250,14 +250,14 @@ impl Rule {
             .unwrap_or(1);
 
         // if `opts` contains a `FilterOp::join(S)`, set separator to S
-        let separator = filters
+        let (separator, conjunction) = filters
             .iter()
             .find_map(|o| match o {
-                FilterOp::Join(s) => Some(s.clone()),
+                FilterOp::Join(s, c) => Some((s.clone(), c.clone())),
                 _ => None,
             })
             // if separator is None, set to empty string
-            .unwrap_or("".to_string());
+            .unwrap_or(("".to_string(), None));
 
         let mut results = vec![];
         let mut failed_attempts = 0;
@@ -283,7 +283,19 @@ impl Rule {
             }
         }
 
-        Ok(results.join(separator.as_str()))
+        if conjunction.is_some() && results.len() > 1 {
+            let conjunction = conjunction.unwrap();
+            let last = results.pop().unwrap();
+
+            Ok(format!(
+                "{}{}{}",
+                results.join(separator.as_str()),
+                conjunction,
+                last
+            ))
+        } else {
+            Ok(results.join(separator.as_str()))
+        }
     }
 
     pub fn external_identifiers(&self) -> Vec<String> {
@@ -314,8 +326,8 @@ pub enum FilterOp {
     Capitalize,
     // (count)
     Unique(usize),
-    // (separator)
-    Join(String),
+    // (separator, conjunction)
+    Join(String, Option<String>),
 }
 
 impl FilterOp {
@@ -343,7 +355,7 @@ impl FilterOp {
                 }
             }
             FilterOp::Unique(_count) => {}
-            FilterOp::Join(_separator) => {}
+            FilterOp::Join(_separator, _conjunction) => {}
         }
     }
 }
@@ -607,7 +619,7 @@ mod tests {
                                 FilterOp::IndefiniteArticle,
                                 FilterOp::Capitalize,
                                 FilterOp::Unique(2),
-                                FilterOp::Join(", ".to_string()),
+                                FilterOp::Join(", ".to_string(), None),
                             ],
                         ),
                     ],

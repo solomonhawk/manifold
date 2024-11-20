@@ -1,6 +1,6 @@
 use nom::{
-    bytes::complete::{take_until, take_while1},
-    character::complete::{digit1, line_ending, not_line_ending},
+    bytes::complete::{take_until, take_while, take_while1},
+    character::complete::{char, digit1, line_ending, not_line_ending},
     combinator::{map_parser, opt},
     error::make_error,
     multi::{fold_many1, many0, many1, separated_list1},
@@ -270,6 +270,7 @@ fn filters(input: Span) -> ParserResult<Vec<FilterOp>> {
     .parse(input)
 }
 
+// `definite` or `indefinite` or `capitalize`
 fn transform_filter(input: Span) -> ParserResult<FilterOp> {
     ident
         .map_res(|s| s.parse())
@@ -277,6 +278,7 @@ fn transform_filter(input: Span) -> ParserResult<FilterOp> {
         .parse(input)
 }
 
+// `unique(3)`
 fn unique_filter(input: Span) -> ParserResult<FilterOp> {
     digit1
         .preceded_by(tag("unique("))
@@ -287,12 +289,21 @@ fn unique_filter(input: Span) -> ParserResult<FilterOp> {
         .parse(input)
 }
 
+// `join(', ')` or `join(', ', ' or ')`
 fn join_filter(input: Span) -> ParserResult<FilterOp> {
-    take_until("')")
-        .preceded_by(tag("join('"))
-        .terminated(tag("')"))
+    pair(str_like, opt(str_like.preceded_by(tag(", "))))
+        .preceded_by(tag("join("))
+        .terminated(tag(")"))
         .context("Invalid join filter")
-        .map(|s: Span| FilterOp::Join(s.to_string()))
+        .map(|(separator, conjunction): (Span, Option<Span>)| {
+            FilterOp::Join(separator.to_string(), conjunction.map(|s| s.to_string()))
+        })
+        .parse(input)
+}
+
+fn str_like(input: Span) -> ParserResult<Span> {
+    take_while(|c: char| c != '\'')
+        .delimited_by(char::<Span, ErrorTree<Span>>('\''))
         .parse(input)
 }
 
@@ -562,10 +573,6 @@ title: Shapes
         let result: Result<Rule, ErrorTree<Span>> =
             final_parser(rule_line)("1: {table|unique(3)|join(', ')}".into());
 
-        if let Err(e) = &result {
-            println!("{}", e);
-        }
-
         assert!(result.is_ok());
         let rule = result.unwrap();
 
@@ -577,11 +584,56 @@ title: Shapes
             assert_eq!(filters.len(), 2);
             assert!(matches!(
                 filters.as_slice(),
-                [FilterOp::Unique(3), FilterOp::Join(..),]
+                [FilterOp::Unique(3), FilterOp::Join(..)]
             ));
 
-            if let FilterOp::Join(sep) = &filters[1] {
+            if let FilterOp::Join(sep, conj) = &filters[1] {
                 assert_eq!(sep, ", ");
+                assert_eq!(conj, &None);
+            }
+        }
+    }
+
+    #[test]
+    fn join_filter_test() {
+        let result: Result<FilterOp, ErrorTree<Span>> =
+            final_parser(join_filter)("join(', ')".into());
+
+        if let Err(e) = &result {
+            println!("{}", e);
+        }
+
+        assert!(result.is_ok());
+        let filter = result.unwrap();
+
+        assert!(matches!(&filter, FilterOp::Join(..)));
+
+        if let FilterOp::Join(separator, conjunction) = &filter {
+            assert_eq!(separator, ", ");
+            assert!(conjunction.is_none());
+        }
+    }
+
+    #[test]
+    fn join_filter_conjunction_test() {
+        let result: Result<FilterOp, ErrorTree<Span>> =
+            final_parser(join_filter)("join(', ', ' or ')".into());
+
+        if let Err(e) = &result {
+            println!("{}", e);
+        }
+
+        assert!(result.is_ok());
+        let filter = result.unwrap();
+
+        assert!(matches!(&filter, FilterOp::Join(..)));
+
+        if let FilterOp::Join(separator, conjunction) = &filter {
+            assert_eq!(separator, ", ");
+            assert!(conjunction.is_some());
+
+            if let Some(conj) = conjunction {
+                assert_eq!(conj, " or ");
             }
         }
     }
