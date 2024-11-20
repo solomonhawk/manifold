@@ -230,10 +230,10 @@ export function TableUpdateForm({
 
   return (
     <Form {...form}>
-      <Header table={table} />
-
       <FlexCol asChild>
-        <form onSubmit={form.handleSubmit(handleSubmit)}>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-16">
+          <Header table={table} />
+
           <FlexCol asChild role="presentation" onKeyDown={handleKeyDown}>
             <fieldset
               disabled={form.formState.isSubmitting || isDisabled}

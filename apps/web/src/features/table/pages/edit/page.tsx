@@ -13,7 +13,7 @@ export function TableEdit() {
   });
 
   return (
-    <FlexCol className="space-y-16 p-12 sm:p-16">
+    <FlexCol className="p-12 sm:p-16">
       <TableUpdateForm
         table={table}
         isDisabled={tableQuery.isPlaceholderData}
