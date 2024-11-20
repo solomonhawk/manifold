@@ -83,7 +83,7 @@ export function UserProfileCreateForm() {
                 <FormLabel>Description</FormLabel>
 
                 <FormControl>
-                  <Textarea rows={3} {...field} />
+                  <Textarea autoSize rows={3} {...field} />
                 </FormControl>
 
                 <FormDescription>

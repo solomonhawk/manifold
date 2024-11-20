@@ -189,7 +189,7 @@ export function TablePublishDialog({
                   <FormLabel>Release Notes</FormLabel>
 
                   <FormControl>
-                    <Textarea rows={1} {...field} />
+                    <Textarea autoSize rows={1} {...field} />
                   </FormControl>
 
                   <FormMessage />

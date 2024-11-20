@@ -1,6 +1,6 @@
 import { useComposedRefs } from "@radix-ui/react-compose-refs";
 import autosize from "autosize";
-import * as React from "react";
+import React, { forwardRef, useEffect, useRef } from "react";
 
 import { cn } from "#lib/utils.ts";
 
@@ -9,13 +9,13 @@ export interface TextareaProps
   autoSize?: boolean;
 }
 
-const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
+const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ className, autoSize = false, ...props }, ref) => {
-    const inputRef = React.useRef<HTMLTextAreaElement>(null);
+    const inputRef = useRef<HTMLTextAreaElement>(null);
 
     const combinedRef = useComposedRefs(ref, inputRef);
 
-    React.useEffect(() => {
+    useEffect(() => {
       const input = inputRef.current;
 
       if (!(input && autoSize)) {

@@ -363,7 +363,6 @@ export function InputPanel({
 
       <Textarea
         id="table-editor-area"
-        autoSize
         className="resize-none bg-background/60 font-mono"
         ref={(node) => {
           // @NOTE: kind of annoying, RHF wants to use a ref callback, but we also want to use a ref object
