@@ -4,7 +4,7 @@ import * as React from "react";
 
 import { cn } from "#lib/utils.js";
 
-const buttonVariants = cva(
+export const buttonVariants = cva(
   "inline-flex shrink-0 items-center justify-center gap-8 whitespace-nowrap rounded-sm text-sm ring-0 ring-offset-0 ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
@@ -44,7 +44,7 @@ export interface ButtonProps
   asChild?: boolean;
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
     return (
@@ -58,54 +58,3 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   },
 );
 Button.displayName = "Button";
-
-interface ButtonGroupProps {
-  className?: string;
-  orientation?: "horizontal" | "vertical";
-  children: React.ReactElement<ButtonProps>[];
-}
-
-function ButtonGroup({
-  className,
-  orientation = "horizontal",
-  children,
-}: ButtonGroupProps) {
-  const totalButtons = React.Children.count(children);
-  const isHorizontal = orientation === "horizontal";
-  const isVertical = orientation === "vertical";
-
-  return (
-    <div
-      className={cn(
-        "flex",
-        {
-          "flex-col": isVertical,
-          "w-fit": isVertical,
-        },
-        className,
-      )}
-    >
-      {React.Children.map(children, (child, index) => {
-        const isFirst = index === 0;
-        const isLast = index === totalButtons - 1;
-
-        return React.cloneElement(child, {
-          className: cn(
-            {
-              "rounded-l-none": isHorizontal && !isFirst,
-              "rounded-r-none": isHorizontal && !isLast,
-              "border-l-0": isHorizontal && !isFirst,
-
-              "rounded-t-none": isVertical && !isFirst,
-              "rounded-b-none": isVertical && !isLast,
-              "border-t-0": isVertical && !isFirst,
-            },
-            child.props.className,
-          ),
-        });
-      })}
-    </div>
-  );
-}
-
-export { Button, ButtonGroup, buttonVariants };
