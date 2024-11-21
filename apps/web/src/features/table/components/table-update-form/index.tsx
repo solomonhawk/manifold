@@ -258,7 +258,7 @@ export function TableUpdateForm({
                           />
                         </FormControl>
 
-                        <FormMessage className="max-h-128 overflow-auto" />
+                        <FormMessage className="max-h-128 overflow-auto whitespace-pre-wrap" />
                       </FormItem>
                     </FlexCol>
                   );

@@ -3,7 +3,7 @@ import type { VariantProps } from "class-variance-authority";
 import * as React from "react";
 
 import { LoadingIndicator } from "#components/loading-indicator.tsx";
-import { buttonVariants } from "#components/ui/button.tsx";
+import { buttonVariants } from "#components/ui/button/button.tsx";
 import { cn } from "#lib/utils.ts";
 
 const AlertDialog = AlertDialogPrimitive.Root;

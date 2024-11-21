@@ -12,7 +12,7 @@
     "check-types": "tsc --noEmit",
     "lint": "eslint --cache \"src/**/*.{ts,tsx}\"",
     "lint:fix": "eslint --cache --fix \"src/**/*.{ts,tsx}\" --max-warnings 0",
-    "lint:strict": "eslint --cache \"**/*.{ts,tsx}\" --max-warnings 0",
+    "lint:strict": "eslint --cache \"src/**/*.{ts,tsx}\" --max-warnings 0",
     "test": "vitest run",
     "test:watch": "vitest",
     "bundle:vis": "vite-bundle-visualizer --port 5000"

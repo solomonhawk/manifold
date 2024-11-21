@@ -8,7 +8,7 @@ import { AnimatedList, AnimatedListItem } from "#components/animated-list.tsx";
 import { ClipboardCopy } from "#components/clipboard-copy.tsx";
 import { Typewriter } from "#components/typewriter.tsx";
 import { Badge } from "#components/ui/badge.tsx";
-import { Button } from "#components/ui/button.tsx";
+import { Button } from "#components/ui/button/button.tsx";
 import { Card, CardContent } from "#components/ui/card.tsx";
 import { transitionAlpha } from "#lib/animation.ts";
 import { cn } from "#lib/utils.ts";

@@ -24,9 +24,10 @@
     },
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/**", "web/dist/**"]
+      "inputs": ["$TURBO_DEFAULT$", ".env*", "!**/*.stories.{tsx,jsx,mdx}"],
+      "outputs": ["dist/**", "web/dist/**", "storybook-static/**"]
     },
+    "build:storybook": {},
     "preview": {
       "cache": false,
       "persistent": true,

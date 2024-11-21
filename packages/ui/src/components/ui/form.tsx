@@ -12,7 +12,7 @@ import {
 } from "react-hook-form";
 
 import { LoadingIndicator } from "#components/loading-indicator.tsx";
-import { Button } from "#components/ui/button.tsx";
+import { Button } from "#components/ui/button/button.tsx";
 import { Label } from "#components/ui/label.tsx";
 import { useStateGuard } from "#hooks/use-state-guard.ts";
 import { cn } from "#lib/utils.ts";

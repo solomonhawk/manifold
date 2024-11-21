@@ -19,12 +19,15 @@
     "./tailwind.config": "./tailwind.config.ts",
     "./lib/*": "./src/lib/*.ts",
     "./hooks/*": "./src/hooks/*.ts",
-    "./components/*": "./src/components/*.tsx"
+    "./components/*": "./src/components/*.tsx",
+    "./components/ui/button": "./src/components/ui/button/index.ts",
+    "./components/ui/pagination": "./src/components/ui/pagination/index.ts"
   },
   "devDependencies": {
     "@manifold/eslint-config": "*",
     "@manifold/tailwind-config": "*",
     "@manifold/typescript-config": "*",
+    "@storybook/react": "^8.4.5",
     "@testing-library/jest-dom": "6.6.3",
     "@testing-library/react": "16.0.1",
     "@types/autosize": "^4.0.3",

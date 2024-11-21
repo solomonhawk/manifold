@@ -1,6 +1,6 @@
 import { forwardRef, type MouseEvent } from "react";
 
-import { Button, type ButtonProps } from "#components/ui/button.tsx";
+import { Button, type ButtonProps } from "#components/ui/button/button.tsx";
 import { cn } from "#lib/utils.ts";
 
 type ReactiveButtonProps = Omit<ButtonProps, "variant" | "onMouseMove"> & {

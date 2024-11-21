@@ -1,4 +1,4 @@
 {
   "extends": "@manifold/typescript-config/base.json",
-  "include": ["."]
+  "include": [".", "../types/src/viget-tailwindcss-plugins.d.ts"]
 }

@@ -1,0 +1,13 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build:storybook": {
+      "dependsOn": ["^build:storybook"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "../../packages/**/*.stories.{tsx,jsx,mdx}"
+      ],
+      "outputs": ["storybook-static/**"]
+    }
+  }
+}

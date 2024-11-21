@@ -4,7 +4,7 @@ import { GoChevronLeft, GoChevronRight } from "react-icons/go";
 import { Link } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 
-import { Button, type ButtonProps } from "#components/ui/button.js";
+import { Button, type ButtonProps } from "#components/ui/button/button.tsx";
 import { FormControl, FormLabel } from "#components/ui/form.js";
 import {
   Select,

@@ -2,7 +2,7 @@ import { GiPlatform, GiSecretDoor } from "react-icons/gi";
 
 import { ReactiveButton } from "#components/reactive-button.js";
 import { Avatar, AvatarFallback, AvatarImage } from "#components/ui/avatar.tsx";
-import { Button } from "#components/ui/button.tsx";
+import { Button } from "#components/ui/button/button.tsx";
 import { cn, initials } from "#lib/utils.ts";
 
 type Props = {

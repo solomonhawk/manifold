@@ -7,7 +7,7 @@ import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import { Button } from "@manifold/ui/components/ui/button";
 import { FlexCol } from "@manifold/ui/components/ui/flex";
 import { Input, InputAdornment } from "@manifold/ui/components/ui/input";
-import { Pagination } from "@manifold/ui/components/ui/pagination/pagination";
+import { Pagination } from "@manifold/ui/components/ui/pagination";
 import {
   Select,
   SelectContent,

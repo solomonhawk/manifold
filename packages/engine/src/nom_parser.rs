@@ -193,11 +193,11 @@ pub fn rule(input: Span) -> ParserResult<(Span, Vec<RuleInst>)> {
     // for us to transform into `Error`. It happily returns partial results
     // when it encounters an error. Cut _should_ work but doesn't.
     let (input, parsed) = many1(
-            rule_dice_roll
-            .or(rule_literal)
-            .or(imported_rule_interpolation)
-            .or(rule_interpolation)
-          )
+          rule_dice_roll
+          .or(rule_literal)
+          .or(imported_rule_interpolation)
+          .or(rule_interpolation)
+        )
         .context("Invalid rule text, expected a dice roll (`2d4`), an interpolation (`{other}`) or a literal")
         .with_recognized()
         .parse(input)?;
@@ -518,6 +518,15 @@ title: Shapes
         if let RuleInst::Literal(lit) = &rule.parts[0] {
             assert_eq!(lit.as_str(), "literal");
         }
+    }
+
+    #[test]
+    fn rule_line_error_test() {
+        let result: Result<Rule, ErrorTree<Span>> = final_parser(rule_line)("d: literal".into());
+
+        assert!(result.is_err());
+        println!("{:#?}", result);
+        println!("{}", result.unwrap_err());
     }
 
     #[test]

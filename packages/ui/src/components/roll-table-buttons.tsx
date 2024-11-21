@@ -4,7 +4,6 @@ import {
   AnimatedListItem,
 } from "@manifold/ui/components/animated-list";
 import { ClipboardCopy } from "@manifold/ui/components/clipboard-copy";
-import { Button } from "@manifold/ui/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
@@ -20,7 +19,8 @@ import {
   GoListUnordered,
 } from "react-icons/go";
 
-import { cn } from "#lib/utils.js";
+import { Button } from "#components/ui/button/button.tsx";
+import { cn } from "#lib/utils.ts";
 
 type Props = {
   className?: string;
