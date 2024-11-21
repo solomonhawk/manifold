@@ -3,20 +3,24 @@ import {
   AnimatedList,
   AnimatedListItem,
 } from "@manifold/ui/components/animated-list";
-import { ReactiveButton } from "@manifold/ui/components/reactive-button";
-import { Button } from "@manifold/ui/components/ui/button";
-import { Card, CardContent, CardHeader } from "@manifold/ui/components/ui/card";
+import { Button } from "@manifold/ui/components/core/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+} from "@manifold/ui/components/core/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-} from "@manifold/ui/components/ui/select";
+} from "@manifold/ui/components/core/select";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@manifold/ui/components/ui/tooltip";
+} from "@manifold/ui/components/core/tooltip";
+import { ReactiveButton } from "@manifold/ui/components/reactive-button";
 import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
 import { transitionGamma } from "@manifold/ui/lib/animation";
 import { cn } from "@manifold/ui/lib/utils";

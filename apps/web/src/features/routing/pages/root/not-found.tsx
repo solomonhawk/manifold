@@ -1,11 +1,11 @@
-import { Button } from "@manifold/ui/components/ui/button";
+import { Button } from "@manifold/ui/components/core/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@manifold/ui/components/ui/card";
+} from "@manifold/ui/components/core/card";
 import { GiSuspicious } from "react-icons/gi";
 import { GoChevronRight } from "react-icons/go";
 import { Link } from "react-router-dom";

@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef } from "react";
 
-import { toast } from "#components/ui/toaster.tsx";
+import { toast } from "#components/core/toaster/toaster.js";
 
 type ToastId = string | number | undefined;
 

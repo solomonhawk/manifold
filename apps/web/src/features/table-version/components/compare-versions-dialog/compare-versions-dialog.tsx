@@ -1,20 +1,20 @@
 import type { RouterOutput } from "@manifold/router";
-import { FullScreenLoader } from "@manifold/ui/components/full-screen-loader";
-import { TableIdentifier } from "@manifold/ui/components/table-identifier";
-import { Button } from "@manifold/ui/components/ui/button";
+import { Button } from "@manifold/ui/components/core/button";
 import {
   DrawerClose,
   DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-} from "@manifold/ui/components/ui/drawer";
+} from "@manifold/ui/components/core/drawer";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-} from "@manifold/ui/components/ui/select";
+} from "@manifold/ui/components/core/select";
+import { FullScreenLoader } from "@manifold/ui/components/full-screen-loader";
+import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import type { Change, WordsOptions } from "diff";
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { GoArrowSwitch, GoDash, GoGitCompare, GoX } from "react-icons/go";

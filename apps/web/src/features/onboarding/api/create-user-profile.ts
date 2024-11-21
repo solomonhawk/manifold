@@ -1,5 +1,5 @@
 import { getSession } from "@manifold/auth/client";
-import { toast } from "@manifold/ui/components/ui/toaster";
+import { toast } from "@manifold/ui/components/core/toaster";
 import { useRef } from "react";
 
 import { useAuth } from "~features/auth/hooks/use-auth";

@@ -1,5 +1,5 @@
-import { Button } from "@manifold/ui/components/ui/button";
-import { Card, CardContent } from "@manifold/ui/components/ui/card";
+import { Button } from "@manifold/ui/components/core/button";
+import { Card, CardContent } from "@manifold/ui/components/core/card";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
 import { AnimatePresence, motion } from "motion/react";
 

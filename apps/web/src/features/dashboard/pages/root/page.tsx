@@ -1,4 +1,4 @@
-import { FlexCol } from "@manifold/ui/components/ui/flex";
+import { FlexCol } from "@manifold/ui/components/core/flex";
 import { useLoaderData } from "react-router-dom";
 
 import { DashboardHeader } from "~features/dashboard/components/dashboard-header";

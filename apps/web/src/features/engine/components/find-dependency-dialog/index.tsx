@@ -3,7 +3,7 @@ import {
   Dialog,
   DialogContent,
   DialogLoader,
-} from "@manifold/ui/components/ui/dialog";
+} from "@manifold/ui/components/core/dialog";
 import { useReturnFocus } from "@manifold/ui/hooks/use-return-focus";
 import { Suspense } from "react";
 

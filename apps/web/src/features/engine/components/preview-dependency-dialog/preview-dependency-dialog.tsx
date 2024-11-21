@@ -1,14 +1,14 @@
 import { injectNamespacePragmasWorkaround } from "@manifold/lib/utils/engine";
-import { ReactiveButton } from "@manifold/ui/components/reactive-button";
-import { TableIdentifier } from "@manifold/ui/components/table-identifier";
-import { Button } from "@manifold/ui/components/ui/button";
+import { Button } from "@manifold/ui/components/core/button";
 import {
   DrawerClose,
   DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-} from "@manifold/ui/components/ui/drawer";
+} from "@manifold/ui/components/core/drawer";
+import { ReactiveButton } from "@manifold/ui/components/reactive-button";
+import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import { useCallback } from "react";
 import { GoX } from "react-icons/go";
 import { useBlocker } from "react-router-dom";

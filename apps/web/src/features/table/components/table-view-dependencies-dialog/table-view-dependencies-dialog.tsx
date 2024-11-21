@@ -1,12 +1,12 @@
-import { TableIdentifier } from "@manifold/ui/components/table-identifier";
-import { Button } from "@manifold/ui/components/ui/button";
+import { Button } from "@manifold/ui/components/core/button";
 import {
   DrawerClose,
   DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-} from "@manifold/ui/components/ui/drawer";
+} from "@manifold/ui/components/core/drawer";
+import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import { useCallback } from "react";
 import { GoLinkExternal, GoX } from "react-icons/go";
 import { useBlocker } from "react-router-dom";

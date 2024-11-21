@@ -1,13 +1,13 @@
 import { isEmpty } from "@manifold/lib/utils/object";
 import type { RouterOutput } from "@manifold/router";
-import { FlexCol } from "@manifold/ui/components/ui/flex";
+import { FlexCol } from "@manifold/ui/components/core/flex";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormMessage,
-} from "@manifold/ui/components/ui/form";
+} from "@manifold/ui/components/core/form";
 import { useZodForm } from "@manifold/ui/hooks/use-zod-form";
 import { tableUpdateInput, z } from "@manifold/validators";
 import { useAtomValue } from "jotai";

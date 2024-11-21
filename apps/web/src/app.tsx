@@ -1,6 +1,6 @@
 import { SessionProvider } from "@manifold/auth/client";
-import { Toaster } from "@manifold/ui/components/ui/toaster";
-import { TooltipProvider } from "@manifold/ui/components/ui/tooltip";
+import { Toaster } from "@manifold/ui/components/core/toaster";
+import { TooltipProvider } from "@manifold/ui/components/core/tooltip";
 import { cn } from "@manifold/ui/lib/utils";
 import { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";

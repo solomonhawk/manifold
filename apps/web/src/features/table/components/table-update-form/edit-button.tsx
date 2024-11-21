@@ -1,6 +1,6 @@
 import { compose } from "@manifold/lib/utils/fn";
+import { Button } from "@manifold/ui/components/core/button";
 import { LoadingIndicator } from "@manifold/ui/components/loading-indicator";
-import { Button } from "@manifold/ui/components/ui/button";
 import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
 import { cn } from "@manifold/ui/lib/utils";
 import { forwardRef } from "react";

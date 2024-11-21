@@ -3,16 +3,16 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@manifold/ui/components/ui/accordion";
-import { Button } from "@manifold/ui/components/ui/button";
+} from "@manifold/ui/components/core/accordion";
+import { Button } from "@manifold/ui/components/core/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@manifold/ui/components/ui/card";
-import { FlexCol } from "@manifold/ui/components/ui/flex";
+} from "@manifold/ui/components/core/card";
+import { FlexCol } from "@manifold/ui/components/core/flex";
 import { isError } from "@tanstack/react-query";
 import { GiDiceTwentyFacesOne } from "react-icons/gi";
 import { GoChevronRight } from "react-icons/go";

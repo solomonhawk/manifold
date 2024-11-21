@@ -1,15 +1,13 @@
 import { pluralize } from "@manifold/lib/utils/string";
-import { LoadingIndicator } from "@manifold/ui/components/loading-indicator";
-import { TableIdentifier } from "@manifold/ui/components/table-identifier";
-import { Button } from "@manifold/ui/components/ui/button";
-import { CommandShortcut } from "@manifold/ui/components/ui/command";
+import { Button } from "@manifold/ui/components/core/button";
+import { CommandShortcut } from "@manifold/ui/components/core/command";
 import {
   DialogClose,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@manifold/ui/components/ui/dialog";
+} from "@manifold/ui/components/core/dialog";
 import {
   Form,
   FormControl,
@@ -18,14 +16,16 @@ import {
   FormLabel,
   FormMessage,
   FormSubmitButton,
-} from "@manifold/ui/components/ui/form";
-import { Input, InputAdornment } from "@manifold/ui/components/ui/input";
+} from "@manifold/ui/components/core/form";
+import { Input, InputAdornment } from "@manifold/ui/components/core/input";
 import {
   Tooltip,
   TooltipArrow,
   TooltipContent,
   TooltipTrigger,
-} from "@manifold/ui/components/ui/tooltip";
+} from "@manifold/ui/components/core/tooltip";
+import { LoadingIndicator } from "@manifold/ui/components/loading-indicator";
+import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import { useZodForm } from "@manifold/ui/hooks/use-zod-form";
 import { cn } from "@manifold/ui/lib/utils";
 import {

@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 
-import { toast } from "#components/ui/toaster.tsx";
+import { toast } from "#components/core/toaster/toaster.js";
 
 function fallbackCopy(text: string) {
   const tempTextArea = document.createElement("textarea");

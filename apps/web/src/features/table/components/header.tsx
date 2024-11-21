@@ -1,24 +1,24 @@
 import { isEmpty } from "@manifold/lib/utils/object";
 import { capitalize } from "@manifold/lib/utils/string";
 import type { RouterOutput } from "@manifold/router";
-import { Button } from "@manifold/ui/components/ui/button";
+import { Button } from "@manifold/ui/components/core/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItemNaked,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@manifold/ui/components/ui/dropdown-menu";
+} from "@manifold/ui/components/core/dropdown-menu";
 import {
   FormSubmitButton,
   FormSubmitStatus,
-} from "@manifold/ui/components/ui/form";
+} from "@manifold/ui/components/core/form";
 import {
   Tooltip,
   TooltipArrow,
   TooltipContent,
   TooltipTrigger,
-} from "@manifold/ui/components/ui/tooltip";
+} from "@manifold/ui/components/core/tooltip";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
 import { formatRelative } from "date-fns";
 import { useAtomValue } from "jotai";

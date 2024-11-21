@@ -3,18 +3,18 @@ import {
   AnimatedList,
   AnimatedListItem,
 } from "@manifold/ui/components/animated-list";
-import { TableIdentifier } from "@manifold/ui/components/table-identifier";
-import { Button } from "@manifold/ui/components/ui/button";
-import { FlexCol } from "@manifold/ui/components/ui/flex";
-import { Input, InputAdornment } from "@manifold/ui/components/ui/input";
-import { Pagination } from "@manifold/ui/components/ui/pagination";
+import { Button } from "@manifold/ui/components/core/button";
+import { FlexCol } from "@manifold/ui/components/core/flex";
+import { Input, InputAdornment } from "@manifold/ui/components/core/input";
+import { Pagination } from "@manifold/ui/components/core/pagination";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-} from "@manifold/ui/components/ui/select";
-import { Separator } from "@manifold/ui/components/ui/separator";
+} from "@manifold/ui/components/core/select";
+import { Separator } from "@manifold/ui/components/core/separator";
+import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import { usePaginationURLState } from "@manifold/ui/hooks/pagination/use-pagination-url-state";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
 import { tableListOrderByMapping } from "@manifold/validators";

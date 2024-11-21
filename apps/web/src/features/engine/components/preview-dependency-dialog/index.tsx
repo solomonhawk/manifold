@@ -3,7 +3,7 @@ import {
   Drawer,
   DrawerContent,
   DrawerLoader,
-} from "@manifold/ui/components/ui/drawer";
+} from "@manifold/ui/components/core/drawer";
 import { useReturnFocus } from "@manifold/ui/hooks/use-return-focus";
 import { Suspense } from "react";
 

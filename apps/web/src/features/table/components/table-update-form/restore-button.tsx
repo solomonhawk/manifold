@@ -1,5 +1,5 @@
+import { Button } from "@manifold/ui/components/core/button";
 import { LoadingIndicator } from "@manifold/ui/components/loading-indicator";
-import { Button } from "@manifold/ui/components/ui/button";
 import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
 import { type MouseEvent } from "react";
 import { GoIterations } from "react-icons/go";

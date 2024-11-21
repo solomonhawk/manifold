@@ -1,5 +1,14 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@manifold/typescript-config/base.json",
-  "include": ["src"]
+  "include": ["src"],
+  "compilerOptions": {
+    // workaround to help VS Code TS auto-complete node subpath imports
+    "paths": {
+      "#lib/*": ["./src/lib/*.ts"],
+      "#hooks/*": ["./src/hooks/*.ts"],
+      "#components/*": ["./src/components/*/index.ts"],
+      "#components/core/*": ["./src/components/core/*/index.ts"]
+    }
+  }
 }

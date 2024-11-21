@@ -1,11 +1,11 @@
-import { LoadingIndicator } from "@manifold/ui/components/loading-indicator";
-import { Button } from "@manifold/ui/components/ui/button";
+import { Button } from "@manifold/ui/components/core/button";
 import {
   Tooltip,
   TooltipArrow,
   TooltipContent,
   TooltipTrigger,
-} from "@manifold/ui/components/ui/tooltip";
+} from "@manifold/ui/components/core/tooltip";
+import { LoadingIndicator } from "@manifold/ui/components/loading-indicator";
 import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
 import { type MouseEvent, useEffect, useRef } from "react";
 import { GoHeart, GoHeartFill } from "react-icons/go";

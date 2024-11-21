@@ -1,4 +1,7 @@
-import { type ExternalToast, toast } from "@manifold/ui/components/ui/toaster";
+import {
+  type ExternalToast,
+  toast,
+} from "@manifold/ui/components/core/toaster";
 
 export function toastSuccess(message: string, options?: ExternalToast) {
   return toast.success(message, {

@@ -1,12 +1,12 @@
 import type { TableVersionSummary } from "@manifold/db";
-import { LoadingIndicator } from "@manifold/ui/components/loading-indicator";
-import { ReactiveButton } from "@manifold/ui/components/reactive-button";
 import {
   Tooltip,
   TooltipArrow,
   TooltipContent,
   TooltipTrigger,
-} from "@manifold/ui/components/ui/tooltip";
+} from "@manifold/ui/components/core/tooltip";
+import { LoadingIndicator } from "@manifold/ui/components/loading-indicator";
+import { ReactiveButton } from "@manifold/ui/components/reactive-button";
 import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
 import { useAtomValue } from "jotai";
 import { GoGitBranch } from "react-icons/go";

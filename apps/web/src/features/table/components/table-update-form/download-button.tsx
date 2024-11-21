@@ -1,5 +1,5 @@
 import { isEmpty } from "@manifold/lib/utils/object";
-import { Button } from "@manifold/ui/components/ui/button";
+import { Button } from "@manifold/ui/components/core/button";
 import { cn } from "@manifold/ui/lib/utils";
 import { forwardRef } from "react";
 import { useFormContext, useWatch } from "react-hook-form";

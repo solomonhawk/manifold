@@ -1,4 +1,4 @@
-import { FlexCol } from "@manifold/ui/components/ui/flex";
+import { FlexCol } from "@manifold/ui/components/core/flex";
 import { LayoutGroup } from "motion/react";
 import { type RefObject } from "react";
 

@@ -3,8 +3,8 @@ import {
   CommandGroup,
   CommandItem,
   CommandSeparator,
-} from "@manifold/ui/components/ui/command";
-import { Skeleton } from "@manifold/ui/components/ui/skeleton";
+} from "@manifold/ui/components/core/command";
+import { Skeleton } from "@manifold/ui/components/core/skeleton";
 import { useCommandPalette } from "@manifold/ui/hooks/use-command-palette";
 import { GoFile, GoHome, GoListUnordered, GoSearch } from "react-icons/go";
 import {

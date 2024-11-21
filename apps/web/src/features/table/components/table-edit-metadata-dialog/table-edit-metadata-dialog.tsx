@@ -1,12 +1,11 @@
-import { TableIdentifier } from "@manifold/ui/components/table-identifier";
-import { Button } from "@manifold/ui/components/ui/button";
+import { Button } from "@manifold/ui/components/core/button";
 import {
   DialogClose,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@manifold/ui/components/ui/dialog";
+} from "@manifold/ui/components/core/dialog";
 import {
   Form,
   FormControl,
@@ -15,9 +14,10 @@ import {
   FormLabel,
   FormMessage,
   FormSubmitButton,
-} from "@manifold/ui/components/ui/form";
-import { Input } from "@manifold/ui/components/ui/input";
-import { Textarea } from "@manifold/ui/components/ui/textarea";
+} from "@manifold/ui/components/core/form";
+import { Input } from "@manifold/ui/components/core/input";
+import { Textarea } from "@manifold/ui/components/core/textarea";
+import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
 import { useZodForm } from "@manifold/ui/hooks/use-zod-form";
 import { type TableUpdateInput, tableUpdateInput } from "@manifold/validators";

@@ -3,13 +3,13 @@ import {
   AnimatedList,
   AnimatedListItem,
 } from "@manifold/ui/components/animated-list";
-import { Typewriter } from "@manifold/ui/components/typewriter";
-import { Button } from "@manifold/ui/components/ui/button";
+import { Button } from "@manifold/ui/components/core/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@manifold/ui/components/ui/tooltip";
+} from "@manifold/ui/components/core/tooltip";
+import { Typewriter } from "@manifold/ui/components/typewriter";
 import { transitionAlpha, transitionBeta } from "@manifold/ui/lib/animation";
 import { LayoutGroup, motion, useReducedMotion } from "motion/react";
 import {

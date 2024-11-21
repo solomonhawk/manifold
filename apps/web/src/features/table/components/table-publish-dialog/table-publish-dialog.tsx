@@ -1,20 +1,19 @@
 import { pluralize } from "@manifold/lib/utils/string";
-import { TableIdentifier } from "@manifold/ui/components/table-identifier";
-import { Button } from "@manifold/ui/components/ui/button";
+import { Button } from "@manifold/ui/components/core/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@manifold/ui/components/ui/card";
+} from "@manifold/ui/components/core/card";
 import {
   DialogClose,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@manifold/ui/components/ui/dialog";
+} from "@manifold/ui/components/core/dialog";
 import {
   Form,
   FormControl,
@@ -23,14 +22,15 @@ import {
   FormLabel,
   FormMessage,
   FormSubmitButton,
-} from "@manifold/ui/components/ui/form";
+} from "@manifold/ui/components/core/form";
 import {
   Notice,
   NoticeContent,
   NoticeIcon,
-} from "@manifold/ui/components/ui/notice";
-import { Separator } from "@manifold/ui/components/ui/separator";
-import { Textarea } from "@manifold/ui/components/ui/textarea";
+} from "@manifold/ui/components/core/notice";
+import { Separator } from "@manifold/ui/components/core/separator";
+import { Textarea } from "@manifold/ui/components/core/textarea";
+import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
 import { useZodForm } from "@manifold/ui/hooks/use-zod-form";
 import { z } from "@manifold/validators";

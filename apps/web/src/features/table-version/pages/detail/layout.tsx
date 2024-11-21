@@ -1,14 +1,14 @@
 import type { RouterOutput } from "@manifold/router";
 import { ClipboardCopy } from "@manifold/ui/components/clipboard-copy";
-import { TableIdentifier } from "@manifold/ui/components/table-identifier";
-import { Button } from "@manifold/ui/components/ui/button";
-import { FlexCol } from "@manifold/ui/components/ui/flex";
+import { Button } from "@manifold/ui/components/core/button";
+import { FlexCol } from "@manifold/ui/components/core/flex";
 import {
   Tooltip,
   TooltipArrow,
   TooltipContent,
   TooltipTrigger,
-} from "@manifold/ui/components/ui/tooltip";
+} from "@manifold/ui/components/core/tooltip";
+import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
 import { AnimatePresence, motion } from "motion/react";
 import {

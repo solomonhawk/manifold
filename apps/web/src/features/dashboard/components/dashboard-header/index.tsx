@@ -4,7 +4,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@manifold/ui/components/ui/card";
+} from "@manifold/ui/components/core/card";
 import { cn } from "@manifold/ui/lib/utils";
 
 import { useRequiredAuth } from "~features/auth/hooks/use-auth";

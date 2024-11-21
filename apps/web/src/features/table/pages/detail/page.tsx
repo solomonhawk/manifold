@@ -1,21 +1,21 @@
 import { injectNamespacePragmasWorkaround } from "@manifold/lib/utils/engine";
 import { buildTableIdentifier } from "@manifold/lib/utils/table-identifier";
 import { ClipboardCopy } from "@manifold/ui/components/clipboard-copy";
-import { TableIdentifier } from "@manifold/ui/components/table-identifier";
-import { Badge } from "@manifold/ui/components/ui/badge";
-import { Button } from "@manifold/ui/components/ui/button";
-import { FlexCol } from "@manifold/ui/components/ui/flex";
+import { Badge } from "@manifold/ui/components/core/badge";
+import { Button } from "@manifold/ui/components/core/button";
+import { FlexCol } from "@manifold/ui/components/core/flex";
 import {
   Notice,
   NoticeContent,
   NoticeIcon,
-} from "@manifold/ui/components/ui/notice";
+} from "@manifold/ui/components/core/notice";
 import {
   Tooltip,
   TooltipArrow,
   TooltipContent,
   TooltipTrigger,
-} from "@manifold/ui/components/ui/tooltip";
+} from "@manifold/ui/components/core/tooltip";
+import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
 import { motion } from "motion/react";
 import {

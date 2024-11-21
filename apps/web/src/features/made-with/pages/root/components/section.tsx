@@ -3,8 +3,8 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@manifold/ui/components/ui/card";
-import { Separator } from "@manifold/ui/components/ui/separator";
+} from "@manifold/ui/components/core/card";
+import { Separator } from "@manifold/ui/components/core/separator";
 import { motion, type Variants } from "motion/react";
 
 import type { MadeWithSection } from "~features/made-with/pages/root/page";

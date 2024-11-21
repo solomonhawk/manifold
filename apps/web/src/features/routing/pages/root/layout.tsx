@@ -1,9 +1,9 @@
 import { signIn, signOut } from "@manifold/auth/client";
+import { Badge } from "@manifold/ui/components/core/badge";
+import { Button } from "@manifold/ui/components/core/button";
+import { Separator } from "@manifold/ui/components/core/separator";
+import { Skeleton } from "@manifold/ui/components/core/skeleton";
 import { GlobalHeader } from "@manifold/ui/components/global-header";
-import { Badge } from "@manifold/ui/components/ui/badge";
-import { Button } from "@manifold/ui/components/ui/button";
-import { Separator } from "@manifold/ui/components/ui/separator";
-import { Skeleton } from "@manifold/ui/components/ui/skeleton";
 import { Outlet, ScrollRestoration } from "react-router-dom";
 import { match } from "ts-pattern";
 

@@ -3,8 +3,8 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@manifold/ui/components/ui/card";
-import { FlexCol } from "@manifold/ui/components/ui/flex";
+} from "@manifold/ui/components/core/card";
+import { FlexCol } from "@manifold/ui/components/core/flex";
 import { GoPackage } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
 

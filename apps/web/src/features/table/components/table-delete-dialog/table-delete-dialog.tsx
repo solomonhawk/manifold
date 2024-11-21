@@ -1,5 +1,3 @@
-import { LoadingIndicator } from "@manifold/ui/components/loading-indicator";
-import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import {
   AlertDialogAction,
   AlertDialogCancel,
@@ -7,12 +5,14 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@manifold/ui/components/ui/alert-dialog";
+} from "@manifold/ui/components/core/alert-dialog";
 import {
   Notice,
   NoticeContent,
   NoticeIcon,
-} from "@manifold/ui/components/ui/notice";
+} from "@manifold/ui/components/core/notice";
+import { LoadingIndicator } from "@manifold/ui/components/loading-indicator";
+import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import { useStateGuard } from "@manifold/ui/hooks/use-state-guard";
 import { type MouseEvent } from "react";
 import { GoInfo } from "react-icons/go";

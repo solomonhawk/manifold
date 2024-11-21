@@ -1,12 +1,12 @@
 import type { RollResult, TableMetadata } from "@manifold/lib/models/roll";
-import { RollResultsList } from "@manifold/ui/components/roll-results-list";
-import { RollTableButtons } from "@manifold/ui/components/roll-table-buttons";
-import { Button } from "@manifold/ui/components/ui/button";
+import { Button } from "@manifold/ui/components/core/button";
 import {
   Notice,
   NoticeContent,
   NoticeIcon,
-} from "@manifold/ui/components/ui/notice";
+} from "@manifold/ui/components/core/notice";
+import { RollResultsList } from "@manifold/ui/components/roll-results-list";
+import { RollTableButtons } from "@manifold/ui/components/roll-table-buttons";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
 import { motion, type MotionProps } from "motion/react";
 import { useCallback, useLayoutEffect, useMemo, useState } from "react";

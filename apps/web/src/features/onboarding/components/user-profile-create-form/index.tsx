@@ -1,5 +1,4 @@
 import { getRandomElement } from "@manifold/lib/utils/array";
-import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import {
   Form,
   FormControl,
@@ -9,9 +8,10 @@ import {
   FormLabel,
   FormMessage,
   FormSubmitButton,
-} from "@manifold/ui/components/ui/form";
-import { Input } from "@manifold/ui/components/ui/input";
-import { Textarea } from "@manifold/ui/components/ui/textarea";
+} from "@manifold/ui/components/core/form";
+import { Input } from "@manifold/ui/components/core/input";
+import { Textarea } from "@manifold/ui/components/core/textarea";
+import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import { useZodForm } from "@manifold/ui/hooks/use-zod-form";
 import { userProfileCreateInput, type z } from "@manifold/validators";
 import { useMemo } from "react";

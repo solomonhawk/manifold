@@ -1,14 +1,14 @@
 import { signIn } from "@manifold/auth/client";
-import { LoadingIndicator } from "@manifold/ui/components/loading-indicator";
-import { ReactiveButton } from "@manifold/ui/components/reactive-button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@manifold/ui/components/ui/card";
-import { FlexCol } from "@manifold/ui/components/ui/flex";
+} from "@manifold/ui/components/core/card";
+import { FlexCol } from "@manifold/ui/components/core/flex";
+import { LoadingIndicator } from "@manifold/ui/components/loading-indicator";
+import { ReactiveButton } from "@manifold/ui/components/reactive-button";
 import { useState } from "react";
 import { GiHobbitDoor } from "react-icons/gi";
 import { useSearchParams } from "react-router-dom";

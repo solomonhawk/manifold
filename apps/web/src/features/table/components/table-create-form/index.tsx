@@ -1,6 +1,4 @@
 import type { RouterOutput } from "@manifold/router";
-import { TableIdentifierInput } from "@manifold/ui/components/table-identifier-input";
-import { TableIdentifierPreview } from "@manifold/ui/components/table-identifier-preview";
 import {
   Form,
   FormControl,
@@ -10,15 +8,17 @@ import {
   FormLabel,
   FormMessage,
   FormSubmitButton,
-} from "@manifold/ui/components/ui/form";
-import { Input } from "@manifold/ui/components/ui/input";
-import { Textarea } from "@manifold/ui/components/ui/textarea";
+} from "@manifold/ui/components/core/form";
+import { Input } from "@manifold/ui/components/core/input";
+import { Textarea } from "@manifold/ui/components/core/textarea";
 import {
   Tooltip,
   TooltipArrow,
   TooltipContent,
   TooltipTrigger,
-} from "@manifold/ui/components/ui/tooltip";
+} from "@manifold/ui/components/core/tooltip";
+import { TableIdentifierInput } from "@manifold/ui/components/table-identifier-input";
+import { TableIdentifierPreview } from "@manifold/ui/components/table-identifier-preview";
 import { useZodForm } from "@manifold/ui/hooks/use-zod-form";
 import { tableCreateInput, type z } from "@manifold/validators";
 import { type SubmitHandler } from "react-hook-form";

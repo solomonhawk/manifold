@@ -4,13 +4,13 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@manifold/ui/components/ui/card";
-import { FlexCol } from "@manifold/ui/components/ui/flex";
+} from "@manifold/ui/components/core/card";
+import { FlexCol } from "@manifold/ui/components/core/flex";
 import {
   Notice,
   NoticeContent,
   NoticeIcon,
-} from "@manifold/ui/components/ui/notice";
+} from "@manifold/ui/components/core/notice";
 import { GoQuestion } from "react-icons/go";
 
 import { UserProfileCreateForm } from "~features/onboarding/components/user-profile-create-form";

@@ -1,11 +1,11 @@
 import type { RouterOutput } from "@manifold/router";
-import { Button } from "@manifold/ui/components/ui/button";
+import { Button } from "@manifold/ui/components/core/button";
 import {
   Tooltip,
   TooltipArrow,
   TooltipContent,
   TooltipTrigger,
-} from "@manifold/ui/components/ui/tooltip";
+} from "@manifold/ui/components/core/tooltip";
 import { GoPackageDependencies } from "react-icons/go";
 
 import { DialogManager, DIALOGS } from "~features/dialog-manager";

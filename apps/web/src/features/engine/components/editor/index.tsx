@@ -1,10 +1,10 @@
 import type { RouterOutput } from "@manifold/router";
-import { FlexCol } from "@manifold/ui/components/ui/flex";
+import { FlexCol } from "@manifold/ui/components/core/flex";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from "@manifold/ui/components/ui/resizable";
+} from "@manifold/ui/components/core/resizable";
 import { type MutableRefObject, useCallback, useRef } from "react";
 import type { RefCallBack } from "react-hook-form";
 

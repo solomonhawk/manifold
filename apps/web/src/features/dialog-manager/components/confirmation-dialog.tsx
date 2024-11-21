@@ -8,7 +8,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@manifold/ui/components/ui/alert-dialog";
+} from "@manifold/ui/components/core/alert-dialog";
 
 type Props = {
   title?: string;

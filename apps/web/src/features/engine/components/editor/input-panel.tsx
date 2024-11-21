@@ -7,9 +7,9 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@manifold/ui/components/ui/command";
-import { FlexCol } from "@manifold/ui/components/ui/flex";
-import { Textarea } from "@manifold/ui/components/ui/textarea";
+} from "@manifold/ui/components/core/command";
+import { FlexCol } from "@manifold/ui/components/core/flex";
+import { Textarea } from "@manifold/ui/components/core/textarea";
 import {
   FloatingFocusManager,
   FloatingPortal,

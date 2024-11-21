@@ -1,6 +1,6 @@
 import { injectNamespacePragmasWorkaround } from "@manifold/lib/utils/engine";
-import { Badge } from "@manifold/ui/components/ui/badge";
-import { Button } from "@manifold/ui/components/ui/button";
+import { Badge } from "@manifold/ui/components/core/badge";
+import { Button } from "@manifold/ui/components/core/button";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
 import { cn } from "@manifold/ui/lib/utils";
 import { LayoutGroup, motion } from "motion/react";

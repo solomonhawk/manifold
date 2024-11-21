@@ -19,9 +19,8 @@
     "./tailwind.config": "./tailwind.config.ts",
     "./lib/*": "./src/lib/*.ts",
     "./hooks/*": "./src/hooks/*.ts",
-    "./components/*": "./src/components/*.tsx",
-    "./components/ui/button": "./src/components/ui/button/index.ts",
-    "./components/ui/pagination": "./src/components/ui/pagination/index.ts"
+    "./components/*": "./src/components/*/index.ts",
+    "./components/core/*": "./src/components/core/*/index.ts"
   },
   "devDependencies": {
     "@manifold/eslint-config": "*",
