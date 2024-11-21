@@ -1,3 +1,4 @@
+import "@manifold/ui/fonts.css";
 import "@manifold/ui/globals.css";
 
 import type { Preview } from "@storybook/react";
@@ -18,7 +19,7 @@ const preview: Preview = {
     },
   },
   decorators: [withDarkMode],
-  globals: {
+  initialGlobals: {
     "tw-dark-mode": true,
   },
 };

@@ -9,6 +9,10 @@ const meta = {
   parameters: {
     layout: "centered",
   },
+  args: {
+    variant: "default",
+    size: "default",
+  },
   argTypes: {
     variant: {
       options: [
@@ -20,6 +24,10 @@ const meta = {
         "ghost",
         "link",
       ],
+      control: { type: "select" },
+    },
+    size: {
+      options: ["sm", "default", "lg", "icon", "icon-sm"],
       control: { type: "select" },
     },
   },
