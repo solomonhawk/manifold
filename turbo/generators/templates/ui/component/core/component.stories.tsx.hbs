@@ -1,0 +1,21 @@
+import type { Meta, StoryObj } from "@storybook/react";
+
+import { {{ component_name }} } from "./{{ dashCase component_name }}";
+
+const meta = {
+  title: "UI/Core/{{ component_name }}",
+  component: {{ component_name }},
+  tags: ["autodocs"],
+  parameters: {
+    layout: "centered",
+  },
+} satisfies Meta<typeof {{ component_name }}>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
+  args: {
+    children: null,
+  },
+};
