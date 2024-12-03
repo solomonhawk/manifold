@@ -144,7 +144,7 @@ export function TableVersionsSearchBrowse() {
                   <AnimatedListItem
                     key={tableVersion.id}
                     transition={transitionAlpha}
-                    initial={{ opacity: 0, scale: 0.99 }}
+                    initial={{ opacity: 0, y: 8 }}
                     className="mb-12 sm:mb-16"
                   >
                     <ListItem tableVersion={tableVersion} />
