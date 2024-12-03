@@ -64,6 +64,13 @@
       "when": 1731105353993,
       "tag": "0012_sad_iron_monger",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1732689834582,
+      "tag": "0013_slim_mentallo",
+      "breakpoints": true
     }
   ]
 }
