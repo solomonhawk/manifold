@@ -6,12 +6,12 @@ import { TableList } from "~features/dashboard/components/table-list";
 import type { DashboardLoaderData } from "~features/dashboard/pages/root/loader";
 
 export function DashboardRoot() {
-  const { orderBy } = useLoaderData() as DashboardLoaderData;
+  const { orderBy, tableListView } = useLoaderData() as DashboardLoaderData;
 
   return (
     <FlexCol className="space-y-12 p-12 sm:space-y-16 sm:p-16">
       <DashboardHeader />
-      <TableList orderBy={orderBy} />
+      <TableList orderBy={orderBy} initialTableListView={tableListView} />
     </FlexCol>
   );
 }

@@ -1,4 +1,3 @@
-import { capitalize } from "@manifold/lib/utils/string";
 import {
   AnimatedList,
   AnimatedListItem,
@@ -13,20 +12,17 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@manifold/ui/components/core/select";
-import { Separator } from "@manifold/ui/components/core/separator";
-import { TableIdentifier } from "@manifold/ui/components/table-identifier";
 import { usePaginationURLState } from "@manifold/ui/hooks/pagination/use-pagination-url-state";
 import { transitionAlpha } from "@manifold/ui/lib/animation";
 import { tableListOrderByMapping } from "@manifold/validators";
-import { formatRelative } from "date-fns";
 import { LayoutGroup, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { GiMagnifyingGlass } from "react-icons/gi";
 import { GoSearch, GoX } from "react-icons/go";
 import { useLoaderData } from "react-router-dom";
 
-import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
 import { useSearchParams } from "~features/routing/hooks/use-search-params";
+import { TableListItem } from "~features/table/components/table-list-item";
 import type { TableVersionsSearchBrowseLoaderData } from "~features/table-version/pages/search-browse/loader";
 import { trpc } from "~utils/trpc";
 
@@ -147,7 +143,12 @@ export function TableVersionsSearchBrowse() {
                     initial={{ opacity: 0, y: 8 }}
                     className="mb-12 sm:mb-16"
                   >
-                    <ListItem tableVersion={tableVersion} />
+                    <TableListItem
+                      {...tableVersion}
+                      title={tableVersion.table.title}
+                      description={tableVersion.table.description}
+                      href={`/t/${tableVersion.ownerUsername}/${tableVersion.tableSlug}`}
+                    />
                   </AnimatedListItem>
                 );
               })}
@@ -250,100 +251,5 @@ function SearchForm({
         }
       />
     </form>
-  );
-}
-
-function ListItem({
-  tableVersion,
-}: {
-  tableVersion: {
-    ownerUsername: string;
-    tableSlug: string;
-    title: string;
-    tableIdentifier: string;
-    createdAt: Date;
-    updatedAt: Date;
-    availableTables: string[];
-    table: {
-      title: string;
-      description: string | null;
-    };
-  };
-}) {
-  const NOW = new Date();
-
-  const [showAllTables, setShowAllTables] = useState(false);
-
-  return (
-    <section className="group relative flex flex-col justify-between rounded border bg-background ring-0 ring-transparent ring-offset-2 ring-offset-background transition-all focus-within:bg-secondary focus-within:ring-2 focus-within:ring-ring hover:bg-secondary sm:flex-row sm:gap-16 sm:p-16">
-      <PrefetchableLink
-        to={`/t/${tableVersion.ownerUsername}/${tableVersion.tableSlug}`}
-        className="flex flex-col space-y-4 p-16 after:absolute after:inset-0 focus:outline-none sm:space-y-6 sm:p-0 md:space-y-8"
-      >
-        <h3 className="-mt-3 text-xl font-bold leading-tight">
-          {tableVersion.table.title}
-        </h3>
-
-        <span>
-          <TableIdentifier
-            className="text-sm transition-colors group-focus-within:bg-background group-hover:bg-background"
-            tableIdentifier={tableVersion.tableIdentifier}
-          />
-        </span>
-
-        {tableVersion.table.description ? (
-          <p className="text-sm text-muted-foreground">
-            {tableVersion.table.description}
-          </p>
-        ) : null}
-      </PrefetchableLink>
-
-      <Separator
-        className="group-hover:bg-background/50 sm:hidden"
-        orientation="horizontal"
-      />
-
-      <div className="flex shrink flex-col justify-center gap-8 p-16 sm:items-end sm:p-0">
-        <div className="order-2 text-sm text-muted-foreground sm:order-1">
-          Last updated:{" "}
-          {capitalize(formatRelative(tableVersion.updatedAt, NOW))}
-        </div>
-
-        <div>
-          <h4 className="mb-4 text-xs font-semibold text-muted-foreground sm:hidden">
-            Tables:
-          </h4>
-
-          <button
-            className="relative z-10 flex flex-wrap gap-4 rounded-sm bg-none ring-0 ring-offset-0 ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:justify-end"
-            type="button"
-            disabled={tableVersion.availableTables.length <= 5}
-            onClick={() => {
-              setShowAllTables((v) => !v);
-            }}
-          >
-            {(showAllTables
-              ? tableVersion.availableTables
-              : tableVersion.availableTables.slice(0, 5)
-            ).map((tableId) => (
-              <code
-                key={tableId}
-                className="rounded bg-secondary p-3 px-6 text-xs leading-none text-accent-foreground transition-colors group-focus-within:bg-background group-hover:bg-background"
-              >
-                {tableId}
-              </code>
-            ))}
-
-            {tableVersion.availableTables.length > 5 ? (
-              <span className="text-xs text-foreground">
-                {showAllTables
-                  ? "show fewer"
-                  : `and ${tableVersion.availableTables.length - 5} more`}
-              </span>
-            ) : null}
-          </button>
-        </div>
-      </div>
-    </section>
   );
 }

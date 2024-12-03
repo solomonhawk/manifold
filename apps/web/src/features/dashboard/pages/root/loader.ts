@@ -1,7 +1,11 @@
 import { tableListOrderBy } from "@manifold/validators";
 import { type LoaderFunctionArgs } from "react-router-dom";
 
-import { TABLE_LIST_ORDER_BY_STORAGE_KEY } from "~features/table/constants";
+import {
+  TABLE_LIST_ORDER_BY_STORAGE_KEY,
+  TABLE_LIST_VIEW_STORAGE_KEY,
+  type TableListView,
+} from "~features/table/constants";
 import { storage } from "~utils/storage";
 import type { TrpcUtils } from "~utils/trpc";
 
@@ -15,6 +19,9 @@ export function loaderBuilder(trpcUtils: TrpcUtils) {
     const searchParams = new URLSearchParams(new URL(request.url).searchParams);
     const orderByFromUrl = tableListOrderBy.safeParse(searchParams.get("sort"));
     const savedOrderBy = await storage.getItem(TABLE_LIST_ORDER_BY_STORAGE_KEY);
+    const tableListView = await storage.getItem<TableListView>(
+      TABLE_LIST_VIEW_STORAGE_KEY,
+    );
 
     const orderBy = orderByFromUrl.success
       ? orderByFromUrl.data
@@ -32,7 +39,7 @@ export function loaderBuilder(trpcUtils: TrpcUtils) {
         : trpcUtils.table.favorites.prefetch(),
     ]);
 
-    return { orderBy };
+    return { orderBy, tableListView: tableListView ?? "grid" };
   };
 }
 

@@ -1,4 +1,4 @@
-import { capitalize } from "@manifold/lib/utils/string";
+import type { RouterOutput } from "@manifold/router";
 import {
   AnimatedList,
   AnimatedListItem,
@@ -28,28 +28,45 @@ import {
   type TableListOrderBy,
   tableListOrderByMapping,
 } from "@manifold/validators";
-import { formatRelative } from "date-fns";
 import { useCallback, useState } from "react";
-import { GoCircle, GoCircleSlash } from "react-icons/go";
+import {
+  GoCircle,
+  GoCircleSlash,
+  GoListUnordered,
+  GoSquare,
+} from "react-icons/go";
 
-import { useRequiredUserProfile } from "~features/onboarding/hooks/use-required-user-profile";
 import { PrefetchableLink } from "~features/routing/components/prefetchable-link";
 import { useSearchParams } from "~features/routing/hooks/use-search-params";
 import { useListPrefetchedTables } from "~features/table/api/list";
-import { TABLE_LIST_ORDER_BY_STORAGE_KEY } from "~features/table/constants";
-import { storage } from "~utils/storage";
+import { TableCard } from "~features/table/components/table-card";
+import { TableListItem } from "~features/table/components/table-list-item";
+import {
+  TABLE_LIST_ORDER_BY_STORAGE_KEY,
+  TABLE_LIST_VIEW_STORAGE_KEY,
+  type TableListView,
+} from "~features/table/constants";
+import { storage, useManifoldStorage } from "~utils/storage";
 
-export function TableList({ orderBy }: { orderBy: TableListOrderBy }) {
-  const NOW = new Date();
-
-  const userProfile = useRequiredUserProfile();
+export function TableList({
+  orderBy,
+  initialTableListView,
+}: {
+  orderBy: TableListOrderBy;
+  initialTableListView: TableListView;
+}) {
   const [includeDeleted, setIncludeDeleted] = useState(false);
   const [_, setSearchParams] = useSearchParams();
+  const [tableView, setTableView] = useManifoldStorage<"grid" | "list">(
+    TABLE_LIST_VIEW_STORAGE_KEY,
+    initialTableListView,
+  );
 
   const [tables, tablesListQuery] = useListPrefetchedTables({
     orderBy,
     includeDeleted,
   });
+
   const isPending = useStateGuard(tablesListQuery.isRefetching, { min: 200 });
 
   const handleSort = useCallback(
@@ -64,6 +81,11 @@ export function TableList({ orderBy }: { orderBy: TableListOrderBy }) {
     },
     [setSearchParams],
   );
+
+  const listClassName =
+    tableView === "grid"
+      ? "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-[repeat(auto-fill,minmax(180px,1fr))]"
+      : "flex flex-col";
 
   return (
     <Card>
@@ -84,30 +106,57 @@ export function TableList({ orderBy }: { orderBy: TableListOrderBy }) {
           </Select>
         </div>
 
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              onClick={() => setIncludeDeleted((v) => !v)}
-            >
-              <span className="sr-only">
-                {includeDeleted ? "Hide deleted" : "Show deleted"}
-              </span>
+        <div className="flex gap-8">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={() =>
+                  setTableView((v) => (v === "grid" ? "list" : "grid"))
+                }
+              >
+                <span className="sr-only">
+                  {tableView === "grid" ? "Show as list" : "Show as grid"}
+                </span>
 
-              {includeDeleted ? <GoCircle /> : <GoCircleSlash />}
-            </Button>
-          </TooltipTrigger>
+                {tableView === "grid" ? <GoListUnordered /> : <GoSquare />}
+              </Button>
+            </TooltipTrigger>
 
-          <TooltipContent side="left">
-            {includeDeleted ? "Hide deleted" : "Show deleted"}
-          </TooltipContent>
-        </Tooltip>
+            <TooltipContent>
+              {tableView === "grid" ? "Show as list" : "Show as grid"}
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={() => setIncludeDeleted((v) => !v)}
+              >
+                <span className="sr-only">
+                  {includeDeleted ? "Hide deleted" : "Show deleted"}
+                </span>
+
+                {includeDeleted ? <GoCircle /> : <GoCircleSlash />}
+              </Button>
+            </TooltipTrigger>
+
+            <TooltipContent>
+              {includeDeleted ? "Hide deleted" : "Show deleted"}
+            </TooltipContent>
+          </Tooltip>
+        </div>
       </CardHeader>
 
       <CardContent className={cn({ "opacity-50": isPending })}>
-        <AnimatedList className="grid grid-cols-3 gap-12 transition-opacity sm:grid-cols-4 sm:gap-16 md:grid-cols-[repeat(auto-fill,minmax(180px,1fr))]">
+        <AnimatedList
+          className={cn("gap-12 transition-opacity sm:gap-16", listClassName)}
+        >
           {tables.length === 0 && (
             <AnimatedListItem
               className="col-span-full flex items-center gap-16 text-center text-gray-500"
@@ -130,54 +179,11 @@ export function TableList({ orderBy }: { orderBy: TableListOrderBy }) {
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={transitionGamma}
               >
-                <div className="aspect-square w-full">
-                  <Button
-                    className="group flex size-full flex-col items-center justify-center gap-6 p-16"
-                    variant="outline"
-                    asChild
-                  >
-                    <PrefetchableLink
-                      to={
-                        tablesListQuery.isRefetching
-                          ? "#"
-                          : `/t/${userProfile.username}/${table.slug}/edit`
-                      }
-                      state={{ table }}
-                      title={table.title}
-                    >
-                      <div className="z-20 translate-y-14 transition-transform group-hover:translate-y-0">
-                        <h2
-                          className={cn(
-                            "line-clamp-2 whitespace-normal text-center text-sm !leading-tight sm:text-base md:text-lg",
-                            {
-                              "line-through": table.deletedAt !== null,
-                            },
-                          )}
-                        >
-                          {table.title}
-                        </h2>
-                      </div>
-
-                      <div className="z-10 -translate-y-12 scale-95 opacity-0 transition-all group-hover:translate-y-0 group-hover:scale-100 group-hover:opacity-100">
-                        <span
-                          className={cn(
-                            "block text-balance text-center text-xs leading-tight",
-                            {
-                              "text-gray-500": table.deletedAt === null,
-                              "text-destructive": table.deletedAt !== null,
-                            },
-                          )}
-                        >
-                          {table.deletedAt
-                            ? `Deleted ${formatRelative(new Date(table.deletedAt), NOW)}`
-                            : capitalize(
-                                formatRelative(new Date(table.updatedAt), NOW),
-                              )}
-                        </span>
-                      </div>
-                    </PrefetchableLink>
-                  </Button>
-                </div>
+                <ListItem
+                  table={table}
+                  tableView={tableView}
+                  isRefetching={tablesListQuery.isRefetching}
+                />
               </AnimatedListItem>
             );
           })}
@@ -185,4 +191,22 @@ export function TableList({ orderBy }: { orderBy: TableListOrderBy }) {
       </CardContent>
     </Card>
   );
+}
+
+function ListItem({
+  table,
+  tableView,
+  isRefetching,
+}: {
+  table: RouterOutput["table"]["list"][number];
+  tableView: "grid" | "list";
+  isRefetching: boolean;
+}) {
+  const href = `/t/${table.ownerUsername}/${table.slug}/edit`;
+
+  if (tableView === "list") {
+    return <TableListItem {...table} href={href} />;
+  }
+
+  return <TableCard table={table} isRefetching={isRefetching} href={href} />;
 }
