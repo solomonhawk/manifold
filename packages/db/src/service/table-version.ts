@@ -88,7 +88,7 @@ export async function listTableVersions(input: TableVersionListInput) {
       )
     : undefined;
 
-  const countSubQuery = await db
+  const countSubQuery = db
     .selectDistinctOn([schema.tableVersions.tableIdentifier], {
       tableIdentifier: schema.tableVersions.tableIdentifier,
       totalCount: sql`count(*) over()`.mapWith(Number).as("count"),
@@ -98,7 +98,7 @@ export async function listTableVersions(input: TableVersionListInput) {
     .groupBy(schema.tableVersions.tableIdentifier)
     .as("countSubQuery");
 
-  const distinctTableVersions = await db
+  const distinctTableVersions = db
     .selectDistinctOn([schema.tableVersions.tableIdentifier])
     .from(schema.tableVersions)
     .where(whereFilter)

@@ -53,7 +53,7 @@ export function PreviewDependencyDialog({
               <dt className="border-b border-r px-10 py-8 font-semibold text-muted-foreground">
                 Description
               </dt>
-              <dd className="border-b border-r px-10 py-8">
+              <dd className="overflow-auto border-b border-r px-10 py-8">
                 {dependency.table?.description || (
                   <em className="text-muted-foreground">
                     No table description
@@ -78,7 +78,7 @@ export function PreviewDependencyDialog({
               <dt className="border-b border-r px-10 py-8 font-semibold text-muted-foreground">
                 Release&nbsp;notes
               </dt>
-              <dd className="border-b border-r px-10 py-8">
+              <dd className="overflow-auto border-b border-r px-10 py-8">
                 {dependency.releaseNotes || (
                   <em className="text-muted-foreground">No release notes</em>
                 )}
@@ -86,7 +86,7 @@ export function PreviewDependencyDialog({
               <dt className="border-b border-r px-10 py-8 font-semibold text-muted-foreground">
                 Available&nbsp;Tables
               </dt>
-              <dd className="flex flex-wrap gap-4 border-b border-r px-10 py-8">
+              <dd className="flex flex-wrap gap-4 border-b border-r px-10 py-8 ">
                 {dependency.availableTables.map((tableId) => (
                   <code
                     key={tableId}

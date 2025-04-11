@@ -30,8 +30,8 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
       },
     ],
 
-    actions: (asdf) => {
-      const isCoreComponent = asdf?.core ?? false;
+    actions: (answers) => {
+      const isCoreComponent = answers?.core ?? false;
 
       if (isCoreComponent) {
         return [
